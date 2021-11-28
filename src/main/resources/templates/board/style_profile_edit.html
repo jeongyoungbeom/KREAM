@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org/"
+      xmlns:sec="http://www.w3.org/1999/xhtml">
+
+<!-- head.html -->
+<div th:replace="include/pjs_head :: head"></div>
+<!--<div th:replace="include/pop :: pop"></div>-->
+<!-- head.html 끝-->
+<link rel="stylesheet" href="/lib/css/pjs_footer.css">
+
+<!-- jquery cdn -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<!--axios cdn -->
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<body>
+<div id="__nuxt">
+    <!---->
+    <div id="__layout">
+        <div class="wrap win_os">
+            <!---->
+            <div class="wrap_inner">
+                <!-- header_title start -->
+                <div th:replace="include/pjs_header_title :: header_title"></div>
+                <!--header_title end-->
+                <div class="container my lg">
+                    <div>
+                        <!--style snb area 시작 -->
+                        <div class="snb_area">
+                            <a href="/my/profile" class="nuxt-link-active">
+                                <h2 class="snb_main_title">Style</h2>
+                            </a>
+                            <nav class="snb">
+                                <div class="snb_list">
+                                    <strong class="snb_title">프로필 정보</strong>
+                                </div>
+                            </nav>
+                        </div>
+                        <!--style snb area 끝 -->
+                    </div>
+                    <div class="content_area"><div class="my_profile">
+                        <div class="content_title border">
+                            <div class="title">
+                                <h3>STYLE 프로필 정보</h3>
+                                <!---->
+                            </div>
+                            <!---->
+                        </div>
+                        <div class="user_profile">
+                            <div class="profile_thumb">
+                                <img src="/lib/img/blank_profile.4347742.png" alt="사용자 이미지" class="thumb_img" style="width: -webkit-fill-available;">
+                            </div>
+                            <div class="profile_detail">
+                                <strong class="name">이름</strong>
+                                <div class="profile_btn_box">
+                                    <button type="submit" class="btn outlinegrey small" id="upImage"> 이미지 변경 </button>
+                                    <button id="delImage" class="btn outlinegrey small"> 삭제 </button>
+                                    <input type="file" hidden="hidden" id="imageFileInput" name="file" accept="image/png, image/jpeg" multiple>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="file" accept="image/jpeg,image/png" hidden="hidden">
+                        <canvas width="1000" height="1000" style="display: none;"></canvas>
+                        <div class="profile_info">
+                            <div class="profile_group">
+                                <h4 class="group_title">프로필 편집</h4>
+                                <div class="unit" id="id_input_box">
+                                    <h5 class="title">프로필 이름</h5>
+                                    <!--영문, 숫자, 특수문자(_ .)만 가능-->
+                                    <input type="text" id="id_input" class="desc" placeholder="프로필 이름을 입력해주세요.">
+                                    <button type="button" class="btn btn_modify outlinegrey small" onclick="update()"> 변경 </button>
+                                    <p class="input_error" id="id_input_error"></p>
+                                </div>
+                                <div class="unit">
+                                    <h5 class="title"> 이름</h5>
+                                    <!--그냥 아무거나 입력가능-->
+                                    <input type="text" class="desc" id="name_input" placeholder="프로필 이름을 입력해주세요.">
+                                    <button type="button" class="btn btn_modify outlinegrey small" onclick="update()"> 변경 </button>
+                                </div>
+                                <div class="unit">
+                                    <!--아무거나 입력가능-->
+                                    <h5 class="title">내 소개</h5>
+                                    <input type="text" class="desc" id="intro_input" placeholder="나를 소개하세요." value="">
+                                    <button type="button" class="btn btn_modify outlinegrey small" onclick="update()"> 변경 </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                <!--footer-->
+                <div th:replace="include/pjs_footer :: footer"></div>
+                <!--footer end--><!----><!----><!---->
+            </div>
+        </div>
+        <!---->
+    </div>
+</div>
+</div>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+
+<script src="/lib/js/loginpage_mypage_all.js" type="text/javascript"></script>
+<script src="/lib/js/style_profile_edit.js" type="text/javascript"></script>
+<script src="/lib/js/pjs_header_nav.js"></script>
+
+<script>
+    // 세션아이디 가져오기
+    const sessionId = sessionStorage.getItem('userid');
+
+    // 모바일 헤더 title 변경
+    const contentTitle = document.querySelector('.content_title').querySelector('h3');
+    const headerTitle = document.querySelector('.main_inner').querySelector('h4');
+    headerTitle.innerHTML=contentTitle.innerText;
+
+    let styleCustomerId,profileName,name,intro,image;
+
+    // 스타일 프로필만 읽어오기
+    axios.get('/api/style_customer_detail/'+sessionId, {
+    }).then(function(response) {
+        console.log(response);
+        styleCustomerId = response.data.data.id;
+        profileName = response.data.data.profileName;
+        name = response.data.data.name;
+        if(name == null){
+            name = '';
+        }
+        intro = response.data.data.intro;
+        if(intro == '정보없음'){
+            intro = '';
+        }
+        document.querySelector('#id_input').value = profileName;
+        document.querySelector('#name_input').value = name;
+        document.querySelector('.name').innerHTML = name;
+        document.querySelector('#intro_input').value = intro;
+    });
+
+    // 이미지만 불러오기
+    axios.get('/api/customer_detail/'+sessionId, {
+
+    }).then(function (response) {
+        image = response.data.data.image;
+        if(image == null){
+            image='/lib/img/blank_profile.4347742.png';
+        }
+        document.querySelector('.thumb_img').setAttribute('src',image);
+    });
+
+    // 스타일 프로필만 업데이트
+    function update(){
+        console.log(document.querySelector('#id_input').value);
+        console.log(document.querySelector('#name_input').value);
+        console.log(document.querySelector('#intro_input').value);
+
+        axios.request({
+            method: "PUT",
+            url: "/api/style_customer_update",
+            headers: {'Content-type': 'application/json'},
+            data: {
+                data:{
+                    id: styleCustomerId,
+                    profileName: document.querySelector('#id_input').value,
+                    name: document.querySelector('#name_input').value,
+                    intro: document.querySelector('#intro_input').value
+                }
+            }
+        }).then();
+        location.reload();
+    }
+
+    // 이미지만 업데이트
+    function updateImage(){
+        axios.request({
+            url: '/api/customer_image_update',
+            method: 'PATCH',
+            headers: {'X-Requested-With': 'XMLHttpRequest'},
+            params: {
+                ID: sessionId,
+            },
+            data: {
+                firstName: 'string',
+                "data": {
+                    "id": sessionId,
+                    "image": image
+                }
+            },
+            responseType: 'json',
+            responseEncoding: 'utf8'
+        }).then(
+        )
+        location.reload();
+    }
+
+    // 사진 삭제 버튼 클릭 이벤트
+    document.querySelector('#delImage').addEventListener('click',()=>{
+        image = '';
+        updateImage();
+    });
+
+</script>
+</body>
+</html>

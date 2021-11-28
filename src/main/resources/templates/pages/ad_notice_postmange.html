@@ -1,0 +1,299 @@
+<html class="no-js" lang="ko"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org/">
+
+<!-- head.html -->
+<div th:replace="fragment/head :: head"></div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<!-- head.html 끝-->
+<script>
+    $(function(){
+
+        let link = document.location.href.split("?page=");
+        let num = link[1];
+        let  axios2 = '/api/board_list?page='+num;
+        axios.get(axios2,{
+        }).then(function(response){
+            console.log(response);
+
+            let startPage = response.data.pagination.startPage;
+            let endPage = response.data.pagination.endPage;
+            let totalPages = response.data.pagination.totalPages;
+            for (let j=startPage-1; j<=endPage-1; j++){
+                console.log(j);
+                let pagNum = j+1;
+                let paying = "<li><a class='paA' href='/pages/product/check?page="+j+"'>"+pagNum+"</a></li>";
+                $('#paying').append(paying);
+                if(j==endPage-1&&j+1!=totalPages){
+                    let next = "<li><a class='paA' href='/pages/product/check?page="+pagNum+"'>＞</a></li>"
+                    $('#paying').append(next);
+                    let EndNum = totalPages-1;
+                    let nextEnd = "<li><a class='paA' href='/pages/product/check?page="+EndNum+"'>≫</a></li>"
+                    $('#paying').append(nextEnd);
+                }
+                if(j>4 && startPage%5===1){
+                    if(j+1==startPage){
+                        let prevNum = j-1;
+                        let prevStart = "<li><a class='paA' href='/pages/product/check?page="+0+"'>≪</a></li>"
+                        let prev = "<a class='paA' href='/pages/product/check?page="+prevNum+"'>＜</a>"
+                        $('.prev').before(prevStart);
+                        $('.prev').append(prev);
+                    }
+                }
+            }
+
+            let tb = $('<tbody>');
+            for(let i in response.data.data){
+                let $idx =response.data.data[i].id;
+                let $category =response.data.data[i].category;
+                let $title =response.data.data[i].title;
+                let $regdate =response.data.data[i].regdate;
+                let row = $('<tr>').append(
+                    "<th class='k_ad_check'><input type='checkbox' id='inquire_cb_"+i+"' class='inquire_check'><label for='inquire_cb_"+i+"' class='inquire_label2'></label></th>" +
+                    "<th class='k_ad_num'>"+ $idx +"</th>" +
+                    "<th class='k_ad_sel'>"+ $category +"</th>" +
+                    "<th class='k_ad_title'><a href='/pages/postm_detail/"+$idx+"'><div class='hidden_title' style='margin: 0 auto'>"+ $title +"</div></a></th>" +
+                    "<th class='k_ad_reg'>"+ $regdate.substring(2, 10) +"</th></tr>"
+                )
+                tb.append(row);
+            }
+            tb.append('</tbody>');
+            $('.thead').after(tb);
+
+            let checkAll = document.getElementsByClassName('inquire_check');
+            $('.postm_del').click(function (){
+                for(let i=0; i < checkAll.length; i++){
+                    if(checkAll[i].checked){
+                        console.log(i);
+                        for(let j in response.data.data){
+                            let idx =response.data.data[j].id;
+                            if (i==j){
+                                axios.delete('/api/board_delete/'+idx)
+                                    .then(function (response){
+                                    }).catch(function (response){
+                                    console.log('삭제 에러발생');
+                                })
+                            }
+                        }
+                    }
+                }
+                alert("삭제되었습니다");
+                location.reload();
+            });
+        }).catch(function(err){
+            console.log(err);
+        });
+
+        axios.get('/api/pro_post_count',{
+        }).then(function (response){
+            let allCnt = response.data.data.allCnt;
+            let finishCnt = response.data.data.finishCnt;
+            let ingCnt = response.data.data.ingCnt;
+            let stopCnt = response.data.data.stopCnt;
+            let waitCnt = response.data.data.waitCnt;
+
+            $('#allCnt').text(allCnt);
+            $('#finishCnt').text(finishCnt);
+            $('#ingCnt').text(ingCnt);
+            $('#stopCnt').text(stopCnt);
+            $('#waitCnt').text(waitCnt);
+        });
+
+
+    });
+    function sendit(num){
+        let title = null;
+        let id = null;
+        let content = null;
+
+        let noticeSelect = null;
+        let notice_start_date = null;
+        let notice_end_date = null;
+
+        if($('#notice_start_date').val()!=''){
+            notice_start_date = $('#notice_start_date').val();
+            notice_start_date = notice_start_date.substring(2);
+        }else{
+            notice_start_date = null;
+        }
+        if($('#notice_end_date').val()!=''){
+            notice_end_date = $('#notice_end_date').val();
+            notice_end_date = notice_end_date.substring(2);
+        }else{
+            notice_end_date = null;
+        }
+
+        if($('#postm_s_search option:selected').val()=='제목'){
+            title = $('#notice_s_text').val();
+        }else if($('#postm_s_search option:selected').val()=='글번호'){
+            id = $('#notice_s_text').val();
+        }else if($('#postm_s_search option:selected').val()=='내용'){
+            content = $('#notice_s_text').val();
+        }
+
+        if($('#notice_s_search option:selected').val()=='전체'||$('#notice_s_search option:selected').val()==null||$('#notice_s_search option:selected').val()==''){
+            noticeSelect = null;
+        }else{
+            noticeSelect = $('#notice_s_search option:selected').val();
+        }
+
+        let axios3 = '/api/board_dataList?page='+num;
+        axios.request({
+            method:"POST",
+            url:axios3,
+            headers:{'Content-type':'application/json'},
+            data:{
+                "data":{
+                    "title": title,
+                    "content": content,
+                    "id":id,
+                    "startDatetime": notice_start_date,
+                    "endDatetime": notice_end_date,
+                    "category":noticeSelect
+                }
+            }
+        }).then(function(response){
+            if(num==undefined){
+                alert('조회되었습니다.')
+            }
+            $('#paying').text('');
+            let startPage = response.data.pagination.startPage;
+            let endPage = response.data.pagination.endPage;
+            let totalPages = response.data.pagination.totalPages;
+            $('#paying').append('<li class="prev"></li>');
+            for (let j=startPage-1; j<=endPage-1; j++){
+                let pagNum = j+1;
+                let paying = "<li><a class='paA' onclick='sendit("+j+")'>"+pagNum+"</a></li>";
+                $('#paying').append(paying);
+                if(j==endPage-1&&j+1!=totalPages){
+                    let next = "<li><a class='paA' onclick='sendit("+pagNum+")'>＞</a></li>";
+                    $('#paying').append(next);
+                    let EndNum = totalPages-1;
+                    let nextEnd = "<li><a class='paA' onclick='sendit("+EndNum+")'>≫</a></li>"
+                    $('#paying').append(nextEnd);
+                }
+                if(j>4 && startPage%5===1){
+                    if(j+1==startPage){
+                        let prevNum = j-1;
+                        let prevStart = "<li><a class='paA' onclick='sendit("+0+")'>≪</a></li>"
+                        let prev = "<a class='paA' onclick='sendit("+prevNum+")'>＜</a>"
+                        $('.prev').before(prevStart);
+                        $('.prev').append(prev);
+                    }
+                }
+            }
+            $('tbody').text('');
+            let tb = $('<tbody>');
+            for(let i in response.data.data){
+                let $idx =response.data.data[i].id;
+                let $category =response.data.data[i].boardCategory;
+                let $title =response.data.data[i].title;
+                let $regdate =response.data.data[i].regdate;
+                let row = $('<tr>').append(
+                    "<th class='k_ad_check'><input type='checkbox' id='inquire_cb_"+i+"' class='inquire_check'><label for='inquire_cb_"+i+"' class='inquire_label2'></label></th>" +
+                    "<th class='k_ad_num'>"+ $idx +"</th>" +
+                    "<th class='k_ad_sel'>"+ $category +"</th>" +
+                    "<th class='k_ad_title'><a href='/pages/postm_detail/"+$idx+"'><div class='hidden_title' style='margin: 0 auto'>"+ $title +"</div></a></th>" +
+                    "<th class='k_ad_reg'>"+ $regdate.substring(2, 10) +"</th></tr>"
+                )
+                tb.append(row);
+            }
+            tb.append('</tbody>');
+            $('.thead').after(tb);
+        });
+    }
+
+</script>
+<body>
+<!-- Start Header Top Area -->
+<div th:replace="fragment/header :: header"></div>
+<!-- End Header Top Area -->
+<!-- Mobile Menu start -->
+<div th:replace="fragment/mo_menu :: mo_menu"></div>
+<!-- Mobile Menu end -->
+<!-- Main Menu area start-->
+<div th:replace="fragment/menu :: menu"></div>
+<!-- Main Menu area End-->
+<!-- Start Status area -->
+<div class="data-table-area">
+    <div class="container table_top">
+        <div class="data-table-list">
+            <div class="basic-tb-hd">
+                <h2>게시글 관리</h2>
+                <p>Post management</p>
+            </div>
+            <hr/>
+            <br>
+            <div>
+                <div class="ad_search_box orderSearch notice_postm">
+                    <div class="postm_text">조회기간</div>
+                    <div class='input_date_box'><input id="notice_start_date" type="date"><div class="input_text1"> ~ </div><input id="notice_end_date" type="date"></div>
+                </div>
+                <br>
+                <div class="ad_search_box orderSearch notice_postm">
+                    <div class="postm_text">검색어</div>
+                    <select class="postm_select" id="postm_s_search" >
+                        <option value="전체">전체</option>
+                        <option value="제목">제목</option>
+                        <option value="내용">내용</option>
+                        <option value="글번호">글번호</option>
+                    </select>
+                    <input class="postm_input_text" id="notice_s_text" type="text">
+                </div>
+                <br>
+                <div class="ad_search_box orderSearch notice_postm">
+                    <div class="postm_text">상세검색</div>
+                    <select class="BigCate_postm" id="notice_s_search" name="product_search">
+                        <option value="전체">전체</option>
+                        <option value="공지">공지</option>
+                        <option value="이벤트">이벤트</option>
+                        <option value="스니커즈">스니커즈</option>
+                        <option value="의류">의류</option>
+                        <option value="패션잡화">패션잡화</option>
+                        <option value="테크">테크</option>
+                        <option value="라이프">라이프</option>
+                        <option value="이용정책">이용정책</option>
+                        <option value="공통">공통</option>
+                        <option value="구매">구매</option>
+                        <option value="판매">판매</option>
+                    </select>
+                </div>
+                <div style="display: flex; justify-content: center;"><input class="postm_button" type="button" onclick="sendit()" value="검색"></div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="data-table-list order_bidcheck_list">
+                    <div class="table-responsive">
+                        <table class="k_ad_table">
+                            <thead class="thead">
+                            <tr style="background: #e6e6e6">
+                                <th class="k_ad_check">선택</th>
+                                <th class="k_ad_num">번호</th>
+                                <th class="k_ad_sel">분류</th>
+                                <th class="k_ad_title">제목</th>
+                                <th class="k_ad_reg">등록일</th>
+                            </tr>
+                            </thead>
+                            <tfoot style="height: 5px;"></tfoot>
+                        </table>
+                        <ul id="paying"></ul>
+                        <input class="postm_del" type="button" value="삭제">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Realtime sts area-->
+<!-- Start Footer area-->
+<div th:replace="fragment/footer :: footer"></div>
+<!-- End Footer area-->
+<div th:replace="fragment/script :: script"></div>
+</body>
+
+</html>

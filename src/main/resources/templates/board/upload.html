@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org/"
+      xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <title>KRAEM | 한정판 거래의 FLEX</title>
+    <link data-n-head="ssr" rel="icon" type="image/x-icon" href="https://kream.co.kr/favicon.ico">
+    <!-- jquery cdn -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <!--axios cdn -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="/lib/css/upload.css">
+    <link rel="stylesheet" href="/lib/css/pop.css">
+</head>
+<body>
+<!-- head.html -->
+<div th:replace="include/header :: head"></div>
+<!-- head.html 끝-->
+<div id="fixed"></div>
+<div th:replace="include/pop :: pop"></div>
+<!-- 모바일 오른쪽 -->
+<div class="navigation_wrap close">
+    <div class="navigation">
+        <div class="navigation_inner">
+            <ul class="nav_list">
+                <li class="nav_item">
+                    <a href="/social/trending" class="nav_link">
+                        STYLE
+                    </a>
+                </li>
+                <li class="nav_item">
+                    <a href="/search" class="nav_link">
+                        SHOP
+                    </a>
+                </li>
+                <li class="nav_item">
+                    <a href="/faq" class="nav_link">
+                        자주 묻는 질문
+                    </a>
+                </li>
+                <li class="nav_item">
+                    <a href="/notice" class="nav_link">
+                        공지사항
+                    </a>
+                </li>
+                <li class="nav_item" sec:authorize="hasRole('ADMIN')"><a href="/pages"  class="nav_link">관리자</a></li>
+                <li class="nav_item" sec:authorize="!isAuthenticated()"><a href="/login" class="nav_link"> 로그인 </a></li>
+                <li class="nav_item" sec:authorize="isAuthenticated()"><a href="/logout" class="nav_link" onclick="sessionStorage.clear()"> 로그아웃 </a></li>
+
+            </ul>
+            <!---->
+            <div class="nav_download">
+                <p class="download_txt">KREAM 앱 설치 후 사용해 보세요!</p>
+                <div class="btn_appdown">
+                    <a href="https://play.google.com/store/apps/details?id=com.fstudio.kream" type="button" class="btn outline medium">
+                        앱 다운로드
+                    </a>
+                </div>
+            </div>
+        </div>
+        <button type="button" class="btn_nav_close">
+            <img src="/lib/img/pop_close.png" class="ico-close icon sprite-icons">
+        </button>
+    </div>
+</div>
+<!--검색창-->
+<div class="layer_search lg" style="display: none;">
+    <div class="search_container">
+        <div class="search_wrap">
+            <div class="search_area" value="">
+                <div class="search">
+                    <img src="/lib/img/search_gray_icon.png" class="ico-search-gray icon sprite-icons">
+                    <input type="text" placeholder="브랜드명, 모델명, 모델번호 등" title="검색창" class="input_search show_placeholder_on_focus">
+                    <button class="btn_search_delete" style="display: none;">
+                        <img src="/lib/img/text_area_delete_icon.png" class="ico-delete-circle icon sprite-icons">
+                    </button>
+                </div>
+            </div>
+            <button class="btn_close">취소</button>
+        </div>
+    </div>
+    <div class="recent_wrap">
+        <div class="recent_area">
+            <div class="recent_box">
+                <strong class="recent_title">최근 검색어</strong>
+                <button class="btn_delete">
+                    <img src="/lib/img/delete_circle_icon.png" class="ico-delete-circle icon sprite-icons">
+                </button>
+                <ul class="search_list">
+                    <li><a href="https://www.kream.co.kr/search?keyword=DJ0950-112&sort=popular&per_page=40" class="search_item">  DJ0950-112 </a></li>
+                    <li><a href="https://www.kream.co.kr/search?keyword=%EC%82%AC%EC%B9%B4" class="search_item"> 사카 </a></li>
+                    <li><a href="https://www.kream.co.kr/search?keyword=%EC%82%AC%EC%B9%B4%EC%9D%B4" class="search_item"> 사카이 </a></li>
+                    <li><a href="https://www.kream.co.kr/search?keyword=Dunk&sort=popular&per_page=40" class="search_item"> 덩크 </a></li>
+                    <li><a href="https://www.kream.co.kr/search?keyword=Jordan%201" class="search_item"> 조던 </a></li>
+                </ul>
+            </div>
+            <ul class="brand_list lg">
+                <li class="brand_item" style="background-color: rgb(246, 238, 237);">
+                    <a class="brand_box">
+                        <img src="/lib/img/p_1c64737691684299b32884e7d890983c.png" alt="Jordan 1" class="brand_img">
+                        <p class="brand_name">Jordan 1</p>
+                    </a>
+                </li>
+                <li class="brand_item" style="background-color: rgb(235, 240, 245);">
+                    <a class="brand_box">
+                        <img src="/lib/img/a_462abc0cfd92429eae5f1e7677742261.png" alt="Dunk" class="brand_img">
+                        <p class="brand_name">Dunk</p>
+                    </a>
+                </li>
+                <li class="brand_item" style="background-color: rgb(235, 240, 245);">
+                    <a class="brand_box">
+                        <img src="/lib/img/p_1077af921fe1436ab78ec3f07b7dae79.png" alt="스캇" class="brand_img">
+                        <p class="brand_name">스캇</p>
+                    </a>
+                </li>
+                <li class="brand_item" style="background-color: rgb(244, 244, 244);">
+                    <a class="brand_box">
+                        <img src="/lib/img/a_5e37181489d44d1a80650eef3edb9296.png" alt="톰브라운" class="brand_img">
+                        <p class="brand_name">톰브라운</p>
+                    </a>
+                </li>
+                <li class="brand_item" style="background-color: rgb(244, 244, 244);">
+                    <a class="brand_box">
+                        <img src="/lib/img/p_4f213a0866354fa39e72f459f3374589.png" alt="지갑" class="brand_img">
+                        <p class="brand_name">지갑</p>
+                    </a>
+                </li>
+                <li class="brand_item" style="background-color: rgb(244, 244, 244);">
+                    <a class="brand_box">
+                        <img src="/lib/img/a_5fb25d6231d3414d9c8b5261d7d87897.png" alt="레고" class="brand_img">
+                        <p class="brand_name">레고</p>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="suggest_wrap" style="display: none;">
+        <div class="suggest_area">
+            <div class="suggest_title_area">
+                <p class="suggest_title">나이키</p>
+            </div>
+            <div class="suggest_list lg">
+                <div class="suggest_item">
+                    <a href="/products/39449" class="suggest_link">
+                        <div class="suggest_thumb">
+                            <img src="https://kream-phinf.pstatic.net/MjAyMTA4MTNfMTc4/MDAxNjI4ODE2OTU1NTEy.-ssaZSoxOvq9N6D9dNAstXpjp170UsMhxJA5syAkGC0g.JdDM7mkjhdXXkRpsTtCq7tZyA2u3r5Pm8zWFE8Oe75Mg.PNG/a_5d5dab542fae4ea9bfd2078c2d07a9f2.png" alt="나이키 x 사카이 x 프라그먼트 LD와플 라이트 스모크 그레이" class="thumb_img">
+                        </div>
+                        <div class="suggest_info">
+                            <p class="model_title">Nike x Sacai x Fragment LDWaffle Light Smoke Grey</p>
+                            <p class="model_sub_info">나이키 x 사카이 x 프라그먼트 LD와플 라이트 스모크 그레이</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="suggest_item">
+                    <a href="/products/39448" class="suggest_link">
+                        <div class="suggest_thumb"><img src="https://kream-phinf.pstatic.net/MjAyMTA4MTNfMjI5/MDAxNjI4ODE2OTQyMjg4.Pr5xVktBScvuEXRctGLADuB8TJZk_ExyPagNS0Fp1i4g.Y-zakijeWyh8d9hgiIZD29bc9fWfQs_axWQ2Xj_t638g.PNG/a_8a2b9c780c234fcdbce3a2bac42f9cf4.png" alt="나이키 x 사카이 x 프라그먼트 LD와플 블랙큰드 블루" class="thumb_img">
+                        </div>
+                        <div class="suggest_info">
+                            <p class="model_title">Nike x Sacai x Fragment LDWaffle Blackened Blue</p>
+                            <p class="model_sub_info">나이키 x 사카이 x 프라그먼트 LD와플 블랙큰드 블루</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="suggest_item">
+                    <a href="/products/28029" class="suggest_link">
+                        <div class="suggest_thumb">
+                            <img src="https://kream-phinf.pstatic.net/MjAyMTA3MjhfMjIg/MDAxNjI3NDQxMDA1NjE5.HOgIYywGZaaBJDqUzx2OnX9HAxoOWPvuWHqUn_LZGcgg.VYIuOfA5_GgjBGRowv6dmQuAOPtUvmAxbGpOyUCOCtYg.PNG/p_9d8ed1a74d2540ab9842e63363607bf4.png" alt="나이키 덩크 로우 레트로 블랙" class="thumb_img"></div>
+                        <div class="suggest_info">
+                            <p class="model_title">Nike Dunk Low Retro Black</p>
+                            <p class="model_sub_info">나이키 덩크 로우 레트로 블랙</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="suggest_item">
+                    <a href="/products/38844" class="suggest_link">
+                        <div class="suggest_thumb">
+                            <img src="https://kream-phinf.pstatic.net/MjAyMTA4MDZfMjY0/MDAxNjI4MjM5NTA1MjU1.9FfkTXbxZFWKxDMdPayVFlD0GIyNT-mFVIQ7zZW3SPcg.c03UoCFjKXtP4XtNMgBdrmTOIQlqxrePk4JScV4GUHEg.PNG/p_8001cbaf0db042bda09fea320ee328b4.png" alt="나이키 덩크 로우 SE 서울" class="thumb_img">
+                        </div>
+                        <div class="suggest_info">
+                            <p class="model_title">Nike Dunk Low SE Seoul</p>
+                            <p class="model_sub_info">나이키 덩크 로우 SE 서울</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="suggest_item">
+                    <a href="/products/28030" class="suggest_link">
+                        <div class="suggest_thumb">
+                            <img src="https://kream-phinf.pstatic.net/MjAyMTA3MjhfMjcz/MDAxNjI3NDQxMDI4OTQz.FUajQFp09YVc_uLkwLnhQslwbgiRxTm-LTxQgi5IJNcg.erY1xk-3dvoOCW8r65BCusQYco2d6ln7BSBpD2Yld9Ug.PNG/p_0ec4e132925345f48fa832f2283cf454.png" alt="(W) 나이키 덩크 로우 블랙" class="thumb_img">
+                        </div>
+                        <div class="suggest_info">
+                            <p class="model_title">(W) Nike Dunk Low Black</p>
+                            <p class="model_sub_info">(W) 나이키 덩크 로우 블랙</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="suggest_item">
+                    <a href="/products/39121" class="suggest_link">
+                        <div class="suggest_thumb">
+                            <img src="https://kream-phinf.pstatic.net/MjAyMTA4MDlfMTQg/MDAxNjI4NDg5NTIwNDY2.Mn68jNQyl_usVByHwgVtvG3PP3QWZUrzx1Pl3hTGpvUg.i-iyK8TlNzo_c7wF-OKDjXPvDzRd4yqtjk6V1n96tSAg.PNG/a_afc5d9ecafec4e8c8d89d50a3236d2a5.png" alt="나이키 x 언디핏 에어포스 1 로우 SP 5 온 잇" class="thumb_img">
+                        </div>
+                        <div class="suggest_info">
+                            <p class="model_title">Nike x Undefeated Air Force 1 Low SP 5 On It</p>
+                            <p class="model_sub_info">나이키 x 언디핏 에어포스 1 로우 SP 5 온 잇</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="suggest_item">
+                    <a href="/products/39142" class="suggest_link">
+                        <div class="suggest_thumb">
+                            <img src="https://kream-phinf.pstatic.net/MjAyMTA4MTBfODIg/MDAxNjI4NTc3NzY4NjQ1.iuyr8BiuWbO-DBet19oNev2VNF_OkstoNOznd1TmdlIg.mtu9Iw_SlAoUiGE-rLb1xBTYQP3T255z15tsVBYwlIIg.PNG/a_cb40b0132d8343c0894a2b8999a35e85.png" alt="나이키 x 오프화이트 덩크 로우 더 50 - 로트 18" class="thumb_img">
+                        </div>
+                        <div class="suggest_info">
+                            <p class="model_title">Nike x Off-White Dunk Low The 50 - Lot 18</p>
+                            <p class="model_sub_info">나이키 x 오프화이트 덩크 로우 더 50 - 로트 18</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="suggest_item">
+                    <a href="/products/39170" class="suggest_link">
+                        <div class="suggest_thumb">
+                            <img src="https://kream-phinf.pstatic.net/MjAyMTA4MThfMTQy/MDAxNjI5MjY4NzY2ODk5.kjFtjtEy6TZ8FoPHj7P45V2Z-dw8OPgIs44mXjkU2v8g.S33cKzKXskwi8cZZChvtQrdGWVxRVvLAouyP6gZl324g.PNG/a_b79da82e8bb44d5bad1f51bc77862c06.png" alt="나이키 x 오프화이트 덩크 로우 더 50 - 로트 46" class="thumb_img">
+                        </div>
+                        <div class="suggest_info">
+                            <p class="model_title">Nike x Off-White Dunk Low The 50 - Lot 46</p>
+                            <p class="model_sub_info">나이키 x 오프화이트 덩크 로우 더 50 - 로트 46</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="suggest_item">
+                    <a href="/products/25620" class="suggest_link">
+                        <div class="suggest_thumb">
+                            <img src="https://kream-phinf.pstatic.net/MjAyMDExMThfMjU2/MDAxNjA1NjkxMzExMTYz.leAiiIeRzdnBC6STAjmeqVlM0lokrpyt7EbsaWUtnnIg.hPz7sqovLq6tPmB6zs8PnR1q8UYkTl8YJiWGKm79cj0g.PNG/p_477d8861bbbd43e8aad3ee5d76c3df76.png" alt="나이키 x 피스마이너스원 에어포스 1 로우 파라노이즈 2.0" class="thumb_img">
+                        </div>
+                        <div class="suggest_info">
+                            <p class="model_title">Nike x Peaceminusone Air Force 1 Low Para-Noise 2.0</p>
+                            <p class="model_sub_info">나이키 x 피스마이너스원 에어포스 1 로우 파라노이즈 2.0</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="suggest_item">
+                    <a href="/products/33799" class="suggest_link">
+                        <div class="suggest_thumb">
+                            <img src="https://kream-phinf.pstatic.net/MjAyMTA0MjNfMTM3/MDAxNjE5MTY4MjI4OTM4.sAToRDxrfFw9deS1_iWzKI7brDmtN1R9WqkimU81XSsg.Th25GokaQPcn0EdT5AvGYrafEbVkRr5P4BWCqXpImIQg.PNG/p_e6013157f46b40fbbbd81efa0cb3bc89.png" alt="나이키 덩크 로우 레트로 유니버시티 블루" class="thumb_img">
+                        </div>
+                        <div class="suggest_info">
+                            <p class="model_title">Nike Dunk Low Retro University Blue</p>
+                            <p class="model_sub_info">나이키 덩크 로우 레트로 유니버시티 블루</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <a href="#" class="more_link">
+                <span class="more_text">7155</span>
+                <img src="/lib/img/size_select_arrow_icon.png" class="ico-arr-right icon sprite-icons">
+            </a>
+            <div class="result_nodata" style="display: none;">
+                <p class="nodata_main">검색하신 결과가 없습니다.</p>
+                <p class="nodata_sub">상품 등록 요청은 앱 <span class="emphasis">1:1 문의하기</span> 로 요청해주세요.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!--  -->
+<div  id="header_upload" >
+    <a onclick="location.href='/social/profile/'+sessionId" style="cursor: pointer">
+        <img src="/lib/img/4781857_arrow_arrows_back_direction_left_icon.png" alt="" id="back_img">
+    </a>
+    <h3>STYLE UPLOAD</h3>
+    <div class="label_box">
+        <label for="formSub">공유</label>
+    </div>
+</div>
+
+<div>
+    <div id="upload_box">
+        <div>
+            <div id="upload_imgbox">
+                <p class="board_text1">사진 추가하기</p>
+                <form class="container" onsubmit="return sendit()"  enctype="multipart/form-data" id="form">
+                    <div class="filebox" >
+                        <input class="upload-name" style="display:none;" disabled="disabled" multiple>
+                        <label class="board_text2" id="ww" for="files">여기를 누르면 사진이 추가됩니다</label>
+                        <input type="file" id="files" style="display:none;" name="files" class="upload-hidden" multiple>
+                    </div>
+                    <input type="submit" id="formSub" style="display: none">
+                    <div id="muti_list" style="display:flex;flex-wrap:wrap;"></div>
+                </form>
+            </div>
+        </div>
+
+        <div>
+            <textarea type="text" placeholder="공유하고 싶은 글을 입력하세요." id="upload_textbox" maxlength="5000" style="resize:none;"></textarea>
+            <div id="upload_hashtag">
+                <p id="upload_hash">해시태그 <span style="color:red; font-size: 1.1rem">*태그는 10개까지만 가능합니다. </span></p>
+                <input type="text" placeholder="해시태그를 입력해주세요" id="hashtag_input" maxlength="10"><span class="hashtag_input_submit">등록</span>
+                <div id="hashtag_list"></div>
+            </div>
+            <div id="upload_product">
+                <div>
+                    <p id="upload_product_tag">상품태그 <span style="color:red; font-size: 1.1rem">*태그는 4개까지만 가능합니다.</span></p>
+                </div>
+                <div id="upload_img_box">
+                    <div class="upload_plus_box" id="search_product">
+                        <img src="/lib/img/2561435_plus_file_icon.png" alt="" class="upload_plus_img">
+                        <p>상품 추가하기</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr/>
+<!-- footer -->
+<div th:replace="include/checkFooter :: footer"></div>
+<!-- footer 끝 -->
+<!--===========================================================================================================================================-->
+<!-- 팝업창 -->
+<div id="popupDiv" style="display: none">
+    <div class="layer_container">
+        <!-- 상품 추가하기 -->
+        <div class="layer_header">
+            <h2 class="title" id="add_title">상품 추가하기</h2>
+            <img src="/lib/img/nav_close_icon.png" alt="닫기" class="btn_layer_close" id="popCloseBtn">
+        </div>
+        <!-- 검색창 버튼  -->
+        <div class="popup_search">
+            <input type="text" placeholder="브랜드명,모델명, 모델번호 등" class="in_search">
+            <div class="search_delet">삭제</div>
+        </div>
+        <div class="product_plus" style="display: none;">
+            <div class="plus_search"></div>
+        </div>
+        <!-- 하단 취소하기 / 저장하기 버튼 -->
+        <div class="bottom_button">
+            <button class="btn solid outlinegrey btn_delete">취소</button>
+        </div>
+    </div>
+</div>
+<!-- js 마지막 -->
+<!--===========================================================================================================================================-->
+
+<script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+<script src="/lib/js/upload.js"></script>
+<script src="/lib/js/pop.js"></script>
+</body>
+<script>
+    const sessionId = sessionStorage.getItem('userid'); // 세션 가져오기
+
+    function handleFileSelect(evt) {
+        let fileSize = document.getElementsByClassName("muti_div");
+        var files = evt.target.files;
+        if(fileSize.length + files.length < 6){
+            for (var i = 0, f; f = files[i]; i++) {
+                if (!f.type.match('image.*')) { continue; }
+
+                var reader = new FileReader();
+
+                reader.onload = (function (theFile) {
+                    return function (e) {
+                        var span = document.createElement('span');
+                        span.innerHTML =
+                            [
+                                '<div class="muti_div" style="display: block;"><img class="muti_img_class" src="',
+                                e.target.result,
+                                '" title="', escape(theFile.name),
+                                '"/><br><button class="img_del" style="border: none; background: none;">삭제</button></div>'
+                            ].join('');
+
+                        document.getElementById('muti_list').insertBefore(span, null);
+                        const muti_img_list = document.querySelectorAll(".img_del");
+                        for (let i = 0; i < muti_img_list.length; i++) {
+                            muti_img_list[i].addEventListener('click', function () {
+                                this.parentNode.remove();
+                            });
+                        }
+                    };
+                })(f);
+                reader.readAsDataURL(f);
+            }
+        }else{ alert("사진은 5개까지 첨부 가능합니다"); }
+    }
+    document.getElementById('files').addEventListener('change', handleFileSelect, false);
+
+    function sendit(){
+        const customer_id = sessionStorage.getItem( "userid");
+        let muti_div = document.querySelectorAll('.muti_div');
+        let hashtag_replace = document.querySelectorAll('.hashtag_replace');
+        let product_id = document.querySelectorAll(".product_id");
+        let arrHash = [];
+        let arrId = [];
+        if(muti_div.length==0){
+            alert("사진을 추가해주세요");
+            return false;
+        }
+        for(let i=0; i<hashtag_replace.length; i++){
+            let hash = hashtag_replace.item(i).innerHTML;
+            arrHash.push(hash);
+        }
+        for(let i=0; i<product_id.length; i++){
+            let proTagId = product_id.item(i).value;
+            console.log(parseInt(proTagId));
+            arrId.push(parseInt(proTagId));
+        }
+        let formData = new FormData($("form")[0]);
+        const img = document.getElementsByClassName('muti_img_class')
+        for(let i = 0; i < img.length; i++){
+            let file = img[i];
+            formData.append('files', file[i]);
+        }
+        const data = {
+            productId: arrId,
+            tagName: arrHash,
+            customerId: customer_id,
+            content: $('#upload_textbox').val(),
+        }
+        formData.append("data", new Blob([JSON.stringify(data)], {type: "application/json"}));
+        axios.request({
+            method: 'POST',
+            url: '/api/style_register',
+            headers:{'Content-type':'multipart/form-data'},
+            data: formData
+        }).then(  )
+        alert('게시물이 등록되었습니다.');
+        location.href='/social/profile/'+customer_id;
+        return false;
+    }
+</script>
+</html>

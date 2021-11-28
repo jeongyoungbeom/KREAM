@@ -1,0 +1,286 @@
+<html class="no-js" lang="ko"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org/">
+
+<!-- head.html -->
+<div th:replace="fragment/head :: head"></div>
+<!-- head.html 끝-->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+
+<script>
+    $(function(){
+        let link = document.location.href.split("?page=");
+        let num = link[1];
+        let axios2 = '/api/customer_list/블랙?page='+num;
+        axios.get(axios2, {
+        }).then(function(response){
+            console.log(response);
+            let startPage = response.data.pagination.startPage;
+            let endPage = response.data.pagination.endPage;
+            let totalPages = response.data.pagination.totalPages;
+            for (let j=startPage-1; j<=endPage-1; j++){
+                console.log(j);
+                let pagNum = j+1;
+                let paying = "<li><a class='paA' href='/pages/member/leave?page="+j+"'>"+pagNum+"</a></li>";
+                $('#paying').append(paying);
+                if(j==endPage-1&&j+1!=totalPages){
+                    let next = "<li><a class='paA' href='/pages/member/leave?page="+pagNum+"'>＞</a></li>"
+                    $('#paying').append(next);
+                    let EndNum = totalPages-1;
+                    let nextEnd = "<li><a class='paA' href='/pages/member/leave?page="+EndNum+"'>≫</a></li>"
+                    $('#paying').append(nextEnd);
+                }
+                if(j>4 && startPage%5===1){
+                    if(j+1==startPage){
+                        let prevNum = j-1;
+                        let prevStart = "<li><a class='paA' href='/pages/member/leave?page="+0+"'>≪</a></li>"
+                        let prev = "<a class='paA' href='/pages/member/leave?page="+prevNum+"'>＜</a>"
+                        $('.prev').before(prevStart);
+                        $('.prev').append(prev);
+                    }
+                }
+            }
+
+
+            let tb = $('<tbody>');
+            for(let i in response.data.data){
+                let id =response.data.data[i].id;
+                let email =response.data.data[i].email;
+                let userid =response.data.data[i].userid;
+                let regdate =response.data.data[i].regdate;
+                let message =response.data.data[i].message;
+                let row = $('<tr>').append(
+                    "<th class='ad_mem_check'><input type='checkbox' id='"+id+"' class='member_check'><label for='"+id+"' class='member_label'></label></th>" +
+                    "<th class='ad_mem_email'>"+ email +"</th>" +
+                    "<th class='ad_mem_userid th_none'>"+ userid +"</th>" +
+                    "<th class='ad_mem_reg th_none'>"+ regdate.substring(2, 10) +"</th>"+
+                    "<th class='ad_mem_black'>"+message+"</th></tr>"
+                )
+                tb.append(row);
+            }
+            tb.append('</tbody>');
+            $('.thead').after(tb);
+
+
+        }).catch(function(err){
+            console.log(err);
+        });
+
+        axios.get('/api/pro_post_count',{
+        }).then(function (response){
+            let allCnt = response.data.data.allCnt;
+            let finishCnt = response.data.data.finishCnt;
+            let ingCnt = response.data.data.ingCnt;
+            let stopCnt = response.data.data.stopCnt;
+            let waitCnt = response.data.data.waitCnt;
+
+            $('#allCnt').text(allCnt);
+            $('#finishCnt').text(finishCnt);
+            $('#ingCnt').text(ingCnt);
+            $('#stopCnt').text(stopCnt);
+            $('#waitCnt').text(waitCnt);
+        });
+    });
+
+    function sendit(num){
+        if($('#search_select').val()!=""&&$('#text').val()==""){
+            alert("검색어를 입력해주세요")
+        }else{
+            let userid = null;
+            let email = null;
+
+            if(($('#search_select option:selected').val())=="닉네임"){
+                userid = $('#text').val();
+            }else if(($('#search_select option:selected').val())=="이메일"){
+                email = $('#text').val();
+            }
+
+            let axios3 = '/api/customer_dataList?page='+num;
+            axios.request({
+                method:"POST",
+                url:axios3,
+                headers:{'Content-type':'application/json'},
+                data:{
+                    "data":{
+                        "userid": userid,
+                        "email": email,
+                        "type":"블랙"
+                    }
+                }
+            }).then(function(response){
+                if(num==undefined){
+                    alert('조회되었습니다.')
+                }
+                $('#paying').text('');
+                let startPage = response.data.pagination.startPage;
+                let endPage = response.data.pagination.endPage;
+                let totalPages = response.data.pagination.totalPages;
+                $('#paying').append('<li class="prev"></li>');
+                for (let j=startPage-1; j<=endPage-1; j++){
+                    let pagNum = j+1;
+                    let paying = "<li><a class='paA' onclick='sendit("+j+")'>"+pagNum+"</a></li>";
+                    $('#paying').append(paying);
+                    if(j==endPage-1&&j+1!=totalPages){
+                        let next = "<li><a class='paA' onclick='sendit("+pagNum+")'>＞</a></li>";
+                        $('#paying').append(next);
+                        let EndNum = totalPages-1;
+                        let nextEnd = "<li><a class='paA' onclick='sendit("+EndNum+")'>≫</a></li>"
+                        $('#paying').append(nextEnd);
+                    }
+                    if(j>4 && startPage%5===1){
+                        if(j+1==startPage){
+                            let prevNum = j-1;
+                            let prevStart = "<li><a class='paA' onclick='sendit("+0+")'>≪</a></li>"
+                            let prev = "<a class='paA' onclick='sendit("+prevNum+")'>＜</a>"
+                            $('.prev').before(prevStart);
+                            $('.prev').append(prev);
+                        }
+                    }
+                }
+                $('tbody').text('');
+                let tb = $('<tbody>');
+                for(let i in response.data.data){
+                    let id =response.data.data[i].id;
+                    let email =response.data.data[i].email;
+                    let userid =response.data.data[i].userid;
+                    let regdate =response.data.data[i].regdate;
+                    let message =response.data.data[i].message;
+                    let row = $('<tr>').append(
+                        "<th class='ad_mem_check'><input type='checkbox' id='"+id+"' class='member_check'><label for='"+id+"' class='member_label'></label></th>" +
+                        "<th class='ad_mem_email'>"+ email +"</th>" +
+                        "<th class='ad_mem_userid th_none'>"+ userid +"</th>" +
+                        "<th class='ad_mem_reg th_none'>"+ regdate.substring(2, 10) +"</th>"+
+                        "<th class='ad_mem_black'>"+message+"</th></tr>"
+                    )
+                    tb.append(row);
+                }
+                tb.append('</tbody>');
+                $('.thead').after(tb);
+
+            });
+        }
+    };
+    function del(){
+        let checkAll = document.getElementsByClassName('member_check');
+        for(let i=0; i < checkAll.length; i++){
+            if(checkAll[i].checked){
+                console.log(checkAll[i].id);
+                let id = checkAll[i].id;
+                axios.get('/api/customer_info/'+id, {
+                }).then(function(response){
+                    console.log(response);
+                    let userpw = response.data.data.userpw;
+                    let name = response.data.data.name;
+                    let message = '';
+                    let type = '일반';
+                    let privacyPolicy = response.data.data.privacyPolicy;
+                    let pushAllow = response.data.data.pushAllow;
+                    let agreement = response.data.data.agreement;
+                    let emailAllow = response.data.data.emailAllow;
+                    let shoesize = response.data.data.shoesize;
+                    let smsAllow = response.data.data.smsAllow;
+                    let rank = response.data.data.rank;
+                    let hp = response.data.data.hp;
+                    let userid = response.data.data.userid;
+                    axios.request({
+                        method: 'PATCH',
+                        url: '/api/customer_update/',
+                        headers:{'Content-type':'application/json'},
+                        data: {
+                            "data":{
+                                "id":id,
+                                "hp":hp,
+                                "rank":rank,
+                                "message":message,
+                                "userid":name,
+                                "shoesize":shoesize,
+                                "userpw":userpw,
+                                "agreement":agreement,
+                                "email":userid,
+                                "privacyPolicy":privacyPolicy,
+                                "pushAllow":pushAllow,
+                                "emailAllow":emailAllow,
+                                "smsAllow":smsAllow,
+                                "type" : type
+                            }
+                        }
+                    }).then(
+                    )
+                    alert('수정되었습니다')
+                    location.reload();
+                }).catch(function(err){
+                    console.log(err);
+                })
+            }
+        }
+    }
+
+
+</script>
+<body>
+<!-- Start Header Top Area -->
+<div th:replace="fragment/header :: header"></div>
+<!-- End Header Top Area -->
+<!-- Mobile Menu start -->
+<div th:replace="fragment/mo_menu :: mo_menu"></div>
+<!-- Mobile Menu end -->
+<!-- Main Menu area start-->
+<div th:replace="fragment/menu :: menu"></div>
+<!-- Main Menu area End-->
+<!-- Start Status area -->
+<div class="data-table-area">
+    <div class="container table_top">
+        <div class="data-table-list">
+            <div class="basic-tb-hd">
+                <h2>블랙리스트</h2>
+                <p>Blacklist</p>
+            </div>
+            <div class="ad_search_box" id="mem_leave_html">
+                <div class="member_search_box">
+                    <select name="member_search_select" id="search_select">
+                        <option value="" id="all">전체</option>
+                        <option value="닉네임" id="userid">닉네임</option>
+                        <option value="이메일" id="email">이메일</option>
+                    </select>
+                    <div class='member_search_box'>
+                        <input type="text" class="member_search" id="text">  <input class="member_submit" type="button" value="조회" onclick="sendit()">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container member_leave_list">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="data-table-list">
+                    <div class="table-responsive">
+                        <table class="k_ad_table">
+                            <thead class="thead">
+                            <tr style="background: #e6e6e6">
+                                <th class='ad_mem_check'>선택</th>
+                                <th class='ad_mem_email'>이메일</th>
+                                <th class='ad_mem_userid th_none'>닉네임</th>
+                                <th class='ad_mem_reg th_none'>가입일</th>
+                                <th class='ad_mem_black'>등록사유&nbsp;&nbsp;&nbsp;</th>
+                            </tr>
+                            </thead>
+                            <tfoot style="height: 5px;"></tfoot>
+                        </table>
+                        <ul id="paying"></ul>
+                        <input type="button" class="mem_leave_del" onclick="del()" value="선택건 해제">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Realtime sts area-->
+<!-- Start Footer area-->
+<div th:replace="fragment/footer :: footer"></div>
+<!-- End Footer area-->
+<div th:replace="fragment/script :: script"></div>
+</body>
+
+</html>

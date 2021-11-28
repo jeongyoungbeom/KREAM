@@ -1,0 +1,243 @@
+<html class="no-js" lang="ko"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org/">
+
+<!-- head.html -->
+<div th:replace="fragment/head :: head"></div>
+<!-- head.html 끝-->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+
+    $(function(){
+        let link = document.location.href.split("?page=");
+        let num = link[1];
+        let  axios2 = '/api/customer_list/일반?page='+num;
+        axios.get(axios2, {
+        }).then(function(response){
+            console.log(response);
+            let startPage = response.data.pagination.startPage;
+            let endPage = response.data.pagination.endPage;
+            let totalPages = response.data.pagination.totalPages;
+            for (let j=startPage-1; j<=endPage-1; j++){
+                console.log(j);
+                let pagNum = j+1;
+                let paying = "<li><a class='paA' href='/pages/member/all?page="+j+"'>"+pagNum+"</a></li>";
+                $('#paying').append(paying);
+                if(j==endPage-1&&j+1!=totalPages){
+                    let next = "<li><a class='paA' href='/pages/member/all?page="+pagNum+"'>＞</a></li>"
+                    $('#paying').append(next);
+                    let EndNum = totalPages-1;
+                    let nextEnd = "<li><a class='paA' href='/pages/member/all?page="+EndNum+"'>≫</a></li>"
+                    $('#paying').append(nextEnd);
+                }
+                if(j>4 && startPage%5===1){
+                    if(j+1==startPage){
+                        let prevNum = j-1;
+                        let prevStart = "<li><a class='paA' href='/pages/member/all?page="+0+"'>≪</a></li>"
+                        let prev = "<a class='paA' href='/pages/member/all?page="+prevNum+"'>＜</a>"
+                        $('.prev').before(prevStart);
+                        $('.prev').append(prev);
+                    }
+                }
+            }
+
+            let tb = $('<tbody>');
+            for(let i in response.data.data){
+                if(response.data.data[i].type=='일반'){
+                    let id =response.data.data[i].id;
+                    let email =response.data.data[i].email;
+                    let userid =response.data.data[i].userid;
+                    let rank =response.data.data[i].rank;
+                    let regdate =response.data.data[i].regdate;
+                    let row = $('<tr>').append(
+                        "<th class='ad_mem_email'>"+ email +"</th>" +
+                        "<th class='ad_mem_userid th_none'>"+ userid +"</th>" +
+                        "<th class='ad_mem_rank'><a href='/pages/rank/"+id+"'>"+rank+"</a></th>" +
+                        "<th class='ad_mem_reg th_none'>"+ regdate.substring(2, 10) +"</th>" +
+                        "<th class='ad_mem_info'><a href='/pages/info/"+id+"'>열람</a></th>" +
+                        "<th class='ad_mem_black'><a href='/pages/black/"+id+"'>등록</a></th></tr>"
+                    )
+                    tb.append(row);
+                }
+            }
+            tb.append('</tbody>');
+            $('.thead').after(tb);
+        }).catch(function(err){
+            console.log(err);
+        });
+    });
+
+    function sendit(num){
+        if($('#search_select').val()!=""&&$('#text').val()==""){
+            alert("검색어를 입력해주세요")
+        }else{
+            let ckeck=null;
+            let start_date = null;
+            let end_date = null;
+
+            if($('#start_date').val()!=''){
+                start_date = $('#start_date').val();
+                start_date = start_date.substring(2);
+
+            }else{
+                start_date = null;
+            }
+            if($('#end_date').val()!=''){
+                end_date = $('#end_date').val();
+                end_date = end_date.substring(2);
+            }else{
+                end_date = null;
+            }
+
+            let userid = null;
+            let rank = null;
+            let email = null;
+
+            if(($('#search_select option:selected').val())=="닉네임"){
+                userid = $('#text').val();
+            }else if(($('#search_select option:selected').val())=="이메일"){
+                email = $('#text').val();
+            }else if(($('#search_select option:selected').val())=="등급"){
+                rank = $('#text').val();
+            }
+
+            let  axios3 = '/api/customer_dataList?page='+num;
+            axios.request({
+                method:"POST",
+                url:axios3,
+                headers:{'Content-type':'application/json'},
+                data:{
+                    "data":{
+                        "regdate": ckeck,
+                        "startDatetime": start_date,
+                        "endDatetime": end_date,
+                        "userid": userid,
+                        "rank": rank,
+                        "email": email,
+                        "type":"일반"
+                    }
+                }
+            }).then(function(response){
+                if(num==undefined){
+                    alert('조회되었습니다.')
+                }
+                $('#paying').text('');
+                let startPage = response.data.pagination.startPage;
+                let endPage = response.data.pagination.endPage;
+                let totalPages = response.data.pagination.totalPages;
+                $('#paying').append('<li class="prev"></li>');
+                for (let j=startPage-1; j<=endPage-1; j++){
+                    let pagNum = j+1;
+                    let paying = "<li><a class='paA' onclick='sendit("+j+")'>"+pagNum+"</a></li>";
+                    $('#paying').append(paying);
+                    if(j==endPage-1&&j+1!=totalPages){
+                        let next = "<li><a class='paA' onclick='sendit("+pagNum+")'>＞</a></li>";
+                        $('#paying').append(next);
+                        let EndNum = totalPages-1;
+                        let nextEnd = "<li><a class='paA' onclick='sendit("+EndNum+")'>≫</a></li>"
+                        $('#paying').append(nextEnd);
+                    }
+                    if(j>4 && startPage%5===1){
+                        if(j+1==startPage){
+                            let prevNum = j-1;
+                            let prevStart = "<li><a class='paA' onclick='sendit("+0+")'>≪</a></li>"
+                            let prev = "<a class='paA' onclick='sendit("+prevNum+")'>＜</a>"
+                            $('.prev').before(prevStart);
+                            $('.prev').append(prev);
+                        }
+                    }
+                }
+                $('tbody').text('');
+                let tb = $('<tbody>');
+                for(let i in response.data.data){
+                    let id =response.data.data[i].id;
+                    let email =response.data.data[i].email;
+                    let userid =response.data.data[i].userid;
+                    let rank =response.data.data[i].rank;
+                    let regdate =response.data.data[i].regdate;
+                    let row = $('<tr>').append(
+                        "<th class='ad_mem_email'>"+ email +"</th>" +
+                        "<th class='ad_mem_userid th_none'>"+ userid +"</th>" +
+                        "<th class='ad_mem_rank'><a href='/pages/rank/"+id+"'>"+rank+"</a></th>" +
+                        "<th class='th_none ad_mem_reg '>"+ regdate.substring(2, 10) +"</th>" +
+                        "<th class='ad_mem_info'><a href='/pages/info/"+id+"'>열람</a></th>" +
+                        "<th class='ad_mem_black'><a href='/pages/black/"+id+"'>등록</a></th></tr>"
+                    )
+                    tb.append(row);
+                }
+                tb.append('</tbody>');
+                $('.thead').after(tb);
+            });
+        }
+    }
+</script>
+<body>
+<!-- Start Header Top Area -->
+<div th:replace="fragment/header :: header"></div>
+<!-- End Header Top Area -->
+<!-- Mobile Menu start -->
+<div th:replace="fragment/mo_menu :: mo_menu"></div>
+<!-- Mobile Menu end -->
+<!-- Main Menu area start-->
+<div th:replace="fragment/menu :: menu"></div>
+<!-- Main Menu area End-->
+<!-- Start Status area -->
+<div class="data-table-area mamberAll">
+    <div class="container table_top">
+        <div class="data-table-list">
+            <div class="basic-tb-hd">
+                <h2>회원 목록</h2>
+                <p>Member list</p>
+            </div>
+            <div class="ad_search_box memAllSearch" style="margin-bottom: 10px">
+                <div class='input_date_box'><input type="date" id="start_date"><div class="input_text1"> ~ </div><input type="date" id="end_date"></div>
+            </div>
+            <div class="ad_search_box" id="mem_all_html">
+                <div class="member_search_box">
+                    <select name="member_search_select" id="search_select">
+                        <option value="" id="all">전체</option>
+                        <option value="닉네임" id="userid">닉네임</option>
+                        <option value="이메일" id="email">이메일</option>
+                        <option value="등급" id="rank">등급</option>
+                    </select>
+                    <div class='member_search_box'>
+                        <input type="text" class="member_search" id="text"> <input class="member_submit" type="button" value="조회" onclick="sendit()">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container member_all_list">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="data-table-list">
+                    <div class="table-responsive">
+                        <table class="k_ad_table">
+                            <thead class="thead">
+                            <tr style="background: #e6e6e6">
+                                <th class='ad_mem_email'>이메일</th>
+                                <th class="th_none ad_mem_userid">닉네임</th>
+                                <th class='ad_mem_rank '>등급</th>
+                                <th class='ad_mem_reg th_none'>가입일</th>
+                                <th class='ad_mem_info'>상세정보</th>
+                                <th class='ad_mem_black'>블랙리스트</th>
+                            </tr>
+                            </thead>
+                            <tfoot style="height: 5px;"></tfoot>
+                        </table>
+                        <ul id="paying"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Realtime sts area-->
+<!-- Start Footer area-->
+<div th:replace="fragment/footer :: footer"></div>
+<!-- End Footer area-->
+<div th:replace="fragment/script :: script"></div>
+</body>
+
+</html>

@@ -1,0 +1,101 @@
+<html class="no-js" lang="ko"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org/">
+
+<!-- head.html -->
+<div th:replace="fragment/head :: head"></div>
+<!-- head.html 끝-->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+    $(function(){
+        let link = document.location.href.split("?page=");
+        let num = link[1];
+        let  axios2 = '/api/purchase_nopayList?page='+num;
+        axios.get(axios2,{
+        }).then(function(response){
+            console.log(response);
+
+            for (let j=0; j<=response.data.pagination.totalPages-1; j++){
+                console.log(j);
+                let pagNum = j+1;
+                let paying = "<li><a class='paA' href='/pages/order/paycheck?page="+j+"'>"+pagNum+"</a></li>";
+                $('#paying').append(paying);
+            }
+
+            let tb = $('<tbody>');
+            for(let i in response.data.data){
+                let id =response.data.data[i].id;
+                let productId =response.data.data[i].productId;
+                let customerId =response.data.data[i].customerId;
+                let userid =response.data.data[i].userid;
+                let name =response.data.data[i].name;
+                let regdate =response.data.data[i].regdate;
+                let row = $('<tr>').append(
+                    "<th class='unpaid2'>"+ id +"</th>" +
+                    "<th class='unpaid3'>"+ regdate.substring(2, 10) +"</th>" +
+                    "<th class='unpaid4'>"+ customerId +"</th>" +
+                    "<th class='unpaid5'>"+ userid +"</th>" +
+                    "<th class='opunpaid6'>"+ name +"</th>" +
+                    "<th class='unpaid7'>"+ productId +"</th></tr>"
+                )
+                tb.append(row);
+            }
+            tb.append('</tbody>');
+            $('.thead').after(tb);
+        }).catch(function(err){
+            console.log(err);
+        });
+    });
+
+</script>
+<body>
+<!-- Start Header Top Area -->
+<div th:replace="fragment/header :: header"></div>
+<!-- End Header Top Area -->
+<!-- Mobile Menu start -->
+<div th:replace="fragment/mo_menu :: mo_menu"></div>
+<!-- Mobile Menu end -->
+<!-- Main Menu area start-->
+<div th:replace="fragment/menu :: menu"></div>
+<!-- Main Menu area End-->
+<!-- Data Table area Start-->
+<div class="data-table-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="data-table-list">
+                    <div class="basic-tb-hd">
+                        <h2>미결제 확인</h2>
+                        <p>Unpaid Confirmation</p>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="k_ad_table">
+                            <thead class="thead">
+                            <tr style="background: #e6e6e6">
+                                <th class="unpaid2">주문번호</th>
+                                <th class="unpaid3">주문일시</th>
+                                <th class="unpaid4">회원번호</th>
+                                <th class="unpaid5">구매자ID</th>
+                                <th class="opunpaid6">수취인</th>
+                                <th class="unpaid8">상품번호</th>
+                            </tr>
+                            </thead>
+                            <tfoot style="height: 5px;"></tfoot>
+                        </table>
+                        <ul id="paying"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Data Table area End-->
+<!-- Start Footer area-->
+<div th:replace="fragment/footer :: footer"></div>
+<!-- End Footer area-->
+<div th:replace="fragment/script :: script"></div>
+
+</body>
+
+</html>

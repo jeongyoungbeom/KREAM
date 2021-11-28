@@ -1,0 +1,156 @@
+<html class="no-js" lang="ko"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org/">
+
+<!-- head.html -->
+<div th:replace="fragment/head :: head"></div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+    $(function (){
+        const id = $('#id').val();
+        axios.get('/api/pro_ad_detail/'+id, {
+        }).then(function (response){
+            console.log(response);
+            let category = response.data.data.category;
+            let subCategory = response.data.data.subCategory;
+            let brand = response.data.data.brand;
+            let name = response.data.data.name;
+            let korName = response.data.data.korName;
+            let modelNumber = response.data.data.modelNumber;
+            let color = response.data.data.color;
+            let release = response.data.data.release;
+            let releasePrice = response.data.data.releasePrice;
+            let gender = response.data.data.gender;
+            let collection = response.data.data.collection;
+            let postStatus = response.data.data.postStatus;
+
+            for(let i in response.data.data.proimgPathApiResponseList){
+                let origSplitImg = response.data.data.proimgPathApiResponseList[i].origFileName;
+                if(response.data.data.proimgPathApiResponseList[i]){
+                    if(i==0){
+                        $('#imgbox').append("<img id='img_list' src='/lib/product/"+origSplitImg+"' style='width: 420px; height: 420px; margin: 0 auto;'>");
+                    }else{
+                        $('#muti_list').append(
+                            "<span><div class='muti_div' style='display: block;'><img class='muti_img_class' style='height: 100px; border: 1px solid #000; margin: 5px' src='/lib/product/"+origSplitImg+"' title='intro_cont1_v2.jpg'></div></span>"
+                        )
+                    }
+                }
+            }
+
+            $('#category').text(category);
+            $('#subCategory').text(subCategory);
+            $('#gender').text(gender);
+            $('#brand').val(brand);
+            $('#name').val(name);
+            $('#korName').val(korName);
+            $('#modelNumber').val(modelNumber);
+            $('#color').val(color);
+            $('#releasePrice').val(releasePrice);
+            $('#release').text(release);
+            $('#collection').val(collection);
+            $('#postStatus').text(postStatus);
+
+            $('#brand_length').text(brand.length);
+            $('#name_length').text(name.length);
+            $('#korName_length').text(korName.length);
+            $('#modelNumber_length').text(modelNumber.length);
+            $('#color_length').text(color.length);
+            $('#release_length').text(release.length);
+            $('#releasePrice_length').text(releasePrice.toString().length);
+            $('#collection_length').text(collection.length);
+        });
+    });
+</script>
+<!-- head.html 끝-->
+
+<body>
+<!-- Start Header Top Area -->
+<div th:replace="fragment/header :: header"></div>
+<!-- End Header Top Area -->
+<!-- Mobile Menu start -->
+<div th:replace="fragment/mo_menu :: mo_menu"></div>
+<!-- Mobile Menu end -->
+<!-- Main Menu area start-->
+<div th:replace="fragment/menu :: menu"></div>
+<!-- Main Menu area End-->
+<!-- Start Status area -->
+<div class="data-table-area">
+    <div class="container table_top">
+        <div class="data-table-list">
+            <div class="basic-tb-hd">
+                <h2>상품 상세정보</h2>
+                <p>Product modification</p>
+                <input type="hidden" id="id" th:value="${id}">
+            </div>
+            <p class="regist_top_text">카테고리 : [ <span name="category" id="category"></span>, <span name="subCategory" id="subCategory"></span> ]</p>
+            <p class="regist_top_text">성별 : <span id="gender" name="gender"></span></p>
+            <br>
+            <div style="font-weight: bold; display: flex">
+                <div style="margin-right: 6px">게시상태 : <span id="postStatus"></span></div>
+                <div style="margin: 0 6px 0 11px">출시일 : <span id="release"></span></div>
+            </div>
+            <hr/>
+            <div class="regist_flex_box">
+                <div class="regist_flex_text">브랜드</div><textarea id="brand" class="textaC" name="brand" readonly></textarea>
+                <div class="texta_cnt"><span id="brand_length"></span> / 100</div>
+            </div>
+            <div class="regist_flex_box">
+                <div class="regist_flex_text">상품이름</div><textarea id="name" class="textaC" name="name" readonly></textarea>
+                <div class="texta_cnt" ><span id="name_length"></span> / 100</div>
+            </div>
+            <div class="regist_flex_box">
+                <div class="regist_flex_text">한글 이름</div><textarea id="korName" class="textaC" name="korName" readonly></textarea>
+                <div class="texta_cnt" ><span id="korName_length"></span> / 100</div>
+            </div>
+            <div class="regist_flex_box">
+                <div class="regist_flex_text">모델번호</div><textarea id="modelNumber" class="textaC" name="modelNumber" readonly></textarea>
+                <div class="texta_cnt"><span id="modelNumber_length"></span> / 100</div>
+            </div>
+            <div class="regist_flex_box">
+                <div class="regist_flex_text">제품색상</div><textarea id="color" class="textaC" name="color" readonly></textarea>
+                <div class="texta_cnt"><span id="color_length"></span> / 100</div>
+            </div>
+            <div class="regist_flex_box">
+                <div class="regist_flex_text">발매가</div><textarea id="releasePrice" class="textaC" name="releasePrice" readonly></textarea>
+                <div class="texta_cnt"><span id="releasePrice_length"></span> / 100</div>
+            </div>
+            <div class="regist_flex_box">
+                <div class="regist_flex_text">컬렉션</div><textarea id="collection" class="textaC" name="collection" readonly></textarea>
+                <div class="texta_cnt" ><span id="collection_length"></span> / 100</div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="data-table-list">
+                    <p class="regist_top_text">대표 이미지</p>
+                    <div id="imgbox" style="width: 100%;margin: 0;text-align: center;padding: 15px 0;"></div>
+                    <hr/>
+                    <p class="regist_top_text">추가 이미지</p>
+                    <div id="muti_list" style="display:flex; flex-wrap: wrap"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container" style="margin-top: 15px">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="data-table-list">
+                    <div class="button_container">
+                        <a style="color:black; float: right; font-weight: 600; border: 1px solid; border-radius: 5px; width: 70px; text-align: center; padding: 5px 2px 3px;" th:href="@{'/pages/product/edit/'+${id}}">수정하기</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- End Realtime sts area-->
+<!-- Start Footer area-->
+<div th:replace="fragment/footer :: footer"></div>
+<!-- End Footer area-->
+<div th:replace="fragment/script :: script"></div>
+</body>
+</html>

@@ -1,0 +1,182 @@
+<html class="no-js" lang="ko"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org/">
+
+<!-- head.html -->
+<div th:replace="fragment/head :: head"></div>
+<!-- head.html 끝-->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+    $(function(){
+        let link = document.location.href.split("?page=");
+        let num = link[1];
+        let  axios2 = '/api/customer_Qna_list?page='+num;
+        axios.get(axios2, {
+        }).then(function(response){
+            console.log(response);
+            let startPage = response.data.pagination.startPage;
+            let endPage = response.data.pagination.endPage;
+            let totalPages = response.data.pagination.totalPages;
+            for (let j=startPage-1; j<=endPage-1; j++){
+                console.log(j);
+                let pagNum = j+1;
+                let paying = "<li><a class='paA' href='/pages/product/check?page="+j+"'>"+pagNum+"</a></li>";
+                $('#paying').append(paying);
+                if(j==endPage-1&&j+1!=totalPages){
+                    let next = "<li><a class='paA' href='/pages/product/check?page="+pagNum+"'>＞</a></li>"
+                    $('#paying').append(next);
+                    let EndNum = totalPages-1;
+                    let nextEnd = "<li><a class='paA' href='/pages/product/check?page="+EndNum+"'>≫</a></li>"
+                    $('#paying').append(nextEnd);
+                }
+                if(j>4 && startPage%5===1){
+                    if(j+1==startPage){
+                        let prevNum = j-1;
+                        let prevStart = "<li><a class='paA' href='/pages/product/check?page="+0+"'>≪</a></li>"
+                        let prev = "<a class='paA' href='/pages/product/check?page="+prevNum+"'>＜</a>"
+                        $('.prev').before(prevStart);
+                        $('.prev').append(prev);
+                    }
+                }
+            }
+
+            let tb = $('<tbody>');
+            for(let i in response.data.data){
+                let id =response.data.data[i].id;
+                let status =response.data.data[i].status;
+                let type =response.data.data[i].type;
+                let title =response.data.data[i].title;
+                let userid =response.data.data[i].customerId;
+                let regdate =response.data.data[i].regdate;
+                let row = $('<tr>').append(
+                    "<th class='k_ad_check'><input type='checkbox' id='inquire_cb_"+id+"' class='inquire_check'><label for='inquire_cb_"+id+"' class='inquire_label2'></label></th>" +
+                    "<th class='ad_inquire_num'>"+ status +"</th>" +
+                    "<th class='ad_inquire_status'>"+ type +"</th>" +
+                    "<th class='ad_inquire_title'><a href='/pages/customer_info/"+id+"'><div class='inquire_title' style='margin: 0 auto'>"+ title +"</div></a></th>" +
+                    "<th class='ad_inquire_userid th_none'>"+ userid +"</th>" +
+                    "<th class='k_ad_reg th_none'>"+ regdate.substring(2, 10) +"</th></tr>"
+                )
+                tb.append(row);
+            }
+            tb.append('</tbody>');
+            $('.thead').after(tb);
+
+            let checkAll = document.getElementsByClassName('inquire_check');
+            $('.inquire_del').click(function (){
+                for(let i=0; i < checkAll.length; i++){
+                    if(checkAll[i].checked){
+                        let id = checkAll[i].id.substring(11);
+                        axios.delete('/api/customer_Qna_delete/'+id)
+                            .then(function (response){
+                                location.reload();
+                            }).catch(function (response){
+                            console.log('삭제 에러발생');
+                        })
+                    }
+                }
+            });
+        }).catch(function(err){
+            console.log(err);
+        });
+
+
+        axios.get('/api/pro_post_count',{
+        }).then(function (response){
+            let allCnt = response.data.data.allCnt;
+            let finishCnt = response.data.data.finishCnt;
+            let ingCnt = response.data.data.ingCnt;
+            let stopCnt = response.data.data.stopCnt;
+            let waitCnt = response.data.data.waitCnt;
+
+            $('#allCnt').text(allCnt);
+            $('#finishCnt').text(finishCnt);
+            $('#ingCnt').text(ingCnt);
+            $('#stopCnt').text(stopCnt);
+            $('#waitCnt').text(waitCnt);
+        });
+
+
+    });
+</script>
+<body>
+<!-- Start Header Top Area -->
+<div th:replace="fragment/header :: header"></div>
+<!-- End Header Top Area -->
+<!-- Mobile Menu start -->
+<div th:replace="fragment/mo_menu :: mo_menu"></div>
+<!-- Mobile Menu end -->
+<!-- Main Menu area start-->
+<div th:replace="fragment/menu :: menu"></div>
+<!-- Main Menu area End-->
+<!-- Start Status area -->
+<div class="data-table-area">
+    <div class="container table_top">
+        <div class="data-table-list">
+            <div class="basic-tb-hd">
+                <h2>고객 문의 관리</h2>
+                <p>Customer inquiry management</p>
+            </div>
+            <div class="ad_search_box" id="incus_html">
+                <select name="product_search inquire_select">
+                    <option value="">구분</option>
+                    <option value="크림이용문의">이용문의</option>
+                    <option value="입찰시스템문의">입찰문의</option>
+                    <option value="계정관련문의">계정문의</option>
+                </select>
+                <div class="inquire_checkbox">
+                    <input type="radio" id="inquire_all" name="inquire_product" value="전체">
+                    <label class="inquire_label" for="inquire_all"><div class="inquire_img"></div><div class="inquire_text">전체</div></label>
+                    <input type="radio" id="inquire_process" name="inquire_product" value="처리">
+                    <label class="inquire_label" for="inquire_process"><div class="inquire_img"></div><div class="inquire_text">처리</div></label>
+                    <input type="radio" id="inquire_unprocess" name="inquire_product" value="미처리">
+                    <label class="inquire_label" for="inquire_unprocess"><div class="inquire_img"></div><div class="inquire_text">미처리</div></label>
+                </div>
+                <div class="inquire_search_box">
+                    <select name="inquire_search_select">
+                        <option value="">전체</option>
+                        <option value="제목">제목</option>
+                        <option value="내용">내용</option>
+                        <option value="제목+내용">제목+내용</option>
+                    </select>
+                    <div class='inquire_search_box'>
+                        <input type="text" class="inquire_search"> <input class="inquire_submit" type="submit" value="검색">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container inquire_customer_list">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="data-table-list">
+                    <div class="table-responsive">
+                        <table class="k_ad_table">
+                            <thead class="thead">
+                            <tr style="background: #e6e6e6">
+                                <th>선택</th>
+                                <th>상태</th>
+                                <th>구분</th>
+                                <th>제목</th>
+                                <th class="th_none">등록자</th>
+                                <th class="th_none">등록일</th>
+                            </tr>
+                            </thead>
+                            <tfoot style="height: 5px;"></tfoot>
+                        </table>
+                        <ul id="paying"></ul>
+                        <input class="inquire_del" type="button" value="삭제">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Realtime sts area-->
+<!-- Start Footer area-->
+<div th:replace="fragment/footer :: footer"></div>
+<!-- End Footer area-->
+<div th:replace="fragment/script :: script"></div>
+</body>
+
+</html>

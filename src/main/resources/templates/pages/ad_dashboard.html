@@ -1,0 +1,474 @@
+<html class="no-js" lang="ko"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org/">
+
+<!-- head.html -->
+<div th:replace="fragment/head :: head"></div>
+<!-- head.html 끝-->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<!-- head.html 끝-->
+<style>
+    .progress_bar, .progress_bar1, .progress_bar2{
+        display: inline-block;
+        width: 16rem;
+        height: 21px;
+        background-color: #d6d3d3;
+        border-radius: 10px;
+        margin : 1rem auto;
+    }
+
+    .progress_bar > .gauge {
+        display: inline-block;
+        width:10%;
+        height: 21px;
+        background-color: #3abff7;
+        border-radius: 10px;
+        transition: 1s linear;
+        float: left;
+    }
+    .gauge1, .gauge2 {
+        display: inline-block;
+        width:10%;
+        height: 21px;
+        background-color: #fdc5c5;
+        border-radius: 10px;
+        transition: 1s linear;
+        float: left;
+    }
+</style>
+<script>
+    $(function () {
+        let count_customer = 0;
+        let count_product = 0;
+        let count_board = 0;
+        let customer = 0;
+        let product = 0;
+        let board = 0;
+        axios.get('/api/customer_list', {}).then(function (response) {
+            for (let i in response.data.data) {
+                if (response.data.data[i].type == '일반') {
+                    customer += 1;
+                }
+            }
+        }).catch(function (err) {
+            console.log(err);
+        });
+        axios.get('/api/pro_list', {}).then(function (response) {
+            for (let i in response.data.data) {
+                if (response.data.data[i].postStatus == '게시중') {
+                    product += 1;
+                }
+            }
+            timeCounter();
+        }).catch(function (err) {
+            console.log(err);
+        });
+        axios.get('/api/board_list', {}).then(function (response) {
+            board = response.data.data.length;
+        }).catch(function (err) {
+            console.log(err);
+        });
+
+        function timeCounter() {
+            customer_num = setInterval(count0Fn, 100);
+
+            function count0Fn() {
+                count_customer++;
+                if (count_customer > customer) {
+                    clearInterval(customer_num);
+                } else {
+                    $(".count").eq(0).text(count_customer);
+                }
+            }
+
+            product_num = setInterval(count1Fn, 100);
+
+            function count1Fn() {
+                count_product++;
+                if (count_product > product) {
+                    clearInterval(product_num);
+                } else {
+                    $(".count").eq(1).text(count_product);
+                }
+            }
+
+            board_num = setInterval(count2Fn, 100);
+
+            function count2Fn() {
+                count_board++;
+                if (count_board > board) {
+                    clearInterval(board_num);
+                } else {
+                    $(".count").eq(2).text(count_board);
+                }
+            }
+        }
+
+        axios.get('/api/board_list', {}).then(function (response) {
+            // console.log(response);
+            let i = response.data.data.length - 1;
+            let j = response.data.data.length - 5;
+            while (i >= j) {
+                // console.log(i)
+                let category = response.data.data[i].category;
+                let title = response.data.data[i].title;
+                let idx = response.data.data[i].id;
+                $('.board_append').append(
+                    "<div class='recent-post-signle rct-pt-mg-wp'>" +
+                    "<a href='/pages/postm_detail/" + idx + "'>" +
+                    "<div class='recent-post-flex'>" +
+                    "<div class='recent-post-it-ctn'>" +
+                    "<h2>" + category + "</h2>" +
+                    "<p>" + title + "</p></div></div></a></div>")
+                i = i - 1;
+            }
+        }).catch(function (err) {
+            console.log(err);
+        });
+        axios.get('/api/dash_board', {}).then(function (response) {
+            console.log(response);
+            let customerCnt = response.data.data.customerCnt; // 전체 회원
+            let productCnt = response.data.data.productCnt; // 상품 수
+            let styleCnt = response.data.data.styleCnt; // 게시글 수
+            let transactionCnt = response.data.data.transactionCnt; // 거래량
+            let nowCustomerCnt = response.data.data.nowCustomerCnt;  // 당일 가입자 수
+            let nowWithdrawalCnt = response.data.data.nowWithdrawalCnt; // 당일 탈퇴 수
+            let nowTransactionCnt = response.data.data.nowTransactionCnt; // 당일 거래량
+            let completedCnt = response.data.data.completedCnt; // 배송 완료
+            let waitingCnt = response.data.data.waitingCnt; // 배송 중
+            let deliveryCnt = response.data.data.deliveryCnt; // 배송 준비
+
+            $('.progress_bar').append('<span class="gauge" per="'+completedCnt+'"><span>'+completedCnt+'</span></span>');
+            $('.progress_bar1').append('<span class="gauge1" per="'+waitingCnt+'"><span>'+waitingCnt+'</span></span>');
+            $('.progress_bar2').append('<span class="gauge2" per="'+deliveryCnt+'"><span>'+deliveryCnt+'</span></span>');
+
+            $('span#style.count').text(styleCnt);
+            $('#dash_counter').text(transactionCnt); // 거래량
+            $('span.nowCustomerCnt').text(nowCustomerCnt);
+            $('span#totalCnt.count').text(customerCnt);
+            $('span#product.count').text(productCnt);
+            $('span.withdrawal').text(nowWithdrawalCnt);
+            $('span.TransactionCnt').text(nowTransactionCnt);
+
+            $('.progress_bar1').find('.gauge1').animate({width : waitingCnt + '%'});
+            $('.progress_bar').find('.gauge').animate({width : completedCnt + '%'});
+            $('.progress_bar2').find('.gauge2').animate({width : deliveryCnt + '%'});
+        }).catch(function (err) {
+            console.log(err);
+        })
+    });
+</script>
+
+
+<body>
+<!-- Start Header Top Area -->
+<div th:replace="fragment/header :: header"></div>
+<!-- End Header Top Area -->
+<!-- Mobile Menu start -->
+<div th:replace="fragment/mo_menu :: mo_menu"></div>
+<!-- Mobile Menu end -->
+<!-- Main Menu area start-->
+<div th:replace="fragment/menu :: menu"></div>
+<!-- Main Menu area End-->
+<!-- Start Status area -->
+<div class="notika-status-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                <a href="/pages/member/all">
+                    <div class="wb-traffic-inner notika-shadow sm-res-mg-t-30 tb-res-mg-t-30">
+                        <div class="website-traffic-ctn">
+                            <h2><span class="count" id="totalCnt"></span>명</h2>
+                            <p>전체 회원 / All members</p>
+                        </div>
+                        <div class="sparkline-bar-stats1">9,4,8,6,5,6,4,8,3,5,9,5</div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                <a href="/pages/product/check">
+                    <div class="wb-traffic-inner notika-shadow sm-res-mg-t-30 tb-res-mg-t-30">
+                        <div class="website-traffic-ctn">
+                            <h2><span class="count" id="product"></span>개</h2>
+                            <p>상품 / product</p>
+                        </div>
+                        <div class="sparkline-bar-stats2">1,4,8,3,5,6,4,8,3,3,9,5</div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                <a href="/pages/notice/postmange">
+                    <div class="wb-traffic-inner notika-shadow sm-res-mg-t-30 tb-res-mg-t-30 dk-res-mg-t-30">
+                        <div class="website-traffic-ctn">
+                            <h2><span class="count" id="style"></span>개</h2>
+                            <p>게시글 / Post</p>
+                        </div>
+                        <div class="sparkline-bar-stats3">4,2,8,2,5,6,3,8,3,5,9,5</div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                <a href="/pages/order/bidcheck">
+                    <div class="wb-traffic-inner notika-shadow sm-res-mg-t-30 tb-res-mg-t-30 dk-res-mg-t-30">
+                        <div class="website-traffic-ctn">
+                            <h2><span class="count" id="dash_counter"></span>개</h2>
+                            <p>거래량 / trading volume</p>
+                        </div>
+                        <div class="sparkline-bar-stats4">2,4,8,4,5,7,4,0,3,5,2,1</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Status area-->
+<!-- Start Email Statistic area-->
+<div class="notika-email-post-area" style="margin-top: 20px;">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12">
+                <div class="email-statis-inner notika-shadow">
+                    <div class="email-ctn-round">
+                        <div class="email-rdn-hd">
+                            <h2><a href="/pages/order/search" style="color: black;">배송 현황</a></h2>
+                        </div>
+
+                        <div class="email-statis-wrap">
+                            <div class="email-round-nock" style="height: unset">
+                                <!--                                <input type="text" class="knob" value="0" data-rel="50" data-linecap="round"-->
+                                <!--                                       data-width="130" data-bgcolor="#E4E4E4" data-fgcolor="#a1cdfb"-->
+                                <!--                                       data-thickness=".10" data-readonly="true" disabled>-->
+                                <p>배송완료</p>
+                                <span class="progress_bar">
+<!--                                    <span class="gauge" per=""></span>-->
+                                </span>
+                            </div>
+                        </div>
+
+
+                        <div class="email-round-gp" style="display: unset">
+                            <div class="email-round-pro">
+                                <div class="email-signle-gp" style="height: unset">
+                                    <!--                                    <input type="text" class="knob" value="0" data-rel="20" data-linecap="round"-->
+                                    <!--                                           data-width="90" data-bgcolor="#E4E4E4" data-fgcolor="#fdc5c5"-->
+                                    <!--                                           data-thickness=".10" data-readonly="true" disabled>-->
+
+                                    <!--                                <div class="email-ctn-nock">-->
+                                    <p>배송 중</p>
+                                    <span class="progress_bar1">
+<!--                                        <span class="gauge1" per=""></span>-->
+                                    </span>
+                                    <!--                                </div>-->
+                                </div>
+                            </div>
+
+
+                            <div class="email-round-pro">
+                                <div class="email-signle-gp" style="height: unset">
+                                    <!--                                    <input type="text" class="knob" value="0" data-rel="3" data-linecap="round"-->
+                                    <!--                                           data-width="90" data-bgcolor="#E4E4E4" data-fgcolor="#fdc5c5"-->
+                                    <!--                                           data-thickness=".10" data-readonly="true" disabled>-->
+                                </div>
+                                <div class="email-ctn-nock">
+                                    <p>배송 준비</p>
+                                    <span class="progress_bar2"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12">
+                <div class="recent-post-wrapper notika-shadow sm-res-mg-t-30 tb-res-ds-n dk-res-ds">
+                    <div class="recent-post-ctn">
+                        <div class="recent-post-title">
+                            <h2>공지사항 및 이벤트</h2>
+                        </div>
+                    </div>
+                    <div class="recent-post-items ">
+                        <div class="board_append"></div>
+                        <div class="recent-post-signle">
+                            <a href="#">
+                                <div class="recent-post-flex rc-ps-vw">
+                                    <div class="recent-post-line rct-pt-mg">
+                                        <p><a href="/pages/notice/postmange" style="color: black;">View All</a></p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12">
+                <div class="recent-items-wp notika-shadow sm-res-mg-t-30">
+                    <div class="rc-it-ltd">
+                        <div class="recent-items-ctn">
+                            <div class="recent-items-title">
+                                <h2>당일 가입 및 탈퇴</h2>
+                            </div>
+                        </div>
+                        <div class="recent-items-inn">
+                            <p style="font-weight: bold; margin: 12px 0 3px">당일 가입자 수</p>
+                            <div style="font-weight: bold; font-size: 15.5px; padding-bottom: 10px; border-bottom: 1px solid #c0c0c0">
+                                : <span class="nowCustomerCnt"></span>명
+                            </div>
+                            <p style="font-weight: bold; margin: 12px 0 3px">당일 탈퇴회원 수</p>
+                            <div style="font-weight: bold; font-size: 15.5px; padding-bottom: 10px; border-bottom: 1px solid #c0c0c0">
+                                : <span class="withdrawal"></span>명
+                            </div>
+                            <p style="font-weight: bold; margin: 12px 0 3px">당일 거래량</p>
+                            <div style="font-weight: bold; font-size: 15.5px; padding-bottom: 10px; border-bottom: 1px solid #c0c0c0">
+                                : <span class="TransactionCnt"></span>개
+                            </div>
+                            <p style="font-size: 12.5px; color:grey; font-weight: bold; text-decoration: underline; margin: 31px 0 3px;line-height: 21px;">
+                                * 00시 00분 00초 부터 23시 59분 59초까지의 가입자 및 회원 상태에 대한 변동사항입니다.</p>
+                            <p style="font-size: 12.5px; color:grey; font-weight: bold; text-decoration: underline;">*
+                                시간은
+                                네이버 서버시간을 기준으로 합니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Contact area Start-->
+<div class="contact-area dash" style="margin-top: 30px">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                <div class="contact-list mg-t-30">
+                    <div class="contact-win">
+                        <div class="contact-img">
+                            <img src="/lib/img/KakaoTalk_20211101_140146585.jpg" alt=""/>
+                        </div>
+                    </div>
+                    <div class="contact-ctn">
+                        <div class="contact-ad-hd">
+                            <h2>생쿠림</h2>
+                            <p class="ctn-ads">cute, pretty, sweet, sexy</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                <div class="contact-list mg-t-30">
+                    <div class="contact-win">
+                        <div class="contact-img">
+                            <img src="/lib/img/admin/young.jpg" alt=""/>
+                        </div>
+                    </div>
+                    <div class="contact-ctn">
+                        <div class="contact-ad-hd">
+                            <h2>Jin seo young</h2>
+                            <p class="ctn-ads">jin98seo22@gmail.com</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                <div class="contact-list mg-t-30">
+                    <div class="contact-win">
+                        <div class="contact-img">
+                            <img src="/lib/img/admin/mj.jpg" alt=""/>
+                        </div>
+                    </div>
+                    <div class="contact-ctn">
+                        <div class="contact-ad-hd">
+                            <h2>Kim mi jeong</h2>
+                            <p class="ctn-ads">mjpower97@naver.com</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                <div class="contact-list mg-t-30">
+                    <div class="contact-win">
+                        <div class="contact-img">
+                            <img src="/lib/img/admin/yj.jpg" alt=""/>
+                        </div>
+                    </div>
+                    <div class="contact-ctn">
+                        <div class="contact-ad-hd">
+                            <h2>So yoon jeong</h2>
+                            <p class="ctn-ads">soyounjeong62@gmail.com</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                <div class="contact-list mg-t-30">
+                    <div class="contact-win">
+                        <div class="contact-img">
+                            <img src="/lib/img/admin/yb.png" alt=""/>
+                        </div>
+                    </div>
+                    <div class="contact-ctn">
+                        <div class="contact-ad-hd">
+                            <h2>Jung Young-beom</h2>
+                            <p class="ctn-ads">jybeomss1@gmail.com</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                <div class="contact-list mg-t-30">
+                    <div class="contact-win">
+                        <div class="contact-img">
+                            <img src="/lib/img/admin/soon.jpg" alt=""/>
+                        </div>
+                    </div>
+                    <div class="contact-ctn">
+                        <div class="contact-ad-hd">
+                            <h2>Park Jung-soon</h2>
+                            <p class="ctn-ads">parkjs5143@gmail.com</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                <div class="contact-list mg-t-30">
+                    <div class="contact-win">
+                        <div class="contact-img">
+                            <img src="/lib/img/admin/js.jpg" alt=""/>
+                        </div>
+                    </div>
+                    <div class="contact-ctn">
+                        <div class="contact-ad-hd">
+                            <h2>Lee Jae-sung</h2>
+                            <p class="ctn-ads">jaesung190@gmail.com</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                <div class="contact-list mg-t-30">
+                    <div class="contact-win">
+                        <div class="contact-img">
+                            <img style="border-radius: 0px" src="/lib/img/kream_man.png" alt=""/>
+                        </div>
+                    </div>
+                    <div class="contact-ctn">
+                        <div class="contact-ad-hd">
+                            <h2><a href="/">크림 바로가기</a></h2>
+                            <p class="ctn-ads"><a href="/">KREAM site</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Contact area End-->
+<!-- Start Footer area-->
+<div th:replace="fragment/footer :: footer"></div>
+<!-- End Footer area-->
+<div th:replace="fragment/script :: script"></div>
+
+</body>
+<script>
+</script>
+</html>

@@ -1,0 +1,145 @@
+<html class="no-js" lang="ko"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org/">
+
+<!-- head.html -->
+<div th:replace="fragment/head :: head"></div>
+<!-- head.html 끝-->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<body>
+<!-- Start Header Top Area -->
+<div th:replace="fragment/header :: header"></div>
+<!-- End Header Top Area -->
+<!-- Mobile Menu start -->
+<div th:replace="fragment/mo_menu :: mo_menu"></div>
+<!-- Mobile Menu end -->
+<!-- Main Menu area start-->
+<div th:replace="fragment/menu :: menu"></div>
+<!-- Main Menu area End-->
+<!-- Start Status area -->
+<div class="data-table-area">
+    <div class="container table_top">
+        <div class="data-table-list">
+            <div class="basic-tb-hd">
+                <h2>글 생성/관리</h2>
+                <p>List Create/Management</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="inbox-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="view-mail-list sm-res-mg-t-30" style="padding-bottom: 40px">
+                    <p class="regist_category">카테고리</p>
+                    <div class="no_search_box">
+                        <select id="select" class="firstCate" name="notice_search">
+                            <option value="공지">공지</option>
+                            <option value="이벤트">이벤트</option>
+                            <option value="스니커즈">스니커즈</option>
+                            <option value="패션잡화">패션잡화</option>
+                            <option value="테크">테크</option>
+                            <option value="의류">의류</option>
+                            <option value="라이프">라이프</option>
+                            <option value="이용정책">이용정책</option>
+                            <option value="공통">공통</option>
+                            <option value="구매">구매</option>
+                            <option value="판매">판매</option>
+                        </select>
+                    </div>
+                    <hr/>
+                    <div class="re_content_container">
+                        <div class="regist_title_box">
+                            <div class="regist_title">게시물 제목</div>
+                            <div style="display: flex">
+                                <input type="hidden" id="registrant" value="미정파워" name="registrant">
+                                <textarea id="textArea1" class="textTitle" name="textArea" style= "width: 300; height:35;"></textarea>
+                                <div class="text_cnt">0 / 50</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cmp-int-box mg-t-20">
+                        <textarea id="smartEditor" class="texta" name="content" rows="10" cols="100" style="width: 100%;"></textarea>
+                    </div>
+                    <div class="btn_container">
+                        <div class="contentM_form">
+                            <form onsubmit="return sendit()" enctype="multipart/form-data" >
+                                <input class="postm_submit2" type="submit" value="등록">
+                            </form>
+                            <button onclick="btnReset()" class="btn_reset">초기화</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Realtime sts area-->
+<!-- Start Footer area-->
+<div th:replace="fragment/footer :: footer"></div>
+<!-- End Footer area-->
+<div th:replace="fragment/script :: script"></div>
+<script type="text/javascript" src="/lib/smarteditor/quick_photo_uploader/plugin/hp_SE2M_AttachQuickPhoto.js" charset="utf-8"> </script>
+<script type="text/javascript" src="/lib/smarteditor/js/HuskyEZCreator.js" charset="utf-8"></script>
+<script type="text/javascript">
+
+    var oEditors = [];
+
+    $(function(){
+        nhn.husky.EZCreator.createInIFrame({
+            oAppRef: oEditors,
+            elPlaceHolder: "smartEditor",
+            sSkinURI: "/lib/smarteditor/SmartEditor2Skin.html",
+            htParams : {
+                bUseToolbar : true,
+                bUseVerticalResizer : true,
+                bUseModeChanger : true,
+                fOnBeforeUnload : function(){
+
+                }
+            },
+            fCreator: "createSEditor2"
+        });
+
+    });
+    $('.postm_submit2').click(function() {
+        oEditors.getById["smartEditor"].exec("UPDATE_CONTENTS_FIELD", []);
+    });
+
+
+    document.getElementById("smartEditor").setAttribute('style','width:'+editorArea.parentNode.offsetWidth+'%');
+
+    function sendit(){
+
+        let title = $('#textArea1').val();
+        let category = $('#select option:selected').val();
+        let registrant = $('#registrant').val();
+        let content = $('#smartEditor').val();
+        console.log(category);
+        console.log(title);
+        console.log(registrant);
+        console.log(content);
+        axios.request({
+            method: 'POST',
+            url: '/api/board_register',
+            headers:{'Content-type':'application/json'},
+            data: {
+                "data":{
+                    "title" : title,
+                    "category": category,
+                    "registrant" : registrant,
+                    "content" : content
+                }
+            }
+        }).then(
+            alert('저장되었습니다')
+        )
+        location.reload();
+        return false;
+    }
+</script>
+</body>
+
+</html>

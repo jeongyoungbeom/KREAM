@@ -1,0 +1,91 @@
+<html class="no-js" lang="ko"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org/">
+
+<!-- head.html -->
+<div th:replace="fragment/head :: head"></div>
+<!-- head.html 끝-->
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+
+</script>
+<body>
+<!-- Start Header Top Area -->
+<div th:replace="fragment/header :: header"></div>
+<!-- End Header Top Area -->
+<!-- Mobile Menu start -->
+<div th:replace="fragment/mo_menu :: mo_menu"></div>
+<!-- Mobile Menu end -->
+<!-- Main Menu area start-->
+<div th:replace="fragment/menu :: menu"></div>
+<!-- Main Menu area End-->
+<!-- Start Status area -->
+<div class="data-table-area">
+    <div class="container table_top">
+        <div class="data-table-list">
+            <div class="basic-tb-hd">
+                <h2>게시글 보기</h2>
+                <p>View/Edit Posts</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="inbox-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="view-mail-list sm-res-mg-t-30">
+                    <div class="view-mail-hd">
+                        <div class="view-mail-hrd" style="width: 100%;">
+                            <input type="hidden" id="idx" name="idx" th:value="${idx}">
+                            <h2>제목 : <span type="text" id="title" name="title" style="width: 100%;"></span></h2>
+                            <p style="margin-top: 10px; margin-bottom: 5px">구분 : <span type="text" id="category" name="category" style="width: 100%;"></span></p>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="cmp-int-box mg-t-20">
+                            <div id="textArea1" style="overflow-wrap: break-word"></div>
+                        </div>
+                        <div class="postm_input_a">
+                            <a class="postm_submit" style="color:black;" th:href="@{'/pages/postm_info/'+${idx}}">수정</a>
+                            <a style="color:black;" href="/pages/notice/postmange">목록</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Realtime sts area-->
+<!-- Start Footer area-->
+<div th:replace="fragment/footer :: footer"></div>
+<!-- End Footer area-->
+<div th:replace="fragment/script :: script"></div>
+<script type="text/javascript">
+    $(function(){
+        let idx = $('#idx').val();
+        axios.get('/api/board_detail/'+ idx, {
+
+        }).then(function(response){
+            console.log(response);
+            let title =response.data.data.title;
+            let content =response.data.data.content;
+            let category =response.data.data.category;
+
+            $('#title').text(title);
+            $('#category').text(category);
+            $('#textArea1').append(
+                content
+            );
+
+        });
+    });
+
+
+
+</script>
+</body>
+
+</html>

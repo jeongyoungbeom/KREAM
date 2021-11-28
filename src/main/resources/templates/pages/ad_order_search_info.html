@@ -1,0 +1,112 @@
+<html class="no-js" lang="ko"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org/">
+
+<!-- head.html -->
+<div th:replace="fragment/head :: head"></div>
+<!-- head.html 끝-->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+    $(function(){
+        let id = $('#id').val();
+        axios.get('/api/purchase_info/'+id, {
+        }).then(function(response){
+            console.log(response);
+            let cardInfo = response.data.data.cardNumber;
+            let cardCompany = response.data.data.cardCompany;
+            let email = response.data.data.email;
+            let userid = response.data.data.userid;
+            let productName = response.data.data.productName;
+            let productId = response.data.data.productId;
+            let size = response.data.data.size;
+            let regdate = response.data.data.regdate;
+            let status3 = response.data.data.status3;
+            let price = response.data.data.price;
+
+            $('#cardInfo').text(cardInfo+" / "+cardCompany);
+            $('#email').text(email);
+            $('#userid').text(userid);
+            $('#productName').text(productName);
+            $('#productId').text(productId);
+            $('#size').text(size);
+            $('#regdate').text(regdate.substring(2,10));
+            $('#status3').text(status3);
+            $('#price').text(price);
+
+        }).catch(function(err){
+            console.log(err);
+        });
+    });
+
+</script>
+<body>
+<!-- Start Header Top Area -->
+<div th:replace="fragment/header :: header"></div>
+<!-- End Header Top Area -->
+<!-- Mobile Menu start -->
+<div th:replace="fragment/mo_menu :: mo_menu"></div>
+<!-- Mobile Menu end -->
+<!-- Main Menu area start-->
+<div th:replace="fragment/menu :: menu"></div>
+<!-- Main Menu area End-->
+<!-- Start Status area -->
+<div class="data-table-area">
+    <div class="container table_top">
+        <div class="data-table-list">
+            <div class="basic-tb-hd">
+                <h2>주문 상세 정보</h2>
+                <p>Order details</p>
+                <input type="hidden" th:value="${id}" id="id">
+            </div>
+        </div>
+    </div>
+    <div class="container search_info_container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="data-table-list">
+                    <p class="regist_top_text">로그인 정보</p>
+                    <div class="search_info_flex mem_mo_info_flex">
+                        <div class="search_idPassword">
+                            <div style="margin-bottom: 10px"><p class="search_info">이메일 : </p><span id="email"></span></div>
+                            <div><p class="search_info">닉네임 : </p><span id="userid"></span></div>
+                        </div>
+                    </div>
+                    <hr/>
+                    <div class="search_info_flex">
+                        <div class="info_flex_box">
+                            <p class="regist_top_text">주문 정보</p>
+                            <div><p class="search_info">상품명 : </p><span id="productName"></span></div>
+                            <div><p class="search_info">상품번호 : </p><span id="productId"></span></div>
+                            <div><p class="search_info">사이즈 : </p><span id="size"></span></div>
+                            <div><p class="search_info">주문일자 : </p><span id="regdate"></span></div>
+                        </div>
+                        <div class="info_flex_box">
+                            <p class="regist_top_text">입찰 구분</p>
+                            <div><p class="search_info">입찰 유형 : </p><span id="status3"></span></div>
+                            <div><p class="search_info">입찰가 : </p><span id="price"></span>원</div>
+                        </div>
+                    </div>
+                    <hr/>
+                    <div class="search_info_flex">
+                        <div class="info_flex_box">
+                            <p class="regist_top_text">결제정보</p>
+                            <div><p class="search_info">카드 : </p><span id="cardInfo"></span></div>
+                        </div>
+                    </div>
+                    <br>
+                    <br>
+                    <button class="search_info_listB" onclick="location.href='/pages/order/search'">목록</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- End Realtime sts area-->
+<!-- Start Footer area-->
+<div th:replace="fragment/footer :: footer"></div>
+<!-- End Footer area-->
+<div th:replace="fragment/script :: script"></div>
+</body>
+</html>

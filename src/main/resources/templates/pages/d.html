@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script type="text/javascript">
+    function sendit(){
+        let id = 0;
+        let bank = $('#bank').val();
+        let account_number = $('#account_number').val();
+        let name = $('#name').val();
+        axios.request({
+            method: 'POST',
+            url: '/api/account_register',
+            headers:{'Content-type':'application/json'},
+            data: {
+                "data":{
+                    "bank" : bank,
+                    "accountNumber": account_number,
+                    "name" : name
+                }
+            }
+
+        }).then(function(response) {
+            console.log(response);
+            id=response.data.data.id;
+        })
+
+        axios.get('/api/account_list', {
+        }).then(function(response) {
+            console.log(response);
+            let idx = id;
+            let email = $('#email').val();
+            let userid = $('#userid').val();
+            let userpw = $('#userpw').val();
+            let hp = $('#hp').val();
+            let agreement = $('#agreement').val();
+            let privacy_policy = $('#privacy_policy').val();
+            let push_allow = $('#push_allow').val();
+            let sms_allow = $('#sms_allow').val();
+            let email_allow = $('#email_allow').val();
+            let rank = $('#rank').val();
+            let type = $('#type').val();
+            let role = $('#role').val();
+
+            console.log(id);
+
+            axios.request({
+                method: 'POST',
+                url: '/api/customer_register',
+                headers: {'Content-type': 'application/json'},
+                data: {
+                    "data": {
+                        "email": email,
+                        "userid": userid,
+                        "userpw": userpw,
+                        "agreement": agreement,
+                        "rank": rank,
+                        "type": type,
+                        "role": role,
+                        "emailAllow": email_allow,
+                        "smsAllow": sms_allow,
+                        "pushAllow": push_allow,
+                        "privacyPolicy": privacy_policy,
+                        "accountId": idx,
+                        "hp": hp
+                    }
+                }
+            }).then(
+                alert('저장되었습니다')
+            )
+        }
+    )
+}
+</script>
+
+<body>
+<form onsubmit="return sendit()">
+    <input type="text" id="bank" value="정보없음">
+    <input type="text" id="account_number" value="정보없음">
+    <input type="text" id="name" value="정보없음">
+    <input type="text" id="email">
+    <input type="text" id="userid">
+    <input type="password" id="userpw">
+    <input type="text" id="hp">
+    <input type="text" id="agreement">
+    <input type="text" id="privacy_policy">
+    <input type="text" id="push_allow">
+    <input type="text" id="sms_allow">
+    <input type="text" id="email_allow">
+    <input type="text" id="rank">
+    <input type="text" id="type">
+    <input type="text" id="role">
+    <input class="postm_submit" type="submit" value="등록">
+</form>
+</body>
+</html>

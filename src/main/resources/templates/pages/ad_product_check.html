@@ -1,0 +1,359 @@
+<html class="no-js" lang="ko"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org/">
+
+<!-- head.html -->
+<div th:replace="fragment/head :: head"></div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<!-- head.html 끝-->
+<script>
+    $(function (){
+        let link = document.location.href.split("?page=");
+        let num = link[1];
+        let  axios2 = '/api/pro_adminlist?page='+num;
+        axios.get(axios2,{
+        }).then(function (response){
+            history.replaceState({}, null, location.pathname);
+            console.log(response);
+            let startPage = response.data.pagination.startPage;
+            let endPage = response.data.pagination.endPage;
+            let totalPages = response.data.pagination.totalPages;
+            for (let j=startPage-1; j<=endPage-1; j++){
+                console.log(j);
+                let pagNum = j+1;
+                let paying = "<li><a class='paA' href='/pages/product/check?page="+j+"'>"+pagNum+"</a></li>";
+                $('#paying').append(paying);
+                if(j==endPage-1&&j+1!=totalPages){
+                    let next = "<li><a class='paA' href='/pages/product/check?page="+pagNum+"'>＞</a></li>"
+                    $('#paying').append(next);
+                    let EndNum = totalPages-1;
+                    let nextEnd = "<li><a class='paA' href='/pages/product/check?page="+EndNum+"'>≫</a></li>"
+                    $('#paying').append(nextEnd);
+                }
+                if(j>4 && startPage%5===1){
+                    if(j+1==startPage){
+                        let prevNum = j-1;
+                        let prevStart = "<li><a class='paA' href='/pages/product/check?page="+0+"'>≪</a></li>"
+                        let prev = "<a class='paA' href='/pages/product/check?page="+prevNum+"'>＜</a>"
+                        $('.prev').before(prevStart);
+                        $('.prev').append(prev);
+                    }
+                }
+            }
+
+            let tb = $('<tbody>');
+            for(let i in response.data.data){
+                if(response.data.data[i]){
+                    let $id = response.data.data[i].id;
+                    let $modelNumber = response.data.data[i].modelNumber;
+                    let $brand = response.data.data[i].brand;
+                    let $category = response.data.data[i].category;
+                    let $status = response.data.data[i].postStatus;
+                    let $regdate = response.data.data[i].regdate;
+                    let row = $('<tr>').append(
+                        "<th class='pro_check'><input type='checkbox' id='"+$id+"'class='inquire_check'><label for='"+$id+"' class='inquire_label2'></label></th>"+
+                        "<th class='pro_num'><a href='/pages/product/detail/"+$id+"'><div class='hidden_num' style='margin: 0 auto'>"+$id+"</div></a></th>" +
+                        "<th class='pro_modelNum'>"+$modelNumber+"</th>"+
+                        "<th class='pro_brand'>"+$brand+"</th>"+
+                        "<th class='pro_cate'>"+$category+"</th>"+
+                        "<th class='pro_status'>"+$status+"</th>"+
+                        "<th class='th_none'>"+$regdate.substring(2,10)+"</th></tr>"
+                    )
+                    tb.append(row);
+                }
+            }
+            tb.append('</tbody>');
+            $('.thead').after(tb);
+
+        }).catch(function (err){
+            console.log(err);
+        });
+
+        axios.get('/api/pro_post_count',{
+        }).then(function (response){
+            let allCnt = response.data.data.allCnt;
+            let finishCnt = response.data.data.finishCnt;
+            let ingCnt = response.data.data.ingCnt;
+            let stopCnt = response.data.data.stopCnt;
+            let waitCnt = response.data.data.waitCnt;
+
+            $('#allCnt').text(allCnt);
+            $('#finishCnt').text(finishCnt);
+            $('#ingCnt').text(ingCnt);
+            $('#stopCnt').text(stopCnt);
+            $('#waitCnt').text(waitCnt);
+        });
+    });
+
+    function reset(){
+        $('#pro_s_Brand').val('');
+        $('#pro_s_Number').val('');
+        $('#pro_s_Select').val('');
+        $('.checked_S_check').prop("checked",false);
+    }
+    function sendit(num){
+        let productNumber = $('#pro_s_Number').val();
+        let productBrand = $('#pro_s_Brand').val();
+        let productStatus = null;
+        let productSelect = null;
+        if($('#pro_s_Number').val()==''||$('#pro_s_Number').val()==null){
+            productNumber = null;
+        }
+        if($('#pro_s_Brand').val()==''||$('#pro_s_Brand').val()==null){
+            productBrand = null;
+        }
+        let postS = document.getElementsByClassName('checked_S_check');
+        for(let i =0; i < postS.length; i++){
+            if(postS[i].checked){
+                productStatus = postS[i].id;
+            }
+        }
+        if($('#pro_s_Select option:selected').val()=='스니커즈'){
+            productSelect = "스니커즈";
+        }else if($('#pro_s_Select option:selected').val()=='의류'){
+            productSelect = "의류";
+        }else if($('#pro_s_Select option:selected').val()=='패션잡화'){
+            productSelect = "패션잡화";
+        }else if($('#pro_s_Select option:selected').val()=='테크'){
+            productSelect = "테크";
+        }else if($('#pro_s_Select option:selected').val()=='라이프'){
+            productSelect = "라이프";
+        }
+
+        let axios3 = '/api/pro_dataList?page='+num;
+        axios.request({
+            method:"POST",
+            url:axios3,
+            headers:{'Content-type':'application/json'},
+            data:{
+                "data":{
+                    "id": productNumber,
+                    "brand": productBrand,
+                    "postStatus":productStatus,
+                    "category":productSelect
+                }
+            }
+        }).then(function(response){
+            console.log(response)
+            if(num==undefined){
+                alert('조회되었습니다.')
+            }
+            $('#paying').text('');
+            let startPage = response.data.pagination.startPage;
+            let endPage = response.data.pagination.endPage;
+            let totalPages = response.data.pagination.totalPages;
+            $('#paying').append('<li class="prev"></li>');
+            for (let j=startPage-1; j<=endPage-1; j++){
+                let pagNum = j+1;
+                let paying = "<li><a class='paA' onclick='sendit("+j+")'>"+pagNum+"</a></li>";
+                $('#paying').append(paying);
+                if(j==endPage-1&&j+1!=totalPages){
+                    let next = "<li><a class='paA' onclick='sendit("+pagNum+")'>＞</a></li>";
+                    $('#paying').append(next);
+                    let EndNum = totalPages-1;
+                    let nextEnd = "<li><a class='paA' onclick='sendit("+EndNum+")'>≫</a></li>"
+                    $('#paying').append(nextEnd);
+                }
+                if(j>4 && startPage%5===1){
+                    if(j+1==startPage){
+                        let prevNum = j-1;
+                        let prevStart = "<li><a class='paA' onclick='sendit("+0+")'>≪</a></li>"
+                        let prev = "<a class='paA' onclick='sendit("+prevNum+")'>＜</a>"
+                        $('.prev').before(prevStart);
+                        $('.prev').append(prev);
+                    }
+                }
+            }
+            $('tbody').text('');
+            let tb = $('<tbody>');
+            for(let i in response.data.data){
+                if(response.data.data[i]){
+                    let $id = response.data.data[i].id;
+                    let $modelNumber = response.data.data[i].modelNumber;
+                    let $brand = response.data.data[i].brand;
+                    let $category = response.data.data[i].category;
+                    let $status = response.data.data[i].postStatus;
+                    let $regdate = response.data.data[i].regdate;
+                    let row = $('<tr>').append(
+                        "<th class='pro_check'><input type='checkbox' id='"+$id+"'class='inquire_check'><label for='"+$id+"' class='inquire_label2'></label></th>"+
+                        "<th class='pro_num'><a href='/pages/product/detail/"+$id+"'><div class='hidden_num' style='margin: 0 auto'>"+$id+"</div></a></th>" +
+                        "<th class='pro_modelNum'>"+$modelNumber+"</th>"+
+                        "<th class='pro_brand'>"+$brand+"</th>"+
+                        "<th class='pro_cate'>"+$category+"</th>"+
+                        "<th class='pro_status'>"+$status+"</th>"+
+                        "<th class='th_none'>"+$regdate.substring(2,10)+"</th></tr>"
+                    )
+                    tb.append(row);
+                }
+            }
+            tb.append('</tbody>');
+            $('.thead').after(tb);
+        });
+    }
+
+    function del(){
+        let checkAll =document.getElementsByClassName('inquire_check');
+        for(let i=0; i<checkAll.length; i++){
+            if(checkAll[i].checked){
+                console.log(checkAll[i].id);
+                let id = checkAll[i].id;
+                console.log(id);
+                axios.delete('/api/pro_delete/'+id).then(function (response){
+                }).catch(function (response){
+                    console.log('삭제 에러발생');
+                })
+            }
+        }
+        alert('삭제');
+        location.reload();
+        return false;
+    }
+</script>
+<body>
+<!-- Start Header Top Area -->
+<div th:replace="fragment/header :: header"></div>
+<!-- End Header Top Area -->
+<!-- Mobile Menu start -->
+<div th:replace="fragment/mo_menu :: mo_menu"></div>
+<!-- Mobile Menu end -->
+<!-- Main Menu area start-->
+<div th:replace="fragment/menu :: menu"></div>
+<!-- Main Menu area End-->
+<!-- Start Status area -->
+<div class="data-table-area">
+    <div class="container table_top">
+        <div class="data-table-list">
+            <div class="basic-tb-hd">
+                <h2>상품조회 / 수정</h2>
+                <p>Product Search / Product modifications</p>
+            </div>
+            <div class="ad_search_box" id="pro_check_html">
+                <div class="product_status_all">
+                    <div class="pro_check_img"><img id="pro_check_img1" src="/lib/img/1x/language_black.png"></div>
+                    <div class="pro_status_text">
+                        <p>전체</p>
+                        <p><span id="allCnt"></span>건</p>
+                    </div>
+                </div>
+                <div class="product_status_all">
+                    <div class="pro_check_img"><img id="pro_check_img2" src="/lib/img/1x/schedule_black.png"></div>
+                    <div class="pro_status_text">
+                        <p>게시대기</p>
+                        <p><span id="waitCnt"></span>건</p>
+                    </div>
+                </div>
+                <div class="product_status_all">
+                    <div class="pro_check_img"><img id="pro_check_img3" src="/lib/img/1x/grading_black.png"></div>
+                    <div class="pro_status_text">
+                        <p>게시중</p>
+                        <p><span id="ingCnt"></span>건</p>
+                    </div>
+                </div>
+                <div class="product_status_all">
+                    <div class="pro_check_img"><img id="pro_check_img4" src="/lib/img/1x/subtitles_off_black.png"></div>
+                    <div class="pro_status_text">
+                        <p>게시중지</p>
+                        <p><span id="stopCnt"></span>건</p>
+                    </div>
+                </div>
+                <div class="product_status_all">
+                    <div class="pro_check_img"><img id="pro_check_img5" src="/lib/img/1x/dangerous_black.png"></div>
+                    <div class="pro_status_text">
+                        <p>게시종료</p>
+                        <p><span id="finishCnt"></span>건</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container product_check_list">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="data-table-list">
+                    <div class="table-responsive">
+                        <div class="proCheck_search">
+                            <p class="proC_text">검색어</p>
+                            <div class="proC_right proC_input_box">
+                                <div class="proC_input">
+                                    <p>상품번호</p>
+                                    <input type="text" name="pro_s_Number" id="pro_s_Number">
+                                </div>
+                                <div class="proC_input">
+                                    <p>브랜드명</p>
+                                    <input type="text" name="pro_s_Brand" id="pro_s_Brand">
+                                </div>
+                            </div>
+                            <hr/>
+                            <p class="proC_text">게시상태</p>
+                            <div class="proC_checkbox proC_right">
+                                <input type="radio" id="전체" class="checked_S_check" name="proC_product" value="전체">
+                                <label class="proC_label" for="전체"><div class="proC_img"></div><div class="proC_text">전체</div></label>
+                                <input type="radio" id="게시대기" class="checked_S_check" name="proC_product" value="게시대기">
+                                <label class="proC_label" for="게시대기"><div class="proC_img"></div><div class="proC_text">게시대기</div></label>
+                                <input type="radio" id="게시중" class="checked_S_check" name="proC_product" value="게시중">
+                                <label class="proC_label" for="게시중"><div class="proC_img"></div><div class="proC_text">게시중</div></label>
+                                <input type="radio" id="게시중지" class="checked_S_check" name="proC_product" value="게시중지">
+                                <label class="proC_label" for="게시중지"><div class="proC_img"></div><div class="proC_text">게시중지</div></label>
+                                <input type="radio" id="게시종료" class="checked_S_check" name="proC_product" value="게시종료">
+                                <label class="proC_label" for="게시종료"><div class="proC_img"></div><div class="proC_text">게시종료</div></label>
+                            </div>
+                            <hr/>
+                            <p class="proC_text">카테고리</p>
+                            <div class="proC_right">
+                                <div class="ad_search_box">
+                                    <select class="BigCate" name="product_search" id="pro_s_Select">
+                                        <option value="">대분류</option>
+                                        <option value="스니커즈">스니커즈</option>
+                                        <option value="의류">의류</option>
+                                        <option value="패션잡화">패션잡화</option>
+                                        <option value="테크">테크</option>
+                                        <option value="라이프">라이프</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="proC_form_search">
+                                <input type="button" value="검색" onclick="sendit()">
+                                <input type="reset" onclick="reset()" value="초기화">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container product_check_list" style="margin-top: 15px">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="data-table-list">
+                    <div class="table-responsive">
+                        <table id="pro_table" class="table table-striped">
+                            <thead class="thead">
+                            <tr style="background: #e6e6e6">
+                                <th class="pro_check">선택</th>
+                                <th class="pro_num">상품번호</th>
+                                <th class="pro_modelNum">모델번호</th>
+                                <th class="pro_brand">브랜드명</th>
+                                <th class="pro_cate">카테고리</th>
+                                <th class="pro_status">게시상태</th>
+                                <th class="th_none">등록일자</th>
+                            </tr>
+                            </thead>
+                            <tfoot style="height: 5px;"></tfoot>
+                        </table>
+                        <ul id="paying"><li class="prev"></li></ul>
+                        <input type="button" value="상품삭제" onclick="del()" class="proC_del">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Realtime sts area-->
+<!-- Start Footer area-->
+<div th:replace="fragment/footer :: footer"></div>
+<!-- End Footer area-->
+<div th:replace="fragment/script :: script"></div>
+</body>
+
+</html>

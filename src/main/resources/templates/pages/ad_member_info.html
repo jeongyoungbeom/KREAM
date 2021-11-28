@@ -1,0 +1,148 @@
+<html class="no-js" lang="ko"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org/">
+
+<!-- head.html -->
+<div th:replace="fragment/head :: head"></div>
+<!-- head.html 끝-->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+    $(function(){
+        let id = $('#id').val();
+        axios.get('/api/customer_info/'+id, {
+        }).then(function(response){
+            console.log(response);
+            let bank = response.data.data.bank;
+            let accountName = response.data.data.accountname;
+            let accountNumber = response.data.data.accountNumber;
+            let shoesize = response.data.data.shoesize;
+            let userid = response.data.data.userid;
+            let name = response.data.data.name;
+            let hp = response.data.data.hp;
+            let emailAllow = response.data.data.emailAllow;
+            let smsAllow = response.data.data.smsAllow;
+
+            let zipcode = "";
+            let address1 = "";
+            let address2 = "";
+            let cardCompany = "";
+            let cardNumber = "";
+
+            if(response.data.data.customerAddressApiResponseList[0]==undefined||response.data.data.customerAddressApiResponseList[0]==null){
+                zipcode = "----";
+                address1 = "정보없음";
+                address2 = " ";
+            }else{
+                zipcode = response.data.data.customerAddressApiResponseList[0].zipcode;
+                address1 = response.data.data.customerAddressApiResponseList[0].address1;
+                address2 = response.data.data.customerAddressApiResponseList[0].address2;
+            }
+
+            if(response.data.data.customerCardInfoApiResponseList[0]==undefined||response.data.data.customerCardInfoApiResponseList[0]==null){
+                cardNumber = "----";
+                cardCompany = "정보없음";
+            }else{
+                cardNumber = response.data.data.customerCardInfoApiResponseList[0].cardNumber;
+                cardCompany = response.data.data.customerCardInfoApiResponseList[0].cardCompany;
+            }
+
+            $('#bank').append(bank);
+            $('#bankNum').append(accountNumber);
+            $('#bankName').append(accountName);
+            $('#size').append(shoesize);
+            $('#userid').append(userid);
+            $('#cardCompany').append(cardCompany);
+            $('#card').append(cardNumber);
+            $('#address').append("[ "+zipcode+" ] - "+address1+" "+address2);
+            $('#hp').append(hp);
+            $('#name').append(name);
+            $('#emailAllow').append(emailAllow);
+            $('#smsAllow').append(smsAllow);
+
+        }).catch(function(err){
+            console.log(err);
+        });
+    });
+
+</script>
+<body>
+<!-- Start Header Top Area -->
+<div th:replace="fragment/header :: header"></div>
+<!-- End Header Top Area -->
+<!-- Mobile Menu start -->
+<div th:replace="fragment/mo_menu :: mo_menu"></div>
+<!-- Mobile Menu end -->
+<!-- Main Menu area start-->
+<div th:replace="fragment/menu :: menu"></div>
+<!-- Main Menu area End-->
+<!-- Start Status area -->
+<div class="data-table-area">
+    <div class="container table_top">
+        <div class="data-table-list">
+            <div class="basic-tb-hd">
+                <h2>회원 정보</h2>
+                <p>member information</p>
+            </div>
+        </div>
+    </div>
+    <div class="container mem_info_container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="data-table-list">
+                    <input type="hidden" id="id" name="id" th:value="${id}">
+                    <p class="regist_top_text">로그인 정보</p>
+                    <div class="mem_info_flex mem_mo_info_flex">
+                        <div class="mem_idPassword">
+                            <div><p class="mem_info">이메일 : </p><span id="userid"></span></div>
+                        </div>
+                    </div>
+                    <hr/>
+                    <div class="mem_info_flex">
+                        <div class="info_flex_box">
+                            <p class="regist_top_text">개인 정보</p>
+                            <div><p class="mem_info">닉네임 : </p><span id="name"></span></div>
+                            <div><p class="mem_info">연락처 : </p><span id="hp"></span></div>
+                            <div><p class="mem_info">사이즈 : </p><span id="size"></span></div>
+                        </div>
+                        <hr class="hr"/>
+                        <div class="info_flex_box">
+                            <p class="regist_top_text">주소록</p>
+                            <div><p class="mem_info">배송지 : </p><span id="address"></span></div>
+                        </div>
+                    </div>
+                    <hr/>
+                    <div class="mem_info_flex">
+                        <div class="info_flex_box">
+                            <p class="regist_top_text">결제정보</p>
+                            <div><p class="mem_info">카드 : </p><span id="card"></span></div>
+                            <div><p class="mem_info">카드사 : </p><span id="cardCompany"></span></div>
+                        </div>
+                        <hr class="hr"/>
+                        <div class="info_flex_box">
+                            <p class="regist_top_text">정산 계좌 등록</p>
+                            <div><p class="mem_info">은행명 : </p><span id="bank"></span></div>
+                            <div><p class="mem_info">계좌번호 : </p><span id="bankNum"></span></div>
+                            <div><p class="mem_info">예금주 : </p><span id="bankName"></span></div>
+                        </div>
+                    </div>
+                    <hr/>
+                    <p class="regist_top_text">광고성 정보 수신</p>
+                    <div class="mem_agree"><p class="mem_info">문자메세지 : </p><span id="smsAllow"></span></div>
+                    <div class="mem_agree"><p class="mem_info">이메일 : </p><span id="emailAllow"></span></div>
+                    <br>
+                    <br>
+                    <button class="mem_info_listB" onclick="location.href='/pages/member/all'">목록</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- End Realtime sts area-->
+<!-- Start Footer area-->
+<div th:replace="fragment/footer :: footer"></div>
+<!-- End Footer area-->
+<div th:replace="fragment/script :: script"></div>
+</body>
+</html>

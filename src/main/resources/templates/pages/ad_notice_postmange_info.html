@@ -1,0 +1,161 @@
+<html class="no-js" lang="ko"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org/">
+
+<!-- head.html -->
+<div th:replace="fragment/head :: head"></div>
+<!-- head.html 끝-->
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+
+</script>
+<body>
+<!-- Start Header Top Area -->
+<div th:replace="fragment/header :: header"></div>
+<!-- End Header Top Area -->
+<!-- Mobile Menu start -->
+<div th:replace="fragment/mo_menu :: mo_menu"></div>
+<!-- Mobile Menu end -->
+<!-- Main Menu area start-->
+<div th:replace="fragment/menu :: menu"></div>
+<!-- Main Menu area End-->
+<!-- Start Status area -->
+<div class="data-table-area">
+    <div class="container table_top">
+        <div class="data-table-list">
+            <div class="basic-tb-hd">
+                <h2>게시글 수정</h2>
+                <p>View/Edit Posts</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="inbox-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="view-mail-list sm-res-mg-t-30">
+                    <div class="view-mail-hd">
+                        <div class="view-mail-hrd" style="width: 100%;">
+                            <input type="hidden" id="idx" name="idx" th:value="${idx}">
+                            <input type="hidden" id="registrant" value="미정파워" name="registrant">
+                            <h2>제목 <input type="text" id="title" name="title" style="width: 100%;" ></h2>
+                            <p style="margin-top: 10px; margin-bottom: 5px">구분
+                                <!--<input type="text" id="category" name="category" style="width: 100%;" >-->
+                                <select id="select">
+                                    <option value="공지">공지</option>
+                                    <option value="이벤트">이벤트</option>
+                                    <option value="스니커즈">스니커즈</option>
+                                    <option value="의류">의류</option>
+                                    <option value="패션잡화">패션잡화</option>
+                                    <option value="테크">테크</option>
+                                    <option value="라이프">라이프</option>
+                                    <option value="이용정책">이용정책</option>
+                                    <option value="공통">공통</option>
+                                    <option value="구매">구매</option>
+                                    <option value="판매">판매</option>
+                                </select>
+                            </p>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="cmp-int-box mg-t-20">
+                            <textarea id="smartEditor" class="texta" name="content" rows="10" cols="100" style="width: 100%;"></textarea>
+                        </div>
+                        <div class="postm_input_a">
+                            <form onsubmit="return sendit()" method="put" enctype="multipart/form-data">
+                                <input class="postm_submit" type="submit" value="등록">
+                                <a style="color:black;" th:href="@{'/pages/postm_detail/'+${idx}}">취소</a>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Realtime sts area-->
+<!-- Start Footer area-->
+<div th:replace="fragment/footer :: footer"></div>
+<!-- End Footer area-->
+<div th:replace="fragment/script :: script"></div>
+<script type="text/javascript" src="/lib/smarteditor/quick_photo_uploader/plugin/hp_SE2M_AttachQuickPhoto.js" charset="utf-8"> </script>
+<script type="text/javascript" src="/lib/smarteditor/js/HuskyEZCreator.js" charset="utf-8"></script>
+<script type="text/javascript">
+    $(function(){
+        let idx = $('#idx').val();
+        axios.get('/api/board_detail/'+ idx, {
+
+        }).then(function(response){
+            console.log(response);
+            let title =response.data.data.title;
+            let content =response.data.data.content;
+            let category =response.data.data.category;
+            let registrant =response.data.data.registrant;
+
+            $('#title').val(title);
+            $('#select').val(category);
+            $('#smartEditor').text(content);
+            $('#registrant').val(registrant);
+
+        });
+    });
+
+    var oEditors = [];
+
+    $(function(){
+        nhn.husky.EZCreator.createInIFrame({
+            oAppRef: oEditors,
+            elPlaceHolder: "smartEditor",
+            sSkinURI: "/lib/smarteditor/SmartEditor2Skin.html",
+            htParams : {
+                bUseToolbar : true,
+                bUseVerticalResizer : true,
+                bUseModeChanger : true,
+                fOnBeforeUnload : function(){
+
+                }
+            },
+            fCreator: "createSEditor2"
+        });
+
+    });
+    $('.postm_submit').click(function() {
+        oEditors.getById["smartEditor"].exec("UPDATE_CONTENTS_FIELD", []);
+    });
+
+
+    document.getElementById("smartEditor").setAttribute('style','width:'+editorArea.parentNode.offsetWidth+'%');
+    function sendit(){
+        let idx = $('#idx').val();
+        let title = $('#title').val();
+        let category = $('#select').val();
+        let registrant = $('#registrant').val();
+        let content = $('#smartEditor').val();
+        console.log(content);
+        axios.request({
+            method: 'PUT',
+            url: '/api/board_update/',
+            headers:{'Content-type':'application/json'},
+            data: {
+                "data":{
+                    "id":idx,
+                    "title" : title,
+                    "category": category,
+                    "registrant" : registrant,
+                    "content" : content
+                }
+            }
+        }).then(
+        )
+        alert("수정되었습니다");
+        location.href="/pages/postm_detail/"+idx;
+    }
+
+
+</script>
+</body>
+
+</html>

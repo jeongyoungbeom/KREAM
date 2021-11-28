@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    driver-class-name: oracle.jdbc.OracleDriver
+    url: jdbc:oracle:thin:@kkream_high?TNS_ADMIN=C:/Users/jybeo/Desktop/Wallet_KKREAM
+    username: admin
+    password: KreamKream1234
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      format_sql: true
+      show_sql: true
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: jybeomss1@gmail.com
+    password: Oh753951!!@@!@
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+
+server:
+  port: 9090

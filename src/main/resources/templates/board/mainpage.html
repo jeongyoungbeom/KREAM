@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org/"
+      xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KRAEM | 한정판 거래의 FLEX</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script th:src="@{/lib/js/mainpage.js}"></script>
+    <link rel="stylesheet" th:href="@{/lib/css/mainpage.css}">
+    <link rel="stylesheet" href="/lib/css/pop.css">
+    <link data-n-head="ssr" rel="icon" type="image/x-icon" href="https://kream.co.kr/favicon.ico">
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<script>
+    let proSize = [];
+
+    // 세션
+    $(document).ready(function() {
+        const sessionEmail = $('#sessionEmail').text();
+        if(!(sessionEmail==null || sessionEmail=='')){
+            axios.get('/api/customer_session/'+sessionEmail,{
+
+            }).then(function(response){
+                sessionStorage.setItem('userEmail', sessionEmail);
+                sessionStorage.setItem('userid', response.data);
+            }).catch(function(err){
+                console.log(err);
+            });
+        };
+    });
+    $(function() {
+        axios.get('/api/main', {
+
+        }).then(function (response) {
+            console.log(response);
+
+            <!--style picks axios-->
+            for(let stylePick in response.data.data.stylePickApiResponseList){
+                let styleId = response.data.data.stylePickApiResponseList[stylePick].id;
+                let styleCustomerImg = response.data.data.stylePickApiResponseList[stylePick].customerOriginFileName;
+                let styleProfileName = response.data.data.stylePickApiResponseList[stylePick].profileName;
+                let styleImg = response.data.data.stylePickApiResponseList[stylePick].styleOriginFileName;
+                if(styleCustomerImg == null){
+                    styleCustomerImg = '/lib/img/blank_profile.4347742.png';
+                }
+                $('.style_picks').append(
+                    '<a href="/social/popular/'+styleId+'" class="sec_insta_a">'+
+                    '<div class="sec_insta_back" style="background: url(/lib/styleImg/'+styleImg+') no-repeat center/cover;">'+
+                    '<div class="sec_gradation">'+
+                    '<div class="sec_insta_logo" style="background: url('+styleCustomerImg+') no-repeat center/cover;"></div>'+
+                    '<div class="sec_insta_id">@'+styleProfileName+'</div></div></div></a>'
+                );
+            }
+            <!--shoeKREAM axios-->
+            for(let shoeKREAM in response.data.data.styleHashTagListApiResponseList){
+                let shoeKREAMId = response.data.data.styleHashTagListApiResponseList[shoeKREAM].id;
+                let shoeKREAMCustomerImg = response.data.data.styleHashTagListApiResponseList[shoeKREAM].customerOriginFileName;
+                let shoeKREAMProfileName = response.data.data.styleHashTagListApiResponseList[shoeKREAM].profileName;
+                let shoeKREAMImg = response.data.data.styleHashTagListApiResponseList[shoeKREAM].styleOriginFileName;
+                if(shoeKREAMCustomerImg == null){
+                    shoeKREAMCustomerImg = '/lib/img/blank_profile.4347742.png';
+                }
+                $('.shoeKREAM').append(
+                    '<a href="/social/popular/'+shoeKREAMId+'" class="sec_insta_a">'+
+                    '<div class="sec_insta_back" style="background: url(/lib/styleImg/'+shoeKREAMImg+') no-repeat center/cover;">'+
+                    '<div class="sec_gradation">'+
+                    '<div class="sec_insta_logo" style="background: url('+shoeKREAMCustomerImg+') no-repeat center/cover;"></div>'+
+                    '<div class="sec_insta_id">@'+shoeKREAMProfileName+'</div></div></div></a>'
+                );
+            }
+            <!--just dropped / 섹션1 상품 axios-->
+            let droppedNum = 0;
+            for(let dropped in response.data.data.productDroppedApiResponseList){
+                let droppedId = response.data.data.productDroppedApiResponseList[dropped].id;
+                let droppedName = response.data.data.productDroppedApiResponseList[dropped].name;
+                let droppedBrand = response.data.data.productDroppedApiResponseList[dropped].brand;
+                let price = response.data.data.productDroppedApiResponseList[dropped].price;
+                let droppedPrice = '';
+                if(price == null){
+                    droppedPrice = '-' ;<!--즉시구매가가 null일 경우 -로 표현-->
+                }else{
+                    droppedPrice = priceReplace(price);
+                };
+                let droppedImg = response.data.data.productDroppedApiResponseList[dropped].originFileName;
+                let backgroundColor = MainBackgroundColor();
+                let sec1 = '<div class="sec_img_box">'+
+                    '<a href="/product/'+droppedId+'" class="sec_img_a">'+
+                    '<div class="sec_img" style="background-color:'+backgroundColor+';"><img class="sec_imgClass" src="/lib/product/'+droppedImg+'"></img></div>'+
+                    '<div class="sec_brand_box">'+
+                    '<div class="sec_brand_line"><p class="sec_brand">'+droppedBrand+'</p></div>'+
+                    '<div class="sec_brand_text">'+droppedName+'</div>'+
+                    '<div class="sec_price"><div class="sec_num">'+droppedPrice+'</div><div class="sec_won">원</div></div>'+
+                    '<div class="sec_price_text">즉시 구매가</div>'+
+                    '</div>'+
+                    '</a>'+
+                    '<div class="sec_mark_box"><div class="sec_markimg" value="'+droppedId+'"></div></div>'+
+                    '</div>';
+                if(droppedNum<4){
+                    $('.sec1_1').append( sec1 );
+                }else if(droppedNum<8&&droppedNum>3){
+                    $('.sec1_2').append( sec1 );
+                }else if(droppedNum<12&&droppedNum>7){
+                    $('.sec1_3').append( sec1 );
+                }
+                droppedNum = droppedNum + 1;
+            }
+            <!--most popular / 섹션2 상품 axios-->
+            let popularNum = 0;
+            for(let popular in response.data.data.productPopularApiResponseList){
+                let popularId = response.data.data.productPopularApiResponseList[popular].id;
+                let popularName = response.data.data.productPopularApiResponseList[popular].name;
+                let popularBrand = response.data.data.productPopularApiResponseList[popular].brand;
+                let price = response.data.data.productPopularApiResponseList[popular].price;
+                let popularPrice = '';
+                if(price == null){
+                    popularPrice = '-' ;<!--즉시구매가가 null일 경우 -로 표현-->
+                }else{
+                    popularPrice = priceReplace(price);
+                };
+                let popularImg = response.data.data.productPopularApiResponseList[popular].originFileName;
+                let backgroundColor = MainBackgroundColor();
+                let sec2 = '<div class="sec_img_box">'+
+                    '<a href="/product/'+popularId+'" class="sec_img_a">'+
+                    '<div class="sec_img" style="background-color:'+backgroundColor+';"><img class="sec_imgClass" src="/lib/product/'+popularImg+'"></img></div>'+
+                    '<div class="sec_brand_box">'+
+                    '<div class="sec_brand_line"><p class="sec_brand">'+popularBrand+'</p></div>'+
+                    '<div class="sec_brand_text">'+popularName+'</div>'+
+                    '<div class="sec_price"><div class="sec_num">'+popularPrice+'</div><span class="sec_won">원</span></div>'+
+                    '<div class="sec_price_text">즉시 구매가</div>'+
+                    '</div>'+
+                    '</a>'+
+                    '<div class="sec_mark_box"><div class="sec_markimg" value="'+popularId+'"></div></div>'+
+                    '</div>'
+                if(popularNum<4){
+                    $('.sec2_1').append( sec2 );
+                }else if(popularNum<8&&popularNum>3){
+                    $('.sec2_2').append( sec2 );
+                }else if(popularNum<12&&popularNum>7){
+                    $('.sec2_3').append( sec2 );
+                }
+                popularNum = popularNum + 1;
+            }
+            <!--New Balance 993 / 섹션3 상품 axios-->
+            let collectionNum = 0;
+            for(let collect in response.data.data.productCollectionApiResponseList1){
+                let collectId = response.data.data.productCollectionApiResponseList1[collect].id;
+                let collectName = response.data.data.productCollectionApiResponseList1[collect].name;
+                let collectBrand = response.data.data.productCollectionApiResponseList1[collect].brand;
+                let price = response.data.data.productCollectionApiResponseList1[collect].price;
+                let collectPrice = '';
+                if(price == null){
+                    collectPrice = '-' ;<!--즉시구매가가 null일 경우 -로 표현-->
+                }else{
+                    collectPrice = priceReplace(price);
+                };
+                let collectImg = response.data.data.productCollectionApiResponseList1[collect].oringinFileName;
+                let backgroundColor = MainBackgroundColor();
+                let sec3 = '<div class="sec_img_box">'+
+                    '<a href="/product/'+collectId+'" class="sec_img_a">'+
+                    '<div class="sec_img" style="background-color:'+backgroundColor+';"><img class="sec_imgClass" src="/lib/product/'+collectImg+'"></img></div>'+
+                    '<div class="sec_brand_box">'+
+                    '<div class="sec_brand_line"><p class="sec_brand">'+collectBrand+'</p></div>'+
+                    '<div class="sec_brand_text">'+collectName+'</div>'+
+                    '<div class="sec_price"><div class="sec_num">'+collectPrice+'</div><span class="sec_won">원</span></div>'+
+                    '<div class="sec_price_text">즉시 구매가</div>'+
+                    '</div>'+
+                    '</a>'+
+                    '<div class="sec_mark_box"><div class="sec_markimg" value="'+collectId+'"></div></div>'+
+                    '</div>'
+                if(collectionNum<4){
+                    $('.sec3_1').append( sec3 );
+                }else if(collectionNum<8&&collectionNum>3){
+                    $('.sec3_2').append( sec3 );
+                }else if(collectionNum<12&&collectionNum>7){
+                    $('.sec3_3').append( sec3 );
+                }
+                collectionNum = collectionNum + 1;
+            }
+            <!--Adidas Yeezy / 섹션4 상품 axios-->
+            let offWNum = 0;
+            for(let off in response.data.data.productCollectionApiResponseList2){
+                let offId = response.data.data.productCollectionApiResponseList2[off].id;
+                let offName = response.data.data.productCollectionApiResponseList2[off].name;
+                let offBrand = response.data.data.productCollectionApiResponseList2[off].brand;
+                let price = response.data.data.productCollectionApiResponseList2[off].price;
+                let offPrice = '';
+                if(price == null){
+                    offPrice = '-' ;<!--즉시구매가가 null일 경우 -로 표현-->
+                }else{
+                    offPrice = priceReplace(price);
+                };
+                let offImg = response.data.data.productCollectionApiResponseList2[off].oringinFileName;
+                let backgroundColor = MainBackgroundColor();
+                let sec4 = '<div class="sec_img_box">'+
+                    '<a href="/product/'+offId+'" class="sec_img_a">'+
+                    '<div class="sec_img" style="background-color:'+backgroundColor+';"><img class="sec_imgClass" src="/lib/product/'+offImg+'"></img></div>'+
+                    '<div class="sec_brand_box">'+
+                    '<div class="sec_brand_line"><p class="sec_brand">'+offBrand+'</p></div>'+
+                    '<div class="sec_brand_text">'+offName+'</div>'+
+                    '<div class="sec_price"><div class="sec_num">'+offPrice+'</div><span class="sec_won">원</span></div>'+
+                    '<div class="sec_price_text">즉시 구매가</div>'+
+                    '</div>'+
+                    '</a>'+
+                    '<div class="sec_mark_box"><div class="sec_markimg" value="'+offId+'"></div></div>'+
+                    '</div>'
+                if(offWNum<4){
+                    $('.sec4_1').append( sec4 );
+                }else if(offWNum<8&&offWNum>3){
+                    $('.sec4_2').append( sec4 );
+                }else if(offWNum<12&&offWNum>7){
+                    $('.sec4_3').append( sec4 );
+                }
+                offWNum = offWNum + 1;
+            }
+            <!--Adidas / 섹션5 상품 axios-->
+            let legoNum = 0;
+            for(let lego in response.data.data.productBrandApiResponseList1){
+                let legoId = response.data.data.productBrandApiResponseList1[lego].id;
+                let legoName = response.data.data.productBrandApiResponseList1[lego].name;
+                let legoBrand = response.data.data.productBrandApiResponseList1[lego].brand;
+                let price = response.data.data.productBrandApiResponseList1[lego].price;
+                let legoPrice = '';
+                if(price == null){
+                    legoPrice = '-' ;<!--즉시구매가가 null일 경우 -로 표현-->
+                }else{
+                    legoPrice = priceReplace(price);
+                };
+                let legoImg = response.data.data.productBrandApiResponseList1[lego].oringinFileName;
+                let backgroundColor = MainBackgroundColor();
+                let sec5 = '<div class="sec_img_box">'+
+                    '<a href="/product/'+legoId+'" class="sec_img_a">'+
+                    '<div class="sec_img" style="background-color:'+backgroundColor+';"><img class="sec_imgClass" src="/lib/product/'+legoImg+'"></img></div>'+
+                    '<div class="sec_brand_box">'+
+                    '<div class="sec_brand_line"><p class="sec_brand">'+legoBrand+'</p></div>'+
+                    '<div class="sec_brand_text">'+legoName+'</div>'+
+                    '<div class="sec_price"><div class="sec_num">'+legoPrice+'</div><span class="sec_won">원</span></div>'+
+                    '<div class="sec_price_text">즉시 구매가</div>'+
+                    '</div>'+
+                    '</a>'+
+                    '<div class="sec_mark_box"><div class="sec_markimg" value="'+legoId+'"></div></div>'+
+                    '</div>'
+                if(legoNum<4){
+                    $('.sec5_1').append( sec5 );
+                }else if(legoNum<8&&legoNum>3){
+                    $('.sec5_2').append( sec5 );
+                }else if(legoNum<12&&legoNum>7){
+                    $('.sec5_3').append( sec5 );
+                }
+                legoNum = legoNum + 1;
+            }
+            <!--Nike Dunk / 섹션6 상품 axios-->
+            let topNum = 0;
+            for(let top in response.data.data.productCollectionApiResponseList5){
+                let topId = response.data.data.productCollectionApiResponseList5[top].id;
+                let topName = response.data.data.productCollectionApiResponseList5[top].name;
+                let topBrand = response.data.data.productCollectionApiResponseList5[top].brand;
+                let price = response.data.data.productCollectionApiResponseList5[top].price;
+                let topPrice = '';
+                if(price == null){
+                    topPrice = '-' ;<!--즉시구매가가 null일 경우 -로 표현-->
+                }else{
+                    topPrice = priceReplace(price);
+                };
+                let topImg = response.data.data.productCollectionApiResponseList5[top].oringinFileName;
+                let backgroundColor = MainBackgroundColor();
+                let sec6 = '<div class="sec_img_box">'+
+                    '<a href="/product/'+topId+'" class="sec_img_a">'+
+                    '<div class="sec_img" style="background-color:'+backgroundColor+';"><img class="sec_imgClass" src="/lib/product/'+topImg+'"></div>'+
+                    '<div class="sec_brand_box">'+
+                    '<div class="sec_brand_line"><p class="sec_brand">'+topBrand+'</p></div>'+
+                    '<div class="sec_brand_text">'+topName+'</div>'+
+                    '<div class="sec_price"><div class="sec_num">'+topPrice+'</div><span class="sec_won">원</span></div>'+
+                    '<div class="sec_price_text">즉시 구매가</div>'+
+                    '</div>'+
+                    '</a>'+
+                    '<div class="sec_mark_box"><div class="sec_markimg" value="'+topId+'"></div></div>'+
+                    '</div>'
+                if(topNum<4){
+                    $('.sec6_1').append( sec6 );
+                }else if(topNum<8&&topNum>3){
+                    $('.sec6_2').append( sec6 );
+                }else if(topNum<12&&topNum>7){
+                    $('.sec6_3').append( sec6 );
+                }
+                topNum = topNum + 1;
+            }
+            <!--Balenciaga / 섹션7-1 상품 axios-->
+            let WCHNum = 0;
+            for(let wallet in response.data.data.productBrandApiResponseList2){
+                let walletId = response.data.data.productBrandApiResponseList2[wallet].id;
+                let walletName = response.data.data.productBrandApiResponseList2[wallet].name;
+                let walletBrand = response.data.data.productBrandApiResponseList2[wallet].brand;
+                let price = response.data.data.productBrandApiResponseList2[wallet].price;
+                let walletPrice = '';
+                if(price == null){
+                    walletPrice = '-' ;<!--즉시구매가가 null일 경우 -로 표현-->
+                }else{
+                    walletPrice = priceReplace(price);
+                };
+                let walletImg = response.data.data.productBrandApiResponseList2[wallet].oringinFileName;
+                let backgroundColor = MainBackgroundColor();
+                let sec7_1 = '<div class="sec_img_box">'+
+                    '<a href="/product/'+walletId+'" class="sec_img_a">'+
+                    '<div class="sec_img" style="background-color:'+backgroundColor+';"><img class="sec_imgClass" src="/lib/product/'+walletImg+'"></img></div>'+
+                    '<div class="sec_brand_box">'+
+                    '<div class="sec_brand_line"><p class="sec_brand">'+walletBrand+'</p></div>'+
+                    '<div class="sec_brand_text">'+walletName+'</div>'+
+                    '<div class="sec_price"><div class="sec_num">'+walletPrice+'</div><span class="sec_won">원</span></div>'+
+                    '<div class="sec_price_text">즉시 구매가</div>'+
+                    '</div>'+
+                    '</a>'+
+                    '<div class="sec_mark_box"><div class="sec_markimg" value="'+walletId+'"></div></div>'+
+                    '</div>'
+                if(WCHNum<4){
+                    $('.sec7_1').append( sec7_1 );
+                }else if(WCHNum<8&&WCHNum>3){
+                    $('.sec7_2').append( sec7_1 );
+                }else if(WCHNum<12&&WCHNum>7){
+                    $('.sec7_3').append( sec7_1 );
+                }
+                WCHNum = WCHNum + 1;
+            }
+            <!--Stone Island / 섹션7-1-1 상품 axios-->
+            let bottomNum = 0;
+            for(let bottom in response.data.data.productBrandApiResponseList3){
+                let bottomId = response.data.data.productBrandApiResponseList3[bottom].id;
+                let bottomName = response.data.data.productBrandApiResponseList3[bottom].name;
+                let bottomBrand = response.data.data.productBrandApiResponseList3[bottom].brand;
+                let price = response.data.data.productBrandApiResponseList3[bottom].price;
+                let bottomPrice = '';
+                if(price == null){
+                    bottomPrice = '-' ;<!--즉시구매가가 null일 경우 -로 표현-->
+                }else{
+                    bottomPrice = priceReplace(price);
+                };
+                let bottomImg = response.data.data.productBrandApiResponseList3[bottom].oringinFileName;
+                let backgroundColor = MainBackgroundColor();
+                let sec7_1_1 = '<div class="sec_img_box">'+
+                    '<a href="/product/'+bottomId+'" class="sec_img_a">'+
+                    '<div class="sec_img" style="background-color:'+backgroundColor+';"><img class="sec_imgClass" src="/lib/product/'+bottomImg+'"></img></div>'+
+                    '<div class="sec_brand_box">'+
+                    '<div class="sec_brand_line"><p class="sec_brand">'+bottomBrand+'</p></div>'+
+                    '<div class="sec_brand_text">'+bottomName+'</div>'+
+                    '<div class="sec_price"><div class="sec_num">'+bottomPrice+'</div><span class="sec_won">원</span></div>'+
+                    '<div class="sec_price_text">즉시 구매가</div>'+
+                    '</div>'+
+                    '</a>'+
+                    '<div class="sec_mark_box"><div class="sec_markimg" value="'+bottomId+'"></div></div>'+
+                    '</div>'
+                if(bottomNum<4){
+                    $('.sec7_1_1').append( sec7_1_1 );
+                }else if(bottomNum<8&&bottomNum>3){
+                    $('.sec7_1_2').append( sec7_1_1 );
+                }else if(bottomNum<12&&bottomNum>7){
+                    $('.sec7_1_3').append( sec7_1_1 );
+                }
+                bottomNum = bottomNum + 1;
+            }
+            <!--Luxury / 섹션8 상품 axios-->
+            let luxuryNum = 0;
+            for(let luxury in response.data.data.productNewLowersApiResponseList){
+                let luxuryId = response.data.data.productNewLowersApiResponseList[luxury].id;
+                let luxuryName = response.data.data.productNewLowersApiResponseList[luxury].name;
+                let luxuryBrand = response.data.data.productNewLowersApiResponseList[luxury].brand;
+                let price = response.data.data.productNewLowersApiResponseList[luxury].price;
+                let luxuryPrice = '';
+                if(price == null){
+                    luxuryPrice = '-' ;<!--즉시구매가가 null일 경우 -로 표현-->
+                }else{
+                    luxuryPrice = priceReplace(price);
+                };
+                let luxuryImg = response.data.data.productNewLowersApiResponseList[luxury].oringinFileName;
+                let backgroundColor = MainBackgroundColor();
+                let sec8 = '<div class="sec_img_box">'+
+                    '<a href="/product/'+luxuryId+'" class="sec_img_a">'+
+                    '<div class="sec_img" style="background-color:'+backgroundColor+';"><img class="sec_imgClass" src="/lib/product/'+luxuryImg+'"></img></div>'+
+                    '<div class="sec_brand_box">'+
+                    '<div class="sec_brand_line"><p class="sec_brand">'+luxuryBrand+'</p></div>'+
+                    '<div class="sec_brand_text">'+luxuryName+'</div>'+
+                    '<div class="sec_price"><div class="sec_num">'+luxuryPrice+'</div><span class="sec_won">원</span></div>'+
+                    '<div class="sec_price_text">즉시 구매가</div>'+
+                    '</div>'+
+                    '</a>'+
+                    '<div class="sec_mark_box"><div class="sec_markimg" value="'+luxuryId+'"></div></div>'+
+                    '</div>'
+                if(luxuryNum<4){
+                    $('.sec8_1').append( sec8 );
+                }else if(luxuryNum<8&&luxuryNum>3){
+                    $('.sec8_2').append( sec8 );
+                }else if(luxuryNum<12&&luxuryNum>7){
+                    $('.sec8_3').append( sec8 );
+                }
+                luxuryNum = luxuryNum + 1;
+            }
+            <!--New Lowest Asks / 섹션9_1 상품 axios-->
+            let lowestNum = 0;
+            for(let lowest in response.data.data.productNewLowersApiResponseList){
+                let lowestId = response.data.data.productNewLowersApiResponseList[lowest].id;
+                let lowestName = response.data.data.productNewLowersApiResponseList[lowest].name;
+                let lowestBrand = response.data.data.productNewLowersApiResponseList[lowest].brand;
+                let price = response.data.data.productNewLowersApiResponseList[lowest].price;
+                let lowestPrice = '';
+                if(price == null){
+                    lowestPrice = '-' ;<!--즉시구매가가 null일 경우 -로 표현-->
+                }else{
+                    lowestPrice = priceReplace(price);
+                };
+                let lowestImg = response.data.data.productNewLowersApiResponseList[lowest].oringinFileName;
+                let backgroundColor = MainBackgroundColor();
+                let sec9_1 = '<div class="sec_img_box">'+
+                    '<a href="/product/'+lowestId+'" class="sec_img_a">'+
+                    '<div class="sec_img" style="background-color:'+backgroundColor+';"><img class="sec_imgClass" src="/lib/product/'+lowestImg+'"></img></div>'+
+                    '<div class="sec_brand_box">'+
+                    '<div class="sec_brand_line"><p class="sec_brand">'+lowestBrand+'</p></div>'+
+                    '<div class="sec_brand_text">'+lowestName+'</div>'+
+                    '<div class="sec_price"><div class="sec_num">'+lowestPrice+'</div><span class="sec_won">원</span></div>'+
+                    '<div class="sec_price_text">즉시 구매가</div>'+
+                    '</div>'+
+                    '</a>'+
+                    '<div class="sec_mark_box"><div class="sec_markimg" value="'+lowestId+'"></div></div>'+
+                    '</div>'
+                if(lowestNum<4){
+                    $('.sec9_1').append( sec9_1 );
+                }else if(lowestNum<8&&lowestNum>3){
+                    $('.sec9_2').append( sec9_1 );
+                }else if(lowestNum<12&&lowestNum>7){
+                    $('.sec9_3').append( sec9_1 );
+                }
+                lowestNum = lowestNum + 1;
+            }
+            <!--New Highest Bids / 섹션9_1_1 상품 axios-->
+            let highestNum = 0;
+            for(let highest in response.data.data.productNewHighestApiResponseList){
+                let highestId = response.data.data.productNewHighestApiResponseList[highest].id;
+                let highestName = response.data.data.productNewHighestApiResponseList[highest].name;
+                let highestBrand = response.data.data.productNewHighestApiResponseList[highest].brand;
+                let price = response.data.data.productNewHighestApiResponseList[highest].price;
+                let highestPrice = '';
+                if(price == null){
+                    highestPrice = '-' ;<!--즉시구매가가 null일 경우 -로 표현-->
+                }else{
+                    highestPrice = priceReplace(price);
+                };
+                let highestImg = response.data.data.productNewHighestApiResponseList[highest].oringinFileName;
+                let backgroundColor = MainBackgroundColor();
+                let sec9_1_1 = '<div class="sec_img_box">'+
+                    '<a href="/product/'+highestId+'" class="sec_img_a">'+
+                    '<div class="sec_img" style="background-color:'+backgroundColor+';"><img class="sec_imgClass" src="/lib/product/'+highestImg+'"></img></div>'+
+                    '<div class="sec_brand_box">'+
+                    '<div class="sec_brand_line"><p class="sec_brand">'+highestBrand+'</p></div>'+
+                    '<div class="sec_brand_text">'+highestName+'</div>'+
+                    '<div class="sec_price"><div class="sec_num">'+highestPrice+'</div><span class="sec_won">원</span></div>'+
+                    '<div class="sec_price_text">즉시 판매가</div>'+
+                    '</div>'+
+                    '</a>'+
+                    '<div class="sec_mark_box"><div class="sec_markimg" value="'+highestId+'"></div></div>'+
+                    '</div>'
+                if(highestNum<4){
+                    $('.sec9_1_1').append( sec9_1_1 );
+                }else if(highestNum<8&&highestNum>3){
+                    $('.sec9_1_2').append( sec9_1_1 );
+                }else if(highestNum<12&&highestNum>7){
+                    $('.sec9_1_3').append( sec9_1_1 );
+                }
+                highestNum = highestNum + 1;
+            }
+            <!--Upcoming Release / 섹션10 상품 axios-->
+            let upcomingNum = 0;
+            for(let upcoming in response.data.data.productUpcomingApiResponseList){
+                let upcomingId = response.data.data.productUpcomingApiResponseList[upcoming].id;
+                let upcomingName = response.data.data.productUpcomingApiResponseList[upcoming].name;
+                let upcomingBrand = response.data.data.productUpcomingApiResponseList[upcoming].brand;
+                let upcomingImg = response.data.data.productUpcomingApiResponseList[upcoming].oringinFileName;
+                let regdate = response.data.data.productUpcomingApiResponseList[upcoming].regdate;
+                let upcomingMonth = regdate.substring(5,7);
+                let upcomingDay = regdate.substring(8,10);
+                if(upcomingMonth.substring(0,1)=='0'){
+                    upcomingMonth.substring(1);
+                }
+                if(upcomingDay.substring(0,1)=='0'){
+                    upcomingDay = upcomingDay.substring(1);
+                }
+                let backgroundColor = MainBackgroundColor();
+
+                let sec10 = '<div class="sec_img_box">'+
+                    '<a href="/product/'+upcomingId+'" class="sec_img_a">'+
+                    '<div class="sec_img" style="background-color:'+backgroundColor+';"><img class="sec_imgClass" src="/lib/product/'+upcomingImg+'"></img></div>'+
+                    '<div class="sec_date"><p class="sec_month">'+upcomingMonth+'월</p><p class="sec_day">'+upcomingDay+'</p></div>'+
+                    '<div class="sec_brand_box">'+
+                    '<div class="sec_brand_line"><p class="sec_brand">'+upcomingBrand+'</p></div>'+
+                    '<div class="sec_brand_text">'+upcomingName+'</div>'+
+                    '</div>'+
+                    '</a>'+
+                    '<div class="sec_mark_box"><div class="sec_markimg" value="'+upcomingId+'"></div></div>'+
+                    '</div>';
+                if(upcomingNum<4){
+                    $('.sec10_1').append( sec10 );
+                }else if(upcomingNum<8&&upcomingNum>3){
+                    $('.sec10_2').append( sec10 );
+                }else if(upcomingNum<12&&upcomingNum>7){
+                    $('.sec10_3').append( sec10 );
+                }
+                upcomingNum = upcomingNum + 1;
+            }
+
+            <!--Jordan1 / 섹션11 상품 axios-->
+            let orcaNum = 0;
+            for(let orca in response.data.data.productCollectionApiResponseList3){
+                let orcaId = response.data.data.productCollectionApiResponseList3[orca].id;
+                let orcaName = response.data.data.productCollectionApiResponseList3[orca].name;
+                let orcaBrand = response.data.data.productCollectionApiResponseList3[orca].brand;
+                let price = response.data.data.productCollectionApiResponseList3[orca].price;
+                let orcaPrice = '';
+                if(price == null){
+                    orcaPrice = '-' ;<!--즉시구매가가 null일 경우 -로 표현-->
+                }else{
+                    orcaPrice = priceReplace(price);
+                };
+                let orcaImg = response.data.data.productCollectionApiResponseList3[orca].oringinFileName;
+                let backgroundColor = MainBackgroundColor();
+                let sec11 = '<div class="sec_img_box">'+
+                    '<a href="/product/'+orcaId+'" class="sec_img_a">'+
+                    '<div class="sec_img" style="background-color:'+backgroundColor+';"><img class="sec_imgClass" src="/lib/product/'+orcaImg+'"></img></div>'+
+                    '<div class="sec_brand_box">'+
+                    '<div class="sec_brand_line"><p class="sec_brand">'+orcaBrand+'</p></div>'+
+                    '<div class="sec_brand_text">'+orcaName+'</div>'+
+                    '<div class="sec_price"><div class="sec_num">'+orcaPrice+'</div><span class="sec_won">원</span></div>'+
+                    '<div class="sec_price_text">즉시 구매가</div>'+
+                    '</div>'+
+                    '</a>'+
+                    '<div class="sec_mark_box"><div class="sec_markimg" value="'+orcaId+'"></div></div>'+
+                    '</div>';
+                if(orcaNum<4){
+                    $('.sec11_1').append( sec11 );
+                }else if(orcaNum<8&&orcaNum>3){
+                    $('.sec11_2').append( sec11 );
+                }else if(orcaNum<12&&orcaNum>7){
+                    $('.sec11_3').append( sec11 );
+                }
+                orcaNum = orcaNum + 1;
+            }
+            <!--Jordan3 / 섹션12 상품 axios-->
+            let greyNum = 0;
+            for(let grey in response.data.data.productCollectionApiResponseList4){
+                let greyId = response.data.data.productCollectionApiResponseList4[grey].id;
+                let greyName = response.data.data.productCollectionApiResponseList4[grey].name;
+                let greyBrand = response.data.data.productCollectionApiResponseList4[grey].brand;
+                let price = response.data.data.productCollectionApiResponseList4[grey].price;
+                let greyPrice = '';
+                if(price == null){
+                    greyPrice = '-' ;<!--즉시구매가가 null일 경우 -로 표현-->
+                }else{
+                    greyPrice = priceReplace(price);
+                };
+                let greyImg = response.data.data.productCollectionApiResponseList4[grey].oringinFileName;
+                let backgroundColor = MainBackgroundColor();
+                let sec12 = '<div class="sec_img_box">'+
+                    '<a href="/product/'+greyId+'" class="sec_img_a">'+
+                    '<div class="sec_img" style="background-color:'+backgroundColor+';"><img class="sec_imgClass" src="/lib/product/'+greyImg+'"></img></div>'+
+                    '<div class="sec_brand_box">'+
+                    '<div class="sec_brand_line"><p class="sec_brand">'+greyBrand+'</p></div>'+
+                    '<div class="sec_brand_text">'+greyName+'</div>'+
+                    '<div class="sec_price"><div class="sec_num">'+greyPrice+'</div><span class="sec_won">원</span></div>'+
+                    '<div class="sec_price_text">즉시 구매가</div>'+
+                    '</div>'+
+                    '</a>'+
+                    '<div class="sec_mark_box"><div class="sec_markimg" value="'+greyId+'"></div></div>'+
+                    '</div>'
+                if(greyNum<4){
+                    $('.sec12_1').append( sec12 );
+                }else if(greyNum<8&&greyNum>3){
+                    $('.sec12_2').append( sec12 );
+                }else if(greyNum<12&&greyNum>7){
+                    $('.sec12_3').append( sec12 );
+                }
+                greyNum = greyNum + 1;
+            }
+        })
+    })
+</script>
+<body>
+<span id="sessionEmail" th:text="${session.user}" style="display: none"></span>
+<header>
+    <div id="header_top">
+        <ul id="ht_box">
+            <li class="ht_text"><a href="/notice">고객센터</a></li>
+            <li class="ht_text"><a href="/my/wish">관심상품</a></li>
+            <li class="ht_text"><a href="/my">마이페이지</a></li>
+            <li class="ht_text" sec:authorize="hasRole('ADMIN')"><a href="/pages">관리자</a></li>
+            <li class="ht_text" sec:authorize="!isAuthenticated()"><a href="/login">로그인</a></li>
+            <li class="ht_text" sec:authorize="isAuthenticated()"><a href="/logout" onclick="sessionStorage.clear()">로그아웃</a></li>
+        </ul>
+    </div>
+    <div id="header_bottom">
+        <div id="hb_logo_box">
+            <p id="hb_logo"></p>
+        </div>
+        <ul id="hb_box">
+            <li class="hb_text"><a href="/social/trending">STYLE</a></li>
+            <li class="hb_text"><a href="/search">SHOP</a></li>
+            <li class="hb_text"><a href="/about">ABOUT</a></li>
+            <li class="hb_text" id="hb_no_text"><button class="hb_button_img"></button></li>
+            <li class="hb_text" id="hb_mo_text"><button class="hb_button_img"></button></li>
+        </ul>
+    </div>
+</header>
+<div id="fixed"></div>
+<!-- 모바일 오른쪽 -->
+<div class="navigation_wrap close">
+    <div class="navigation">
+        <div class="navigation_inner">
+            <ul class="nav_list">
+                <li class="nav_item">
+                    <a href="/social/trending" class="nav_link">STYLE</a>
+                </li>
+                <li class="nav_item">
+                    <a href="/search" class="nav_link">SHOP</a>
+                </li>
+                <li class="nav_item">
+                    <a href="/faq" class="nav_link">자주 묻는 질문</a>
+                </li>
+                <li class="nav_item">
+                    <a href="/notice" class="nav_link">공지사항</a>
+                </li>
+                <li class="nav_item">
+                    <a href="/my" class="nav_link">마이페이지</a>
+                </li>
+                <li class="nav_item" sec:authorize="hasRole('ADMIN')">
+                    <a href="/pages" class="nav_link">관리자</a>
+                </li>
+                <li class="nav_item" sec:authorize="!isAuthenticated()">
+                    <a href="/login" class="nav_link">로그인</a>
+                </li>
+                <li class="nav_item" sec:authorize="isAuthenticated()">
+                    <a href="/login" class="nav_link" onclick="sessionStorage.clear()">로그아웃</a>
+                </li>
+                <!---->
+            </ul>
+            <!---->
+            <div class="nav_download">
+                <p class="download_txt">KREAM 앱 설치 후 사용해 보세요!</p>
+                <div class="btn_appdown">
+                    <a type="button" class="btn outline medium">앱 다운로드</a>
+                </div>
+            </div>
+        </div>
+        <button type="button" class="btn_nav_close">
+            <img src="/lib/img/pop_close.png" class="ico-close icon sprite-icons">
+        </button>
+    </div>
+</div>
+<!--검색창-->
+<div class="layer_search lg" style="display: none;">
+    <div class="search_container">
+        <div class="search_wrap">
+            <div class="search_area" value="">
+                <div class="search">
+                    <img src="/lib/img/search_gray_icon.png" class="ico-search-gray icon sprite-icons">
+                    <input type="text" placeholder="브랜드명, 모델명, 모델번호 등" title="검색창" class="input_search show_placeholder_on_focus">
+                    <button class="btn_search_delete" style="display: none;">
+                        <img src="/lib/img/text_area_delete_icon.png" class="ico-delete-circle icon sprite-icons">
+                    </button>
+                </div>
+            </div>
+            <button class="btn_close">취소</button>
+        </div>
+    </div>
+    <div class="recent_wrap">
+        <div class="recent_area">
+            <div class="recent_box">
+                <strong class="recent_title">최근 검색어</strong>
+                <button class="btn_delete">
+                    <img src="/lib/img/delete_circle_icon.png" class="ico-delete-circle icon sprite-icons">
+                </button>
+                <ul class="search_list">
+                    <!--검색기록-->
+                </ul>
+            </div>
+            <ul class="brand_list lg">
+                <li class="brand_item" style="background-color: rgb(246, 238, 237);">
+                    <a class="brand_box" href="/search/">
+                        <img src="/lib/img/p_1c64737691684299b32884e7d890983c.png" alt="Jordan 1" class="brand_img">
+                        <p class="brand_name">Jordan 1</p>
+                    </a>
+                </li>
+                <li class="brand_item" style="background-color: rgb(235, 240, 245);">
+                    <a class="brand_box" href="/search/">
+                        <img src="/lib/img/a_462abc0cfd92429eae5f1e7677742261.png" alt="Dunk" class="brand_img">
+                        <p class="brand_name">Dunk</p>
+                    </a>
+                </li>
+                <li class="brand_item" style="background-color: rgb(235, 240, 245);">
+                    <a class="brand_box" href="/search/">
+                        <img src="/lib/img/p_1077af921fe1436ab78ec3f07b7dae79.png" alt="스캇" class="brand_img">
+                        <p class="brand_name">스캇</p>
+                    </a>
+                </li>
+                <li class="brand_item" style="background-color: rgb(244, 244, 244);">
+                    <a class="brand_box" href="/search/">
+                        <img src="/lib/img/a_5e37181489d44d1a80650eef3edb9296.png" alt="톰브라운" class="brand_img">
+                        <p class="brand_name">톰브라운</p>
+                    </a>
+                </li>
+                <li class="brand_item" style="background-color: rgb(244, 244, 244);">
+                    <a class="brand_box" href="/search/">
+                        <img src="/lib/img/p_4f213a0866354fa39e72f459f3374589.png" alt="지갑" class="brand_img">
+                        <p class="brand_name">지갑</p>
+                    </a>
+                </li>
+                <li class="brand_item" style="background-color: rgb(244, 244, 244);">
+                    <a class="brand_box" href="/search/">
+                        <img src="/lib/img/a_5fb25d6231d3414d9c8b5261d7d87897.png" alt="레고" class="brand_img">
+                        <p class="brand_name">레고</p>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="suggest_wrap" style="display: none;">
+        <div class="suggest_area">
+            <!--검색결과-->
+        </div>
+    </div>
+</div>
+<div id="down_app_size" class="down_size">
+    <div id="down_app_back">
+        <div id="down_app_center">
+            <div class="pop_close_box" id="app_close_box"><div class="pop_close" id="app_close" onclick="pop_down_main()"></div></div>
+            <div id="pop_path_box1">
+                <div id="pop_path"></div>
+            </div>
+            <div id="pop_app_text1">앱 설치하여 사용해주세요!</div>
+            <div id="pop_mo_app_box">
+                <p id="pop_mo_app_text2">KREAM 앱 설치 후 사용해 보세요!</p>
+                <div id="pop_mo_down"><a>앱 다운로드</a></div>
+            </div>
+            <div id="pop_app_QR_box"><div id="pop_app_QR"></div></div>
+            <div id="pop_app_text2">휴대폰 번호를 입력해주시면,<br>앱 설치 주소를 메시지로 보내드립니다.</div>
+            <div id="pop_app_phone">
+                    <span class="pop_app_span">
+                        <label for="app_hp" class="app_label">number</label>
+                        <input type="text" id="app_hp" onfocus="this.placeholder=''" onblur="this.placeholder='휴대폰 번호 입력해주세요.'" placeholder="휴대폰 번호 입력해주세요." value class="app_phone">
+                        <button class="app_btn_submit" id="app_btn">보내기</button>
+                    </span>
+            </div>
+            <div id="pop_app_checkbox_box">
+                <div class="app_check_box">
+                    <input type="checkbox" id="pop_app_check">
+                    <label for="pop_app_check" onclick="app_check()"><div id="checkbox_img" class="app_img"></div></label>
+                </div>
+                <label for="pop_app_check" class="pop_check_text" onclick="app_check()">
+                    앱 다운로드 주소 전송을 위해 전화번호를 수집하며, 수집일로부터 3개월간 보관됩니다. 서비스 제공을 위한 필요한 개인정보이므로, 동의를 해주셔야 서비스를 이용하실 수 있습니다.
+                </label>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="include/pop :: pop"></div>
+<div class="interest_container">
+    <div class="interest_content">
+        <div class="interest_header">
+            <h2 class="interest_title">관심 상품 추가</h2>
+        </div>
+        <div class="pop_close" onclick="comment_down()"></div>
+        <div class="interest_list">
+            <div class="interest_item"></div>
+            <div class="interest_un_list_box">
+                <div class="interest_un_list"></div>
+            </div>
+            <div class="interest_layer_btn">
+                <a href="#a" class="interest_check_btn" onclick="comment_down()"> 확인</a>
+            </div>
+        </div>
+    </div>
+</div>
+<section>
+    <!--섹션 탑 메인-->
+    <div id="section_top_t">
+        <div id="stt_div1">
+            <a href="/notice" class="stt_text">[공지] 택배 없는 날 및 대체 공휴일에 따른 거래 일정 안내</a>
+        </div>
+    </div>
+    <div id="sm" class="swiper-container">
+        <div class="swiper-wrapper">
+            <div class="section_mainimg swiper-slide"  id="section_top_mainimg">
+                <div class="sec_imgbox" id="st_imgbox" ></div>
+
+            </div>
+            <div class="section_mainimg swiper-slide"  id="section_top_mainimg2">
+                <div class="sec_imgbox" id="st_imgbox2" ></div>
+            </div>
+            <div class="section_mainimg swiper-slide"  id="section_top_mainimg3">
+                <div class="sec_imgbox" id="st_imgbox3" ></div>
+            </div>
+            <div class="section_mainimg swiper-slide"  id="section_top_mainimg4">
+                <div class="sec_imgbox" id="st_imgbox4" ></div>
+            </div>
+        </div>
+    </div>
+    <div id="sm2" class="swiper-container2 sm_mo">
+        <div class="swiper-wrapper">
+            <div class="section_mainimg swiper-slide"  id="section_top_mainimg">
+                <div class="sec_imgbox" id="st_imgbox" ></div>
+            </div>
+            <div class="section_mainimg swiper-slide"  id="section_top_mainimg2">
+                <div class="sec_imgbox" id="st_imgbox2" ></div>
+            </div>
+            <div class="section_mainimg swiper-slide"  id="section_top_mainimg3">
+                <div class="sec_imgbox" id="st_imgbox3" ></div>
+            </div>
+            <div class="section_mainimg swiper-slide"  id="section_top_mainimg4">
+                <div class="sec_imgbox" id="st_imgbox4" ></div>
+            </div>
+        </div>
+    </div>
+    <div id="section_top_button1">
+        <ul id="st_button_box1">
+            <li class="st_button1 swiper-button-prev" id="stb_1"></li>
+            <li class="st_button1 swiper-button-next" id="stb_2"></li>
+        </ul>
+    </div>
+    <div id="section_top_button2" class="swiper-pagination"></div>
+    <div id="section_top_button3" class="swiper-scrollbar"></div>
+    <!--섹션 1-->
+    <div class="section_sec" id="section_sec1">
+        <div class="sec_B_text">Just Dropped</div>
+        <div class="sec_S_text">발매 상품</div>
+        <div class="sec_flex_box sec1_1"></div><!--droppend index 0~3-->
+        <div class="insta_head_line"></div>
+        <div class="sec_more_button">
+            <a class="sec_more">더보기</a>
+        </div>
+        <div class="more_page">
+            <div class="sec_flex_box sec1_2"></div><!--droppend index 4~7-->
+            <div class="sec_more_button">
+                <a class="sec_more">더보기</a>
+            </div>
+        </div>
+        <div class="more_page">
+            <div class="sec_flex_box sec1_3"></div><!--droppend index 8~11-->
+        </div>
+        <div class="sec_style_text">Style Picks!</div>
+        <div class="sc_box" id="insta_box1">
+            <div class="sec_insta style_picks"></div> <!--style picks 들어가는 div-->
+        </div>
+    </div>
+    <div class="section_insta_button_box" id="insta_button_box1">
+        <div class="insta_button insta_left_button" id="slideLeft"></div>
+        <div class="insta_button insta_right_button" id="slideRight"></div>
+    </div>
+    <!--***************************-->
+    <!--섹션 2-->
+    <div class="section_mainimg"  id="section_Bimg">
+        <a href="/product/121">
+            <div class="sec_imgbox" id="sec2_imgbox"></div>
+        </a>
+    </div>
+    <div class="section_sec" id="section_sec2">
+        <div class="sec_B_text">Most Popular</div>
+        <div class="sec_S_text">인기 상품</div>
+        <div class="sec_flex_box sec2_1"></div><!--popular index 0~3-->
+        <div class="sec_more_button">
+            <a class="sec_more">더보기</a>
+        </div>
+        <div class="more_page">
+            <div class="sec_flex_box sec2_2"></div><!--popular index 4~7-->
+            <div class="sec_more_button">
+                <a class="sec_more">더보기</a>
+            </div>
+        </div>
+        <div class="more_page">
+            <div class="sec_flex_box sec2_3"></div><!--popular index 8~11-->
+        </div>
+        <div class="insta_head_line"></div>
+        <div class="sec_style_text">#shoeKREAM</div>
+        <div class="sc_box" id="insta_box2">
+            <div class="sec_insta shoeKREAM"></div> <!--shoeKREAM 들어가는 div-->
+        </div>
+    </div>
+    <div class="section_insta_button_box" id="insta_button_box2">
+        <div class="insta_button insta_left_button" id="slideLeft_2"></div>
+        <div class="insta_button insta_right_button" id="slideRight_2"></div>
+    </div>
+    <!--***************************-->
+    <!--섹션 3-->
+    <div class="section_mainimg"  id="section3_Bimg">
+        <a href="/product/121">
+            <div class="sec_imgbox" id="sec3_imgbox"></div>
+        </a>
+    </div>
+    <div class="section_sec" id="section_sec3">
+        <div class="sec_B_text">New Balance 993</div>
+        <div class="sec_S_text">추천 상품</div>
+        <div class="sec_flex_box sec3_1"></div><!--New Balance 993 index 0~3-->
+        <div class="sec_more_button">
+            <a class="sec_more">더보기</a>
+        </div>
+        <div class="more_page">
+            <div class="sec_flex_box sec3_2"></div><!--New Balance 993 index 4~7-->
+            <div class="sec_more_button">
+                <a class="sec_more">더보기</a>
+            </div>
+        </div>
+        <div class="more_page">
+            <div class="sec_flex_box sec3_3"></div><!--New Balance 993 index 8~11-->
+        </div>
+    </div>
+    <!--***************************-->
+    <!--섹션 4-->
+    <div class="section_mainimg"  id="section4_Bimg">
+        <a href="/product/121">
+            <div class="sec_imgbox" id="sec4_imgbox"></div>
+        </a>
+    </div>
+    <div class="section_sec" id="section_sec4">
+        <div class="sec_B_text">Adidas Yeezy</div>
+        <div class="sec_S_text">추천 상품</div>
+        <div class="sec_flex_box sec4_1"></div><!--Adidas Yeezy index 0~3-->
+        <div class="sec_more_button">
+            <a class="sec_more">더보기</a>
+        </div>
+        <div class="more_page">
+            <div class="sec_flex_box sec4_2"></div><!--Adidas Yeezy index 4~7-->
+            <div class="sec_more_button">
+                <a class="sec_more">더보기</a>
+            </div>
+        </div>
+        <div class="more_page">
+            <div class="sec_flex_box sec4_3"></div><!--Adidas Yeezy index 8~11-->
+        </div>
+    </div>
+    <!--***************************-->
+    <!--섹션 5-->
+    <div class="section_mainimg"  id="section5_Bimg">
+        <a href="/product/121">
+            <div class="sec_imgbox" id="sec5_imgbox"></div>
+        </a>
+    </div>
+    <div class="section_sec" id="section_sec5">
+        <div class="sec_B_text">Adidas</div>
+        <div class="sec_S_text">추천 상품</div>
+        <div class="sec_flex_box sec5_1"></div><!--Adidas index 0~3-->
+        <div class="sec_more_button">
+            <a class="sec_more">더보기</a>
+        </div>
+        <div class="more_page">
+            <div class="sec_flex_box sec5_2"></div><!--Adidas index 4~7-->
+            <div class="sec_more_button">
+                <a class="sec_more">더보기</a>
+            </div>
+        </div>
+        <div class="more_page">
+            <div class="sec_flex_box sec5_3"></div><!--Adidas index 8~11-->
+        </div>
+    </div>
+    <!--***************************-->
+    <!--섹션 6-->
+    <div class="section_mainimg"  id="section6_Bimg">
+        <a href="/product/121">
+            <div class="sec_imgbox" id="sec6_imgbox"></div>
+        </a>
+    </div>
+    <div class="section_sec" id="section_sec6">
+        <div class="sec_B_text">Nike Dunk</div>
+        <div class="sec_S_text">추천 상품</div>
+        <div class="sec_flex_box sec6_1"></div><!--Nike Dunk index 0~3-->
+        <div class="sec_more_button">
+            <a class="sec_more">더보기</a>
+        </div>
+        <div class="more_page">
+            <div class="sec_flex_box sec6_2"></div><!--Nike Dunk index 4~7-->
+            <div class="sec_more_button">
+                <a class="sec_more">더보기</a>
+            </div>
+        </div>
+        <div class="more_page">
+            <div class="sec_flex_box sec6_3"></div><!--Nike Dunk index 8~11-->
+        </div>
+    </div>
+    <!--***************************-->
+    <!--섹션 7-->
+    <div class="section_mainimg"  id="section7_Bimg">
+        <a href="/product/121">
+            <div class="sec_imgbox" id="sec7_imgbox"></div>
+        </a>
+    </div>
+    <div class="section_sec" id="section_sec7">
+        <div class="sec_B_text">Balenciaga</div>
+        <div class="sec_S_text">추천 상품</div>
+        <div class="sec_flex_box sec7_1"></div><!--Balenciaga index 0~3-->
+        <div class="sec_more_button">
+            <a class="sec_more">더보기</a>
+        </div>
+        <div class="more_page">
+            <div class="sec_flex_box sec7_2"></div><!--Balenciaga index 4~7-->
+            <div class="sec_more_button">
+                <a class="sec_more">더보기</a>
+            </div>
+        </div>
+        <div class="more_page">
+            <div class="sec_flex_box sec7_3"></div><!--Balenciaga index 8~11-->
+        </div>
+    </div>
+    <!--********************-->
+
+    <!--섹션 7-1-->
+    <div class="section_sec" id="section_sec7_1">
+        <div class="sec_B_text">Stone Island</div>
+        <div class="sec_S_text">추천 상품</div>
+        <div class="sec_flex_box sec7_1_1"></div><!--Stone Island index 0~3-->
+        <div class="sec_more_button">
+            <a class="sec_more">더보기</a>
+        </div>
+        <div class="more_page">
+            <div class="sec_flex_box sec7_1_2"></div><!--Stone Island index 4~7-->
+            <div class="sec_more_button">
+                <a class="sec_more">더보기</a>
+            </div>
+        </div>
+        <div class="more_page">
+            <div class="sec_flex_box sec7_1_3"></div><!--Stone Island index 8~11-->
+        </div>
+    </div>
+    <!--***************************-->
+    <!--섹션 8-->
+    <div class="section_mainimg"  id="section8_Bimg">
+        <a href="/product/121">
+            <div class="sec_imgbox" id="sec8_imgbox"></div>
+        </a>
+    </div>
+    <div class="section_sec" id="section_sec8">
+        <div class="sec_B_text">Luxury</div>
+        <div class="sec_S_text">추천 상품</div>
+        <div class="sec_flex_box sec8_1"></div><!--Luxury index 0~3-->
+        <div class="sec_more_button">
+            <a class="sec_more">더보기</a>
+        </div>
+        <div class="more_page">
+            <div class="sec_flex_box sec8_2"></div><!--Luxury index 4~7-->
+            <div class="sec_more_button">
+                <a class="sec_more">더보기</a>
+            </div>
+        </div>
+        <div class="more_page">
+            <div class="sec_flex_box sec8_3"></div><!--Luxury index 8~11-->
+        </div>
+    </div>
+    <!--********************-->
+    <!--섹션 9-->
+    <div class="section_mainimg"  id="section9_Bimg">
+        <a href="/product/121">
+            <div class="sec_imgbox" id="sec9_imgbox"></div>
+        </a>
+    </div>
+    <div class="section_sec" id="section_sec9">
+        <div class="sec_B_text">New Lowest Asks</div>
+        <div class="sec_S_text">새로운 즉시 구매가</div>
+        <div class="sec_flex_box sec9_1"></div><!--New Lowest Asks index 0~3-->
+        <div class="sec_more_button">
+            <a class="sec_more">더보기</a>
+        </div>
+        <div class="more_page">
+            <div class="sec_flex_box sec9_2"></div><!--New Lowest Asks index 4~7-->
+            <div class="sec_more_button">
+                <a class="sec_more">더보기</a>
+            </div>
+        </div>
+        <div class="more_page">
+            <div class="sec_flex_box sec9_3"></div><!--New Lowest Asks index 8~11-->
+        </div>
+    </div>
+    <!--**********************-->
+
+
+    <!--섹션 9-1-->
+    <div class="section_sec" id="section_sec9_1">
+        <div class="sec_B_text">New Highest Bids</div>
+        <div class="sec_S_text">새로운 즉시 판매가</div>
+        <div class="sec_flex_box sec9_1_1"></div><!--New Highest Bids index 0~3-->
+        <div class="sec_more_button">
+            <a class="sec_more">더보기</a>
+        </div>
+        <div class="more_page">
+            <div class="sec_flex_box sec9_1_2"></div><!--New Highest Bids index 4~7-->
+            <div class="sec_more_button">
+                <a class="sec_more">더보기</a>
+            </div>
+        </div>
+        <div class="more_page">
+            <div class="sec_flex_box sec9_1_3"></div><!--New Highest Bids index 8~11-->
+        </div>
+    </div>
+    <!--***************************-->
+    <!--섹션 10-->
+    <div class="section_mainimg"  id="section10_Bimg">
+        <a href="/product/121">
+            <div class="sec_imgbox" id="sec10_imgbox"></div>
+        </a>
+    </div>
+    <div class="section_sec" id="section_sec10">
+        <div class="sec_B_text">Upcoming Release</div>
+        <div class="sec_S_text">발매 예정</div>
+        <div class="sec_flex_box sec10_1"></div><!--Upcoming Release index 0~3-->
+        <div class="sec_more_button">
+            <a class="sec_more">더보기</a>
+        </div>
+        <div class="more_page">
+            <div class="sec_flex_box sec10_2"></div><!--Upcoming Release index 4~7-->
+            <div class="sec_more_button">
+                <a class="sec_more">더보기</a>
+            </div>
+        </div>
+        <div class="more_page">
+            <div class="sec_flex_box sec10_3"></div><!--Upcoming Release index 8~11-->
+        </div>
+    </div>
+    <!--**********************-->
+
+    <!--섹션 11-->
+    <div class="section_mainimg"  id="section11_Bimg">
+        <a href="/product/121">
+            <div class="sec_imgbox" id="sec11_imgbox"></div>
+        </a>
+    </div>
+    <div class="section_sec" id="section_sec11">
+        <div class="sec_B_text">Jordan1</div>
+        <div class="sec_S_text">추천 상품</div>
+        <div class="sec_flex_box sec11_1"></div><!--Jordan1 index 0~3-->
+        <div class="sec_more_button">
+            <a class="sec_more">더보기</a>
+        </div>
+        <div class="more_page">
+            <div class="sec_flex_box sec11_2"></div><!--Jordan1 index 4~7-->
+            <div class="sec_more_button">
+                <a class="sec_more">더보기</a>
+            </div>
+        </div>
+        <div class="more_page">
+            <div class="sec_flex_box sec11_3"></div><!--Jordan1 index 8~11-->
+        </div>
+    </div>
+    <!--**********************-->
+    <!--섹션 12-->
+    <div class="section_mainimg"  id="section12_Bimg">
+        <a href="/product/121">
+            <div class="sec_imgbox" id="sec12_imgbox"></div>
+        </a>
+    </div>
+    <div class="section_sec" id="section_sec12">
+        <div class="sec_B_text">Jordan3</div>
+        <div class="sec_S_text">추천 상품</div>
+        <div class="sec_flex_box sec12_1"></div><!--Jordan3 index 0~3-->
+        <div class="sec_more_button">
+            <a class="sec_more">더보기</a>
+        </div>
+        <div class="more_page">
+            <div class="sec_flex_box sec12_2"></div><!--Jordan3 index 4~7-->
+            <div class="sec_more_button">
+                <a class="sec_more">더보기</a>
+            </div>
+        </div>
+        <div class="more_page">
+            <div class="sec_flex_box sec12_3"></div><!--Jordan3 index 8~11-->
+        </div>
+    </div>
+    <!--**********************-->
+
+    <!--섹션 13-->
+    <div class="section_mainimg"  id="section13_Bimg">
+        <a href="/product/121">
+            <div class="sec_imgbox" id="sec13_imgbox"></div>
+        </a>
+    </div>
+    <div class="sec_bottom"></div>
+</section>
+<footer>
+    <div class="footer_flex_box">
+        <div id="footer_left_box">
+            <a href="/about">
+                <div class="footer_box_text">
+                    <div class="fb_text_1">SERVICE GUIDE</div>
+                    <div class="fb_text_2">
+                        <P>KREAM은 처음이지?<br>서비스 소개를 확인해보세요.</p>
+                    </div>
+                    <div class="fb_text_3">서비스 안내</div>
+                </div>
+            </a>
+        </div>
+        <div id="footer_right_box"class="app_QR_click" onclick="pop()">
+            <a class="frb">
+                <div class="footer_box_text">
+                    <div class="fb_text_1">DOWNLOAD THE APP</div>
+                    <div class="fb_text_2">
+                        <P>KREAM 앱을 설치하여<br>한정판 스니커즈를 FLEX 하세요!</p>
+                    </div>
+                    <div class="fb_text_3">앱 설치하기</div>
+                </div>
+            </a>
+        </div>
+        <a href="#fixed"><div id="top_button_box"><button id = "top_button"></button></div></a>
+    </div>
+    <div class="footer_flex_box2">
+        <div id="footer_left_box2">
+            <div class="footer_box_text2" id="fbtext2_left">
+                <div class="fbb2_Btext">이용안내</div>
+                <ul>
+                    <li><a onclick="pop_inspecion()">검수기준</a></li>
+                    <li><a onclick="pop_policy()">이용정책</a></li>
+                    <li><a onclick="pop_penalty()">패널티 정책</a></li>
+                    <li><a onclick="pop_commu()">커뮤니티 가이드라인</a></li>
+                </ul>
+            </div>
+            <div class="footer_box_text2">
+                <div class="fbb2_Btext">고객지원</div>
+                <ul>
+                    <li><a href="/notice">공지사항</a></li>
+                    <li><a href="/about">서비스 소개</a></li>
+                    <li><a href="https://kream.co.kr/showroom">쇼룸 안내</a></li>
+                    <li><a href="https://kream.co.kr/privacy">판매자 방문접수</a></li>
+                </ul>
+            </div>
+        </div>
+        <div id="footer_right_box2">
+            <div class="fbb2_Btext">고객센터 1588-7813</div>
+            <ul>
+                <li>운영시간평일 11:00 - 18:00 (토 ∙ 일, 공휴일 휴무)</li>
+                <li>점심시간평일 13:00 - 14:00</li>
+            </ul>
+            <div id="footer_ask_text">1:1 문의하기는 앱에서만 가능합니다.</div>
+            <div id="footer_ask_box"><a href="/faq">자주 묻는 질문</a></div>
+        </div>
+    </div>
+    <div class="footer_flex_box3">
+        <div id="footer_box3">
+            <div id="footer_box3_1">
+                <ul id="footer_box3_1_text">
+                    <li><a href="https://www.kreamcorp.com">회사소개</a></li>
+                    <li><a href="https://recruit.kreamcorp.com/kream/recruitMain">인재채용</a></li>
+                    <li class="no_moblie"><a href="https://www.kreamcorp.com/view/contact.html">제휴제안</a></li>
+                    <li><a href="https://kream.co.kr/agreement">이용약관</a></li>
+                    <li id="policy"><a href="https://kream.co.kr/privacy">개인정보처리방침</a></li>
+                </ul>
+                <ul id="sns_and_button">
+                    <ul id="sns_img">
+                        <li id="insta_img"><a href="https://www.instagram.com/kream.co.kr/"></a></li>
+                        <li id="facebook_img"><a href="https://www.facebook.com/kreamcokr"></a></li>
+                        <li id="chat_img"><a href="https://pf.kakao.com/_adpxlxb"></a></li>
+                    </ul>
+                    <li id="footer_button" onclick="business_info()">사업자정보 <div class="up_down_img"></div></li>
+                </ul>
+            </div>
+            <div id="footer_box3_2" class="business_info">
+                <ul>
+                    <li>크림 주식회사 · 대표 김창욱</li>
+                    <li>사업자등록번호: 570-88-01618 <a href="#">사업자정보확인</a></li>
+                    <li>통신판매업: 제 2021-성남분당C-0093호</li>
+                </ul>
+                <ul>
+                    <li>사업장소재지: 경기도 성남시 분당구 분당내곡로 117, 8층</li>
+                    <li>개인정보관리책임자: 김미진</li>
+                    <li>호스팅 서비스: 네이버 클라우드 (주)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="footer_flex_box4">
+        <p id="footer_left_box4">크림(주)는 통신판매 중개자로서 통신판매의 당사자가 아니므로 개별 판매자가 등록한 상품정보에 대해서 책임을 지지 않습니다. 단, 거래과정에서 검수하고 보증하는 내용에 대한 책임은 당사에 있습니다.</p>
+        <p id="footer_right_box4">© 2021 KREAM.Corp.</p>
+    </div>
+</footer>
+</body>
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+<script src="/lib/js/pop.js"></script>
+</html>

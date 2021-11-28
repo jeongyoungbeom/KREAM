@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>서비스 소개</title>
+    <link data-n-head="ssr" rel="icon" type="image/x-icon" href="https://kream.co.kr/favicon.ico">
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+</head>
+
+<link rel="stylesheet" href="/lib/css/about.css">
+<script defer src="/lib/js/about.js"></script>
+<style>
+    html,
+    body {
+        width: 100%;
+        height: 100%;
+        margin: 0px;
+        padding: 0px;
+        overflow: hidden;
+        font-family: sans-serif;
+    }
+
+    #fullpage {
+        position: relative;
+        top: 0px;
+        z-index: 9;
+    }
+
+    html,
+    body {
+        width: 100%;
+        height: 100%;
+        margin: 0px;
+        padding: 0px;
+        overflow: hidden;
+        font-family: sans-serif;
+    }
+
+    ul,
+    li {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .quick {
+        position: fixed;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 100000;
+        margin-left: 2rem;
+    }
+
+    .quick li {
+        width: 10px;
+        height: 10px;
+        margin-bottom: 10px;
+        border-radius: 15px;
+        background-color: 1px solid lightgray;
+        border: 0.1px solid black;
+        cursor: pointer;
+    }
+
+    .quick .on {
+        background: lightskyblue;
+    }
+</style>
+<body>
+<header>
+    <div id="header_top">
+        <a href="/"><img src="/lib/img/sprite.ebdfa88.png" alt="메인" class="main1"></a>
+        <div class="top_logo">
+            <a href="https://www.facebook.com/kreamcokr/"><img src="/lib/img/facebook1.png" alt="페이스북" class="facebook"></a>
+            <a href="https://www.instagram.com/kream.co.kr/"><img src="/lib/img/instar.png" alt="인스타" class="instagram"></a>
+        </div>
+    </div>
+</header>
+<div id="fixed"></div>
+<div id="fullpage">
+    <div class='quick'>
+        <ul>
+            <li class="on"></li>
+            <li class=""></li>
+            <li class=""></li>
+            <li class=""></li>
+            <li class=""></li>
+            <li class=""></li>
+            <li class=""></li>
+            <li class=""></li>
+            <li class=""></li>
+            <li class=""></li>
+            <li class=""></li>
+            <li class=""></li>
+            <li class=""></li>
+            <li class=""></li>
+            <li class=""></li>
+            <li class=""></li>
+            <li class=""></li>
+        </ul>
+    </div>
+    <div class="app_download">
+        <button class="download_btn">앱 다운로드</button>
+    </div>
+    <!-------------------------------- 첫번째 페이지 ------------------------->
+    <div class="bg1" id="hideme">
+        <div id="ani">
+            <h2 class="title">
+                KICKS <br>
+                RULE <br>
+                EVERYTHING <br>
+                AROUND <br>
+                ME <br>
+            </h2>
+            <div class="sub_title">
+                <span>한정판 거래의 FLEX</span>
+                <p class="sub_info">한정판을 거래하는 가장 확실한 방법</p>
+            </div>
+            <div class="btn_area">
+                <a href="https://apps.apple.com/app/id1490580239" class="btn app_store">
+                    <img src="/lib/img/apple.png" alt="애플스토어" class="apple">
+                    App Store</a>
+                <a href="https://play.google.com/store/apps/details?id=com.fstudio.kream" class="btn google_play">
+                    <img src="/lib/img/store.png" alt="구글 스토어" class="playstore">Google Play</a>
+            </div>
+        </div>
+        <div id="ani2">
+            <div class="bg_item first "></div>
+            <div class="bg_item second"></div>
+        </div>
+    </div>
+    <!------------------------------ 두번째 페이지 --------------------------->
+    <div class="bg2" id="hideme">
+        <div class="content">
+            <div id="ani">
+                <h2 class="inner">
+                    한정판 거래는 <br>
+                    왜 KREAM?
+                </h2>
+            </div>
+            <h2 id="mo_inner">
+                한정판 거래는 <br>
+                왜 KREAM?
+            </h2>
+        </div>
+    </div>
+    <!--------------------------- 세번째 페이지 ---------------------------->
+    <div class="bg3">
+        <div id="ani">
+            <span class="num">01</span>
+            <span class="pc_title">
+                    개인 정보 공유 <br>
+                    이제 그만! <br>
+                    익명으로 안전 거래<br>
+                </span>
+            <span class="mo_title">
+                    이제는 <br>
+                    익명거래로 <br>
+                    안전거래 <br>
+                </span>
+            <span class="info_text">
+                    거래를 위해 서로의 개인 정보를 공유할 필요가 없고, <br>
+                    메시지를 보내 가격을 흥정할 필요도 없습니다. <br>
+                    KREAM이 안전하게 거래를 도와드립니다.
+                </span>
+        </div>
+        <div class="bg_item"></div>
+    </div>
+    <!-------------------------- 네번째 페이지 ------------------------------->
+    <div class="bg4" >
+        <div id="ani">
+            <span class="num">02</span>
+            <span class="pc_title">
+                    주식처럼 <br>
+                    시세 예측하여 <br>
+                    똑똑한 거래<br>
+                </span>
+            <span class="mo_title1">
+                    주식처럼 <br>
+                    시세 예측하여 <br>
+                    똑똑한 거래<br>
+                </span>
+            <span class="info_text">
+                    모든 거래 체결 내역과 입찰가를 공개하여 <br>
+                    주식처럼 시세를 예측할 수 있어 <br>
+                    똑똑한 구매와 판매가 가능합니다.
+                </span>
+        </div>
+        <div class="bg_item1"></div>
+    </div>
+    <!------------------------------ 5번째 페이지 -------------------------->
+    <div class="bg5" >
+        <span class="num">03</span>
+        <span class="pc_title">
+                철저한 검수로 <br>
+                가품 걱정없이 <br>
+                편안한 거래!<br>
+            </span>
+        <span class="mo_title1">
+                철저한 검수로 <br>
+                가품 걱정없이 <br>
+                편안한 거래!<br>
+            </span>
+        <span class="info_text">
+                거래가 체결된 모든 상품은 KREAM 검수센터에서 <br>
+                전문 검수팀이 다양한 방법으로 철저한 검수를 진행합니다. <br>
+                검수에 합격한 상품만 구매자에게 배송합니다.<br>
+            </span>
+        <span class="ex_text">
+                *정품이 아닌 경우 금액의 3배 보상
+            </span>
+        <div class="bg_item2"></div>
+    </div>
+    <!-------------------------- 6번째 페이지 ----------------------------->
+    <div class="bg6 mo_bg6">
+        <div class="content">
+            <h2 class="inner">
+                그럼 <br>
+                구매와 판매는 <br>
+                어떻게 하나요?
+            </h2>
+            <h2 class="mo_inner">
+                판매와 구매는 <br>
+                어떻게 하나요?
+            </h2>
+        </div>
+        <ol class="method_list">
+            <li class="step01">
+                <div class="buyer">
+                    <div class="img_box">
+                        <img src="/lib/img/bg_buyer.5698037.png" alt="상품">
+                    </div>
+                    <p>원하는 상품 검색</p>
+                </div>
+                <div class="seller">
+                    <div class="img_box">
+                        <img src="/lib/img/bg_seller_mo.645f764.png" alt="상품">
+                    </div>
+                    <p>판매할 상품 등록</p>
+                </div>
+            </li>
+            <li class="step02">
+                <div class="method_info">
+                    <div class="img_box">
+                        <img src="/lib/img/bg_info06.88dd177.png" alt="악수">
+                    </div>
+                    <h3>
+                        <span>KREAM</span>
+                        <br>
+                        거래체결
+                    </h3>
+                    <p>
+                        구매자와 판매자가 원하는 가격이 <br>
+                        일치하면 거래 체결
+                    </p>
+                </div>
+            </li>
+        </ol>
+        <div class="m_contents">
+            <div class="method_info">
+                <ol class="method_list">
+                    <li class="step03">
+                        <div class="buyer">
+                            <div class="img_box">
+                                <img src="/lib/img/bg_buyer02_mo.0e65aed.png" alt="카드" id="card">
+                            </div>
+                            <p>
+                                등록된 카드로 <br>
+                                자동 결제
+                            </p>
+                        </div>
+                        <div class="seller">
+                            <div class="img_box">
+                                <img src="/lib/img/bg_seller02_mo.02ab50b.png" alt="카드" id="card">
+                            </div>
+                            <p>
+                                검수센터로 상품 <br>
+                                48시간 내외 발송
+                            </p>
+                        </div>
+                    </li>
+                    <li class="step04">
+                        <div class="method_info">
+                            <div class="img_box">
+                                <img src="/lib/img/bg_info02_mo.9af4423.png" alt="img">
+                            </div>
+                            <h3>
+                                <span>KREAM</span>
+                                검수센터
+                            </h3>
+                            <p>
+                                전문가들이 다양한 기준으로 <br>
+                                검수하여 가품 걱정 NO! <br>
+                                *정품이 아닌 경우 금액의 3배 보상
+                            </p>
+                        </div>
+                    </li>
+                    <li class="step05">
+                        <div class="buyer">
+                            <div class="img_box">
+                                <img src="/lib/img/bg_buyer03_mo.f721d49.png" alt="shoes">
+                            </div>
+                            <p>
+                                구매자에게 <br>
+                                상품 배송 완료!
+                            </p>
+                        </div>
+                        <div class="seller">
+                            <div class="img_box">
+                                <img src="/lib/img/bg_seller03_mo.8cdf561.png" alt="shoes">
+                            </div>
+                            <p>
+                                판매자에게 <br>
+                                정산 완료!
+                            </p>
+                        </div>
+                    </li>
+
+                </ol>
+
+            </div>
+        </div>
+    </div>
+
+    <!------------------------- 7번째 페이지 ------------------------------->
+    <div class="bg7">
+        <div class="item_left">
+            <h3 class="sub_title">구매자</h3>
+            <div class="img_buyer">
+                <img src="/lib/img/bg_info04.ea5bb23.png" alt="구매자" class="image">
+            </div>
+        </div>
+        <div class="item_right">
+            <h3 class="sub_title">판매자</h3>
+            <div class="img_seller">
+                <img src="/lib/img/bg_info04.ea5bb23.png" alt="판매자" class="image">
+            </div>
+        </div>
+    </div>
+    <!--------------------------- 8번째 페이지 ----------------------------->
+    <div class="bg8">
+        <div class="item_left">
+            <p class="transcation_num">01</p>
+            <div class="img_area">
+                <img src="/lib/img/bg_buyer.5698037.png" alt="왼쪽 신발" class="image">
+            </div>
+            <h3 class="sub_title">
+                구매자는 <br>
+                구매할 상품 선택 <br>
+            </h3>
+            <span class="info_text1">
+                    원하는 상품을 검색하여 <br>
+                    구매 입찰 / 즉시 구매 선택 <br>
+                </span>
+        </div>
+        <div class="item_right">
+            <p class="transcation_num">01</p>
+            <div class="img_area">
+                <img src="/lib/img/bg_seller.cda2b27.png" alt="오른쪽 신발" class="image">
+            </div>
+            <h3 class="sub_title">
+                판매자는 <br>
+                판매할 상품 등록 <br>
+            </h3>
+            <span class="info_text1">
+                    판매할 상품의 사이즈를 선택 후 <br>
+                    판매 입찰 / 즉시 판매로 상품 등록 <br>
+                </span>
+        </div>
+    </div>
+
+    <!-- 9번째 페이지 -->
+    <div class="bg9">
+        <p class="transcation_num1">02</p>
+        <div class="transaction_num">
+            <img src="/lib/img/bg_info06.88dd177.png" alt="악수" class="image1">
+        </div>
+        <h3 class="sub_title1">구매와 판매 거래 체결</h3>
+        <span class="info_text2">
+                구매자와 판매자가 원하는 가격이 <br>
+                일치하면 거래 체결 <br>
+            </span>
+    </div>
+
+    <!-- 10번째 페이지 -->
+    <div class="bg10">
+        <div class="item_left">
+            <p class="transcation_num">01</p>
+            <div class="img_area">
+                <img src="/lib/img/bg_buyer02.1c705fa.png" alt="왼쪽 신발" class="image">
+            </div>
+            <h3 class="sub_title">
+                등록된 카드로 <br>
+                구매할 상품 자동 결제 <br>
+            </h3>
+            <span class="info_text1">
+                    구매할 상품 거래가 체결되면 <br>
+                    등록된 카드로 자동 결제 <br>
+                </span>
+        </div>
+        <div class="item_right">
+            <p class="transcation_num">01</p>
+            <div class="img_area">
+                <img src="/lib/img/bg_seller02.9456593.png" alt="오른쪽 신발" class="image">
+            </div>
+            <h3 class="sub_title">
+                검수센터로 <br>
+                판매할 상품 발송 <br>
+            </h3>
+            <span class="info_text1">
+                    판매할 상품을 거래 체결 후 <br>
+                    48시간 이내 검수센터로 상품 발송 <br>
+                </span>
+        </div>
+    </div>
+
+    <!-- 11번째 페이지 -->
+    <div class="bg11">
+        <p class="transcation_num1">04</p>
+        <div class="transaction_num">
+            <img src="/lib/img/bg_info02_mo.9af4423.png" alt="악수" class="image1">
+        </div>
+        <h3 class="sub_title1">전문 검수팀에서 검수 진행</h3>
+        <span class="info_text3">
+                판매자가 보낸 상품은 전문 검수팀이 <br>
+                다양한 방법으로 철저하게 검수하여 가품 걱정 NO! <br>
+                *정품이 아닌 경우 금액의 3배 보상 <br>
+            </span>
+    </div>
+
+    <!-- 12번째 페이지 -->
+    <div class="bg12">
+        <div class="item_left">
+            <p class="transcation_num">05</p>
+            <div class="img_area">
+                <img src="/lib/img/bg_buyer03.1381b9f.png" alt="왼쪽 신발" class="image">
+            </div>
+            <h3 class="sub_title">
+                구매자에게 <br>
+                상품 배송 완료 <br>
+            </h3>
+            <span class="info_text1">
+                    구매자에게 안전하게 <br>
+                    상품 배송 완료 <br>
+                </span>
+        </div>
+        <div class="item_right">
+            <p class="transcation_num">05</p>
+            <div class="img_area">
+                <img src="/lib/img/bg_seller03.e3d033c.png" alt="오른쪽 신발" class="image">
+            </div>
+            <h3 class="sub_title">
+                판매자에게 <br>
+                정산 완료! <br>
+            </h3>
+            <span class="info_text1">
+                    판매자에게 안전하게 <br>
+                    판매 금액 정산 완료 <br>
+                </span>
+        </div>
+    </div>
+
+    <!-- 13페이지 -->
+    <div class="bg13">
+        <div class="video_info md" tabindex="-1" style="width: 100%; display: inline-block;">
+            <div class="content">
+                <h3 class="title">
+                    HOW TO BUY & SELL
+                </h3>
+                <h3 id="mo_title">
+                    HOW TO <br>
+                    BUY & SELL
+                </h3>
+                <div class="video_box">
+                    <iframe width="100%" height="100%" src="https://www.youtube.com/embed/ZSPCMrQRltk"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreenallowfullscreen></iframe>
+                </div>
+                <span class="info_text">
+                        KREAM 서비스 이용방법을 영상으로 쉽게 확인하세요!
+                    </span>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- 14페이지 -->
+    <!-- 다시 -->
+    <div class="bg14">
+        <div class="text_item14">
+            <h2 class="title">
+                구매 방법 <br>
+                구매 입찰 / 즉시 구매 <br>
+            </h2>
+            <h2 id="mo_title">
+                구매 방법
+            </h2>
+            <!-- <div class="table_item14">
+            <ul role="tablist" class="ulist_box">
+                <li role="tab" class="list_01 selected">
+                    <button>구매 입찰</button>
+                </li>
+                <li role="tab" class="list_02">
+                    <button>즉시 구매</button>
+                </li>
+            </ul>
+        </div> -->
+            <div class="tab_area">
+                <ul class="tab_list">
+                    <li class="item_on1">
+                        <a href="#" class="item_link">구매 입찰</a>
+                    </li>
+                    <li class="item_on">
+                        <a href="#" class="item_link1">즉시 구매</a>
+                    </li>
+                </ul>
+            </div>
+            <p class="info_text14">
+                판매자가 없는 경우, <br>
+                구매 희망가를 입력하여 구매 입찰 할 수 있습니다
+            </p>
+            <div class="bg_item4">
+                <div class="video_box">
+                    <img src="/lib/img/kream_buy.149a8df.gif" alt="구매" autoplay="autoplay" muted="muted"
+                         loop="loop" width="100%" webkit-playsinline="true">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 15page -->
+    <div class="bg15">
+        <div class="text_item14">
+            <h2 class="title">
+                판매 방법 <br>
+                판매 입찰 / 즉시 판매 <br>
+            </h2>
+            <h2 id="mo_title">
+                판매 방법
+            </h2>
+            <div class="tab_area">
+                <ul class="tab_list">
+                    <li class="item_on2">
+                        <a href="#" class="item_link">판매 입찰</a>
+                    </li>
+                    <li class="item_on">
+                        <a href="#" class="item_link1">즉시 판매</a>
+                    </li>
+                </ul>
+            </div>
+            <p class="info_text14">
+                원하는 사이즈에 구매 입찰이 없는 경우, <br>
+                판매 희망가를 입력하여 판매 입찰할 수 있습니다.
+            </p>
+            <div class="bg_item4">
+                <div class="video_box">
+                    <img src="/lib/img/kream_sell.621ef60.gif" alt="구매" autoplay="autoplay" muted="muted"
+                         loop="loop" width="100%" webkit-playsinline="true">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 16page -->
+    <div class="bg16">
+        <div class="text_item">
+            <h2 class="title16">
+                래플과 선착 <br>
+                발매 정보를 한눈에~
+            </h2>
+            <h2 id="mo_title">
+                발매 정보
+            </h2>
+            <p class="info_text16">
+                국내외 래플과 선착 발매 정보를 한눈에 확인할 수 있습니다. <br>
+                알림 설정과 참여 확인 기능으로 나만의 발매 정보를 완성해보세요.
+            </p>
+            <ul class="brand_list">
+                <li class="sns"><span class="blind">SNS</span></li>
+                <li class="snkrs"><span class="blind">SNKRS</span></li>
+                <li class="kasina"><span class="blind">KASINA</span></li>
+                <li class="end"><span class="blind">END.</span></li>
+            </ul>
+            <div class="bg_item16">
+                <img src="/lib/img/bg_phone07.b66b5be.png" alt="image">
+                <img src="/lib/img/bg_phone07_mo.a926b53.png" alt="image" class="img_mo">
+            </div>
+        </div>
+    </div>
+    <div id="bot">© 2021 KREAM Corp</div>
+
+    <!-- 17page -->
+    <div class="bg17">
+        <div class="app_store">
+            <h3 class="app_title">KREAM 앱으로 만나요!</h3>
+            <div class="img_qr">
+                <img src="/lib/img/img_qr.f79040b.jpg" alt="qr" width="142" height="142">
+            </div>
+            <p class="sub_info17">휴대폰번호를 입력해주시면, 앱 설치 주소를 메시지로 보내드립니다.</p>
+            <div class="form_element">
+                <div class="input_area">
+                        <span class="input_box_phone">
+                            <label for="input01" class="blind">number</label>
+                            <input type="text" id="input01" placeholder="휴대폰 번호 입력해주세요." value class="user_phone">
+                            <button class="btn_submit">보내기</button>
+                        </span>
+                </div>
+                <div class="form_checkbox">
+                    <div class="checkbox_box">
+                        <input type="checkbox" id="input03" class="abd">
+                    </div>
+                    <label for="input03" class="checkbox_text">
+                        서비스 제공을 위한 필요한 개인정보이므로, 동의를 해주서야 서비스를 이용하실 수 있습니다.
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+
+<script>
+    window.onload = function () {
+        $(document).ready(function () {
+            fullset();
+            quickClick();
+        });
+        function fullset() {
+            var pageindex = $("#bg").size(); //(#bg) 몇개인지 확인하기
+            for (var i = 1; i <= pageindex; i++) {
+                $("#fullpage > .quick > ul").append("<li></li>");
+            }
+            $("#fullpage .quick ul :first-child").addClass("on"); //일단 화면이 로드 되었을때는 퀵버튼에 1번째에 불이 들어오게
+
+            //마우스 휠 이벤트
+            $(window).bind("mousewheel", function (event) {
+                var page = $(".quick ul li.on");
+                // alert(page.index()+1);  // 현재 on 되어있는 페이지 번호
+                if ($("body").find("#fullpage:animated").length >= 1)
+                    return false;
+                //마우스 휠을 위로
+                if (event.originalEvent.wheelDelta >= 0) {
+                    var before = page.index();
+                    if (page.index() >= 0) page.prev().addClass("on").siblings(".on").removeClass("on");//퀵버튼옮기기
+                    var pagelength = 0;
+                    for (var i = 1; i < (before); i++) {
+                        pagelength += $(".bg" + i).height();
+                    }
+                    if (page.index() > 0) { //첫번째 페이지가 아닐때 (index는 0부터 시작임)
+                        page = page.index() - 1;
+                        $("#fullpage").animate({ "top": -pagelength + "px" }, 600, "swing");
+                        // $("fullpage").animate({"top" : -pagelength + "rem"},100, "swing");
+                    } else {
+                    }
+                } else { // 마우스 휠을 아래로
+                    var nextPage = parseInt(page.index() + 1); //다음페이지번호
+                    var lastPageNum = parseInt($(".quick ul li").size()); //마지막 페이지번호
+                    //현재페이지번호 <= (마지막 페이지 번호 - 1)
+                    //이럴때 퀵버튼옮기기
+                    if (page.index() <= $(".quick ul li").size() - 1) {
+                        page.next().addClass("on").siblings(".on").removeClass("on");
+                    }
+
+                    if (nextPage < lastPageNum) { //마지막 페이지가 아닐때만 animate !
+                        var pagelength = 0;
+                        for (var i = 1; i < (nextPage+ 1); i++) {
+                            //총 페이지 길이 구하기
+                            //ex) 현재 1번페이지에서 2번페이지로 내려갈때는 1번페이지 길이 + 2번페이지 길이가 더해짐
+                            pagelength += $(".bg" + i).height();
+                        }
+                        $("#fullpage").animate({ "top": -pagelength + "px" }, 700, "swing");
+                        // $("fullpage").animate({"top" : -pagelength + "rem"},100 ,"swing");
+                    }
+                    else { // 현재 마지막 페이지 일때는
+                    };
+
+                }
+            });
+            $(window).resize(function () {
+                //페이지가 100%이기때문에 브라우저가 resize 될때마다 스크롤 위치가 그대로 남아있는것을 방지하기 위해
+                var resizeindex = $(".quick ul li.on").index() + 1;
+
+                var pagelength = 0;
+                for (var i = 1; i < resizeindex; i++) {
+                    //총 페이지 길이 구하기
+                    //ex) 현재 1번페이지에서 2번페이지로 내려갈때는 1번페이지 길이 + 2번페이지 길이가 더해짐
+                    pagelength += $(".bg" + i).height();
+                }
+
+                $("#fullpage").animate({ "top": -pagelength + "px" }, 0);
+            });
+        }
+        // 사이드 퀵버튼 클릭 이동
+        function quickClick() {
+            $(".quick li").click(function () {
+                var gnbindex = $(this).index() + 1;
+                var length = 0;
+                for (var i = 1; i < (gnbindex); i++) {
+                    length += $(".full" + i).height();
+                }
+                if ($("body").find("#fullpage:animated").length >= 1) return false;
+                $(this).addClass("on").siblings("li").removeClass("on");
+
+                $("#fullpage").animate({ "top": -length + "px" }, 900, "swing");
+                return false;
+            });
+        }
+
+        //휴대폰번호 유효성 검사
+        function validateTell(strTell){
+            const reg_tell = /^01(?:0|1|[6-9])(?:\d{3}|\d{4})\d{4}$/;
+            if(!reg_tell.test(''+strTell)){
+                return false;
+            }
+            return true;
+        }
+
+
+        // 문자발송 버튼
+        document.querySelector('.btn_submit').addEventListener('click', ()=>{
+            let strTell = document.querySelector('#input01').value;
+            if($('#input03').prop('checked')){
+                if(!validateTell(strTell)){
+                    alert('휴대폰 번호를 정확히 입력해주세요.');
+                } else {
+                    axios.get('/api/send_sms/'+strTell, {}).then();
+                    alert('문자가 전송되었습니다.')
+                }
+            }else{
+                alert('개인정보 동의 체크박스를 선택해주세요.');
+            }
+        });
+    }
+</script>
+</body>
+</html>

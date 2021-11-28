@@ -1,0 +1,269 @@
+<html class="no-js" lang="ko"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org/">
+
+<!-- head.html -->
+<div th:replace="fragment/head :: head"></div>
+<!-- head.html 끝-->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+    $(function(){
+        let link = document.location.href.split("?page=");
+        let num = link[1];
+        let  axios2 = '/api/purchase_list?page='+num;
+
+        let productid = null;
+        let purchaseid = null;
+        let status_3 = null;
+        let status_2 = null;
+        let purchase_start_date = null;
+        let purchase_end_date = null;
+
+        axios.request({
+            method:"POST",
+            url:axios2,
+            headers:{'Content-type':'application/json'},
+            data:{
+                "data":{
+                    "productId": productid,
+                    "id": purchaseid,
+                    "status3":status_3,
+                    "status2":status_2,
+                    "regdate1": purchase_start_date,
+                    "regdate2": purchase_end_date
+                }
+            }
+        }).then(function(response){
+            console.log(response);
+            let startPage = response.data.pagination.startPage;
+            let endPage = response.data.pagination.endPage;
+            let totalPages = response.data.pagination.totalPages;
+            for (let j=startPage-1; j<=endPage-1; j++){
+                console.log(j);
+                let pagNum = j+1;
+                let paying = "<li><a class='paA' href='/pages/order/search?page="+j+"'>"+pagNum+"</a></li>";
+                $('#paying').append(paying);
+                if(j==endPage-1&&j+1!=totalPages){
+                    let next = "<li><a class='paA' href='/pages/order/search?page="+pagNum+"'>＞</a></li>"
+                    $('#paying').append(next);
+                    let EndNum = totalPages-1;
+                    let nextEnd = "<li><a class='paA' href='/pages/order/search?page="+EndNum+"'>≫</a></li>"
+                    $('#paying').append(nextEnd);
+                }
+                if(j>4 && startPage%5===1){
+                    if(j+1==startPage){
+                        let prevNum = j-1;
+                        let prevStart = "<li><a class='paA' href='/pages/order/search?page="+0+"'>≪</a></li>"
+                        let prev = "<a class='paA' href='/pages/order/search?page="+prevNum+"'>＜</a>"
+                        $('.prev').before(prevStart);
+                        $('.prev').append(prev);
+                    }
+                }
+            }
+
+            let tb = $('<tbody>');
+            for(let i in response.data.data){
+                let purchaseId =response.data.data[i].purchaseId;
+                let productId =response.data.data[i].productId;
+                let status3 =response.data.data[i].status3;
+                let status2 =response.data.data[i].status2;
+                let regdate =response.data.data[i].regdate;
+                let row = $('<tr>').append(
+                    "<th><a href='/pages/search_info/"+purchaseId+"'>"+ purchaseId +"</a></th>" +
+                    "<th>"+ regdate.substring(2, 10) +"</th>" +
+                    "<th>"+ status3 +"</th>" +
+                    "<th>"+ status2 +"</th>" +
+                    "<th>"+ productId +"</th></tr>"
+                )
+                tb.append(row);
+            }
+            tb.append('</tbody>');
+            $('.thead').after(tb);
+        }).catch(function(err){
+            console.log(err);
+        });
+
+        axios.get('/api/pro_post_count',{
+        }).then(function (response){
+            let allCnt = response.data.data.allCnt;
+            let finishCnt = response.data.data.finishCnt;
+            let ingCnt = response.data.data.ingCnt;
+            let stopCnt = response.data.data.stopCnt;
+            let waitCnt = response.data.data.waitCnt;
+
+            $('#allCnt').text(allCnt);
+            $('#finishCnt').text(finishCnt);
+            $('#ingCnt').text(ingCnt);
+            $('#stopCnt').text(stopCnt);
+            $('#waitCnt').text(waitCnt);
+        });
+    });
+
+    function sendit(num){
+
+        let productid = null;
+        let purchaseid = null;
+        let status_3 = null;
+        let status_2 = null;
+        let purchase_start_date = null;
+        let purchase_end_date = null;
+
+        if($('#purchase_start_date').val()!=''){
+            purchase_start_date = $('#purchase_start_date').val();
+            purchase_start_date = purchase_start_date.substring(2);
+        }else{
+            purchase_start_date = null;
+        }
+        if($('#purchase_end_date').val()!=''){
+            purchase_end_date = $('#purchase_end_date').val();
+            purchase_end_date = purchase_end_date.substring(2);
+        }else{
+            purchase_end_date = null;
+        }
+
+        if($('#pur_cate_search option:selected').val()=='주문번호'){
+            purchaseid = $('#purchase_text').val();
+        }else if($('#pur_cate_search option:selected').val()=='주문유형'){
+            status_3 = $('#purchase_text').val();
+        }else if($('#pur_cate_search option:selected').val()=='상태'){
+            status_2 = $('#purchase_text').val();
+        }else if($('#pur_cate_search option:selected').val()=='상품번호'){
+            productid = $('#purchase_text').val();
+        }
+
+        let axios3 = '/api/purchase_list?page='+num;
+        axios.request({
+            method:"POST",
+            url:axios3,
+            headers:{'Content-type':'application/json'},
+            data:{
+                "data":{
+                    "productId": productid,
+                    "id": purchaseid,
+                    "status3":status_3,
+                    "status2":status_2,
+                    "regdate1": purchase_start_date,
+                    "regdate2": purchase_end_date
+                }
+            }
+        }).then(function (response){
+            console.log(response);
+            if(num==undefined){
+                alert('조회되었습니다.')
+            }
+            $('#paying').text('');
+            let startPage = response.data.pagination.startPage;
+            let endPage = response.data.pagination.endPage;
+            let totalPages = response.data.pagination.totalPages;
+            $('#paying').append('<li class="prev"></li>');
+            for (let j=startPage-1; j<=endPage-1; j++){
+                let pagNum = j+1;
+                let paying = "<li><a class='paA' onclick='sendit("+j+")'>"+pagNum+"</a></li>";
+                $('#paying').append(paying);
+                if(j==endPage-1&&j+1!=totalPages){
+                    let next = "<li><a class='paA' onclick='sendit("+pagNum+")'>＞</a></li>";
+                    $('#paying').append(next);
+                    let EndNum = totalPages-1;
+                    let nextEnd = "<li><a class='paA' onclick='sendit("+EndNum+")'>≫</a></li>"
+                    $('#paying').append(nextEnd);
+                }
+                if(j>4 && startPage%5===1){
+                    if(j+1==startPage){
+                        let prevNum = j-1;
+                        let prevStart = "<li><a class='paA' onclick='sendit("+0+")'>≪</a></li>"
+                        let prev = "<a class='paA' onclick='sendit("+prevNum+")'>＜</a>"
+                        $('.prev').before(prevStart);
+                        $('.prev').append(prev);
+                    }
+                }
+            }
+            $('tbody').text('');
+            let tb = $('<tbody>');
+            for(let i in response.data.data){
+                let purchaseId =response.data.data[i].purchaseId;
+                let productId =response.data.data[i].productId;
+                let status3 =response.data.data[i].status3;
+                let status2 =response.data.data[i].status2;
+                let regdate =response.data.data[i].regdate;
+                let row = $('<tr>').append(
+                    "<th class='ad_pur_id'><a href='/pages/search_info/"+purchaseId+"'>"+ purchaseId +"</a></th>" +
+                    "<th class='ad_pur_reg'>"+ regdate.substring(2, 10) +"</th>" +
+                    "<th class='ad_pur_status3'>"+ status3 +"</th>" +
+                    "<th class='ad_pur_status2'>"+ status2 +"</th>" +
+                    "<th class='ad_pur_pro'>"+ productId +"</th></tr>"
+                )
+                tb.append(row);
+            }
+            tb.append('</tbody>');
+            $('.thead').after(tb);
+        });
+
+
+    }
+
+</script>
+<body>
+<!-- Start Header Top Area -->
+<div th:replace="fragment/header :: header"></div>
+<!-- End Header Top Area -->
+<!-- Mobile Menu start -->
+<div th:replace="fragment/mo_menu :: mo_menu"></div>
+<!-- Mobile Menu end -->
+<!-- Main Menu area start-->
+<div th:replace="fragment/menu :: menu"></div>
+<!-- Main Menu area End-->
+<!-- Start Status area -->
+<div class="data-table-area">
+    <div class="container table_top">
+        <div class="data-table-list">
+            <div class="basic-tb-hd">
+                <h2>입찰(구매) / 즉시구매</h2>
+                <p>Purchase Bid / Instant Purchase</p>
+            </div>
+            <form class="ad_search_box orderSearch">
+                <select name="product_search" id="pur_cate_search">
+                    <option value="">전체</option>
+                    <option value="주문번호">주문번호</option>
+                    <option value="주문유형">주문유형</option>
+                    <option value="상태">상태</option>
+                    <option value="상품번호">상품번호</option>
+                </select>
+                <input style="margin-left: 5px" class="search_input_text" type="text" id="purchase_text">
+                <div class='input_date_box'><input id="purchase_start_date" type="date"><div class="input_text1"> ~ </div><input type="date" id="purchase_end_date"></div>
+                <div class="order_searchB"><input type="button" onclick="sendit()" value="검색"></div>
+            </form>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="data-table-list">
+                    <div class="table-responsive">
+                        <table class="k_ad_table">
+                            <thead class="thead">
+                            <tr style="background: #e6e6e6">
+                                <th class="ad_pur_id">주문번호</th>
+                                <th class="ad_pur_reg">주문일시</th>
+                                <th class="ad_pur_status3">주문유형</th>
+                                <th class="ad_pur_status2">상태</th>
+                                <th class="ad_pur_pro">상품번호</th>
+                            </tr>
+                            </thead>
+                            <tfoot style="height: 5px;"></tfoot>
+                        </table>
+                        <ul id="paying"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Realtime sts area-->
+<!-- Start Footer area-->
+<div th:replace="fragment/footer :: footer"></div>
+<!-- End Footer area-->
+<div th:replace="fragment/script :: script"></div>
+</body>
+
+</html>

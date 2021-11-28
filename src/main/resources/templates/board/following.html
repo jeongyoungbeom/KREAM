@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org/"
+      xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KREAM | 한정판 거래의 FLEX</title>
+    <link data-n-head="ssr" rel="icon" type="image/x-icon" href="https://kream.co.kr/favicon.ico">
+
+    <!--외부 라이브러리-->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.5.1/css/swiper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.5.1/js/swiper.min.js"></script>
+    <!--맨 밑으로 놔야함 : cascading방식으로 작동이 되기 때문에 외부 라이브러리가 먼저 먹히고 그 다음 내가 만든 css가 먹히게 할라고-->
+    <script src="http://code.jquery.com/jquery-1.12.4.js"></script>
+
+    <link rel="stylesheet" href="/lib/css/following.css">
+    <link rel="stylesheet" href="/lib/css/pop.css">
+</head>
+<body>
+<!-- 모바일 오른쪽 -->
+<div class="navigation_wrap close">
+    <div class="navigation">
+        <div class="navigation_inner">
+            <ul class="nav_list">
+                <li class="nav_item">
+                    <a href="/style" class="nav_link">
+                        STYLE
+                    </a>
+                </li>
+                <li class="nav_item">
+                    <a href="/search" class="nav_link">
+                        SHOP
+                    </a>
+                </li>
+                <li class="nav_item">
+                    <a href="/faq" class="nav_link">
+                        자주 묻는 질문
+                    </a>
+                </li>
+                <li class="nav_item">
+                    <a href="/notice" class="nav_link">
+                        공지사항
+                    </a>
+                </li>
+                <li class="nav_item" sec:authorize="!isAuthenticated()"><a href="/login" class="nav_link"> 로그인 </a></li>
+                <li class="nav_item" sec:authorize="isAuthenticated()"><a href="/logout" class="nav_link"
+                                                                          onclick="sessionStorage.clear()"> 로그아웃 </a>
+                </li>
+            </ul>
+            <!---->
+            <div class="nav_download">
+                <p class="download_txt">KREAM 앱 설치 후 사용해 보세요!</p>
+                <div class="btn_appdown">
+                    <a href="https://play.google.com/store/apps/details?id=com.fstudio.kream" type="button"
+                       class="btn outline medium">
+                        앱 다운로드
+                    </a>
+                </div>
+            </div>
+        </div>
+        <button type="button" class="btn_nav_close">
+            <img src="/lib/img/pop_close.png" class="ico-close icon sprite-icons">
+        </button>
+    </div>
+</div>
+<header id="header">
+    <div id="header_top">
+        <ul id="ht_box">
+            <li class="ht_text"><a href="/notice">고객센터</a></li>
+            <li class="ht_text"><a href="/my/wish">관심상품</a></li>
+            <li class="ht_text"><a href="/my">마이페이지</a></li>
+            <li class="ht_text" sec:authorize="!isAuthenticated()"><a href="/login">로그인</a></li>
+            <li class="ht_text" sec:authorize="isAuthenticated()"><a href="/logout">로그아웃</a></li>
+        </ul>
+    </div>
+    <div id="header_bottom" value="hide">
+        <div id="hb_logo_box">
+            <a href="/"><p id="hb_logo"></p></a>
+        </div>
+        <ul id="hb_box">
+            <li class="hb_text"><a href="/social/trending" class="hide">STYLE</a></li>
+            <li class="hb_text"><a href="/search" class="hide">SHOP</a></li>
+            <li class="hb_text"><a href="/about" class="hide">ABOUT</a></li>
+            <li class="hb_text" id="hb_no_text"><button class="hb_button_img"></button></li>
+            <li class="hb_text" id="hb_mo_text"><button class="hb_button_img"></button></li>
+        </ul>
+    </div>
+</header>
+<div id="title">
+    <h2>STYLE</h2>
+    <a href="/social/trending">인기</a>
+    <a href="/social/following">팔로잉</a>
+    <a sec:authorize="isAuthenticated()" onclick="location.href='/social/profile/'+sessionStorage.getItem('userid')" style="cursor: pointer">내스타일</a>
+</div>
+<div id="fixed"></div>
+<div th:replace="include/pop :: pop"></div>
+
+<div id="social_container">
+    <!--게시물 리스트-->
+</div>
+</div>
+<div id="background">
+    <div class="p_container">
+        <div id="p_title_box">
+            <div id="p_title_x">
+                <img src="/lib/img/x.png" alt="" id="p_title_x_img" onclick="comment_down()">
+                <img src="/lib/img/4781857_arrow_arrows_back_direction_left_icon.png" alt="" id="p_title_arrow" onclick="comment_down()"></div>
+            <div id="p_title_text">댓글</div>
+        </div>
+        <div id="p_main_box">
+            <div id="p_main_user_imgbox">
+                <img src="/lib/img/사용자 프로필 이미지 (1).jpg" alt="" id="p_main_user_img"></div>
+            <div id="p_main_user_text">
+                <div><a id="p_userid"></a><span id="p_user_title"></span></div>
+                <div id="p_user_tag"></div>
+                <div id="p_user_time"><span></span> - 공감 <span></span>개</div>
+            </div>
+        </div>
+        <div id="p_middle_line"></div>
+        <div id="p_comment_box">
+            <div id="p_comment_user_imgbox">
+                <img src="/lib/img/사용자 프로필 이미지 (1).jpg" alt="" id="p_comment_user_img"></div>
+            <div id="p_comment_user_textbox">
+                <input type="text" name="" placeholder="댓글을 남기세요" id="p_comment_user_text">
+                <a class="btn_regist"> 등록 </a>
+                <input type="hidden" id="reReRegistId" value="">
+                <input type="hidden" id="reReRegistCustomerId" value="">
+                <input type="hidden" id="reReRegistCustomerName" value="">
+            </div>
+        </div>
+        <div id="p_bottom_line"></div>
+        <div id="comment_list_box">
+            <!--댓글 리스트-->
+        </div>
+    </div>
+</div>
+
+<div id="share_background">
+    <div id="share_container">
+        <div id="share_title">
+            <span>공유</span><div>
+            <img src="/lib/img/x.png" alt="" id="share_x_img" onclick="share_down()"></div>
+        </div>
+        <div id="share_box1">
+            <a id="share_facebook" href="https://www.facebook.com/login.php?skip_api_login=1&api_key=966242223397117&signed_next=1&next=https%3A%2F%2Fwww.facebook.com%2Fsharer.php%3Fu%3Dhttps%253A%252F%252Fkream.co.kr%252Fsocial%252Fposts%252F280319&cancel_url=https%3A%2F%2Fwww.facebook.com%2Fdialog%2Fclose_window%2F%3Fapp_id%3D966242223397117%26connect%3D0%23_%3D_&display=popup&locale=ko_KR">
+                <img src="/lib/img/facebook1.png" alt="페이스북" id="share_facebook_img"><p>페이스북</p></a>
+            <a id="share_twitter" href="https://twitter.com/intent/tweet?text=kreamy__kaze%EB%8B%98%EC%9D%98%20%EA%B2%8C%EC%8B%9C%EB%AC%BC%20%7C%20KREAM&url=https%3A%2F%2Fkream.co.kr%2Fsocial%2Fposts%2F280319">
+                <img src="/lib/img/twitter2.png" alt="트위터" id="share_twitter_img"><p>트위터</p></a>
+            <a id="share_line" href="https://access.line.me/oauth2/v2.1/login?loginState=Ale3OjNgnFCL9quOZjOGN7&loginChannelId=1446101138&returnUri=%2Foauth2%2Fv2.1%2Fauthorize%2Fconsent%3Fscope%3Dopenid%2Bprofile%2Bfriends%2Bgroups%2Btimeline.post%2Bmessage.write%26response_type%3Dcode%26redirect_uri%3Dhttps%253A%252F%252Fsocial-plugins.line.me%252Flineit%252FloginCallback%253FreturnUrl%253Dhttps%25253A%25252F%25252Fsocial-plugins.line.me%25252Flineit%25252Fshare%25253Furl%25253Dhttps%2525253A%2525252F%2525252Fkream.co.kr%2525252Fsocial%2525252Fposts%2525252F280319%26state%3D1ab9b619908fa3919719f667d0882f%26client_id%3D1446101138#/">
+                <img src="/lib/img/line.png" alt="" id="share_line_img"><p>라인</p></a>
+        </div>
+        <div id="share_box2">
+            <a id="share_kakao" href="https://accounts.kakao.com/login?continue=https://sharer.kakao.com/talk/friends/picker/shortlink/%253A%2540MPah%255DjY%253BKKd_W%2560kLkX2MpG9MI%2540VTr%253B%255B%253EIJi9T1BCWw0%255Brl3%255Dt3D_zi%252FSUfNlrf">
+                <img src="/lib/img/kakao.png" alt="" id="share_kakao_img"><p>카카오톡</p></a>
+            <a id="share_email" href="https://www.google.com/intl/ko/gmail/about/">
+                <img src="/lib/img/email.png" alt="이메일" id="share_email_img"><p>이메일</p></a>
+            <a id="share_link">
+                <img src="/lib/img/copy.png" alt="" id="share_link_img" onclick="copy()"><p>링크 복사</p></a>
+        </div>
+    </div>
+</div>
+<div th:replace="include/checkFooter :: footer"></div>
+</body>
+<script src="/lib/js/following.js"></script>
+</html>

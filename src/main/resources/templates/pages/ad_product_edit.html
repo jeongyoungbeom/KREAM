@@ -1,0 +1,306 @@
+<html class="no-js" lang="ko"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org/">
+
+<!-- head.html -->
+<div th:replace="fragment/head :: head"></div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+    $(function(){
+
+        const id = $('#id').val();
+        axios.get('/api/pro_ad_detail/'+id,{
+
+        }).then(function (response){
+            console.log(response);
+            let category = response.data.data.category;
+            let subCategory = response.data.data.subCategory;
+            let brand = response.data.data.brand;
+            let name = response.data.data.name;
+            let korName = response.data.data.korName;
+            let modelNumber = response.data.data.modelNumber;
+            let color = response.data.data.color;
+            let release = response.data.data.release;
+            let releasePrice = response.data.data.releasePrice;
+            let gender = response.data.data.gender;
+            let collection = response.data.data.collection;
+            let postStatus = response.data.data.postStatus;
+
+            for(let i in response.data.data.proimgPathApiResponseList){
+                let origSplitImg = response.data.data.proimgPathApiResponseList[i].origFileName;
+                console.log(origSplitImg)
+                if(response.data.data.proimgPathApiResponseList[i]){
+                    if(i==0){
+                        $('#imgbox').append("<img id='img_list' src='/lib/product/"+origSplitImg+"' style='width: 420px; height: 420px; margin: 0 auto;'>");
+                    }else{
+                        $('#muti_list').append(
+                            "<span><div class='muti_div' style='display: block;'><img class='muti_img_class' style='height: 100px; border: 1px solid #000; margin: 5px' src='/lib/product/"+origSplitImg+"' title='intro_cont1_v2.jpg'></div></span>"
+                        )
+                    }
+                }
+            }
+
+            const muti_img_list = document.querySelectorAll(".img_del");
+            for (let i = 0; i < muti_img_list.length; i++) {
+                muti_img_list[i].addEventListener('click', function () {
+                    this.parentNode.remove();
+                    console.log(i);
+                });
+            }
+            $('#category').val(category);
+            $('#subCategory').val(subCategory);
+
+
+            $('#gender').val(gender);
+            $('#brand').val(brand);
+            $('#name').val(name);
+            $('#korName').val(korName);
+            $('#modelNumber').val(modelNumber);
+            $('#color').val(color);
+            $('#releasePrice').val(releasePrice);
+            $('#release').val(release);
+            $('#collection').val(collection);
+            $('#postStatus').val(postStatus);
+
+            $('#brand_length').text(brand.length);
+            $('#name_length').text(name.length);
+            $('#korName_length').text(korName.length);
+            $('#modelNumber_length').text(modelNumber.length);
+            $('#color_length').text(color.length);
+            $('#releasePrice_length').text(releasePrice.toString().length);
+            $('#collection_length').text(collection.length);
+
+            let sCate1 = ['스니커즈'];
+            let sCate2 = ['아우터','상의','하의','기타'];
+            let sCate3 = ['모자','가방','지갑및카드홀더'];
+            let sCate4 = ['그래픽카드','게임기','기타'];
+            let sCate5 = ['라이프'];
+            if(category=='스니커즈'){
+                $('.op').remove();
+                $.each(sCate1, function (i, item){
+                    if(item==subCategory) {
+                        $('.smallCate').append('<option class="op" selected>' + item + '</option>');
+                    }else{
+                        $('.smallCate').append('<option class="op">' + item + '</option>');
+                    }
+                });
+            }else if(category=='의류'){
+                $('.op').remove();
+                $.each(sCate2, function (i, item){
+                    if(item==subCategory) {
+                        $('.smallCate').append('<option class="op" selected>' + item + '</option>');
+                    }else{
+                        $('.smallCate').append('<option class="op">' + item + '</option>');
+                    }
+                });
+            }else if (category=="패션잡화"){
+                $('.op').remove();
+                $.each(sCate3, function (i, item){
+                    if(item==subCategory) {
+                        $('.smallCate').append('<option class="op" selected>' + item + '</option>');
+                    }else{
+                        $('.smallCate').append('<option class="op">' + item + '</option>');
+                    }
+                });
+            }else if (category=="테크"){
+                $('.op').remove();
+                $.each(sCate4, function (i, item){
+                    if(item==subCategory) {
+                        $('.smallCate').append('<option class="op" selected>' + item + '</option>');
+                    }else{
+                        $('.smallCate').append('<option class="op">' + item + '</option>');
+                    }
+                });
+            }else if (category=="라이프"){
+                $('.op').remove();
+                $.each(sCate5, function (i, item){
+                    if(item==subCategory) {
+                        $('.smallCate').append('<option class="op" selected>' + item + '</option>');
+                    }else{
+                        $('.smallCate').append('<option class="op">' + item + '</option>');
+                    }
+                });
+            }
+            const img = document.getElementsByClassName('muti_img_class')
+            for(let i = 0; i < img.length; i++){
+                console.log(img.length);
+            }
+        }).then(function (err){
+
+        })
+    });
+
+    function sendit(){
+        let id = $("#id").val();
+        let formData = new FormData($("form")[0]);
+        let formData2 = new FormData($("form")[0]);
+        const data = {
+            id:$("#id").val(),
+            category: $("#category").val(),
+            subCategory: $("#subCategory").val(),
+            brand: $("#brand").val(),
+            name: $("#name").val(),
+            korName: $("#korName").val(),
+            modelNumber: $("#modelNumber").val(),
+            color: $("#color").val(),
+            date: $("#date").val(),
+            releasePrice: $("#releasePrice").val(),
+            release: $("#release").val(),
+            gender: $("#gender").val(),
+            collection: $("#collection").val(),
+            postStatus: $("#postStatus").val()
+        }
+        formData.append("data", new Blob([JSON.stringify(data)], {type: "application/json"}));
+        const img = document.getElementsByClassName('muti_img_class');
+        for(let i = 0; i < img.length; i++){
+            let file = '';
+            if(i==0){
+                file=img[i]
+            }
+            file = img[i];
+            formData2.append('files', file[i]);
+        }
+
+        axios.request({
+            method: 'PUT',
+            url: '/api/pro_update',
+            headers:{'Content-type':'multipart/form-data'},
+            data: formData
+        }).then(
+
+        )
+        axios.request({
+            method: 'POST',
+            url: '/api/pro_imgUpload/'+id,
+            headers:{'Content-type':'multipart/form-data'},
+            data: formData2
+        }).then(
+            alert("수정되었습니다")
+        )
+        location.href = "/pages/product/detail/"+id;
+        return false;
+    }
+</script>
+<!-- head.html 끝-->
+
+<body>
+<!-- Start Header Top Area -->
+<div th:replace="fragment/header :: header"></div>
+<!-- End Header Top Area -->
+<!-- Mobile Menu start -->
+<div th:replace="fragment/mo_menu :: mo_menu"></div>
+<!-- Mobile Menu end -->
+<!-- Main Menu area start-->
+<div th:replace="fragment/menu :: menu"></div>
+<!-- Main Menu area End-->
+<!-- Start Status area -->
+<div class="data-table-area">
+    <div>
+        <input type="hidden" id="id" name="id" th:value="${id}">
+        <div class="container table_top">
+            <div class="data-table-list">
+                <div class="basic-tb-hd">
+                    <h2>상품 수정</h2>
+                    <p>Product modification</p>
+                </div>
+                <p class="regist_top_text">카테고리</p>
+                <div class="ad_search_box">
+                    <select class="BigCate" name="product_search" id="category">
+                        <option value="">대분류</option>
+                        <option value="스니커즈">스니커즈</option>
+                        <option value="의류">의류</option>
+                        <option value="패션잡화">패션잡화</option>
+                        <option value="테크">테크</option>
+                        <option value="라이프">라이프</option>
+                    </select>
+                    <select class="smallCate" name="product_search" id="subCategory">
+                        <option value="">소분류</option>
+                    </select>
+                    <select class="genderS"  id="gender" name="product_search">
+                        <option value="남성">남성</option>
+                        <option value="여성">여성</option>
+                    </select>
+                </div>
+                <br>
+                <div style="font-weight: bold; display: flex">
+                    <div style="margin-right: 6px">게시상태 : </div>
+                    <select id="postStatus">
+                        <option value="게시대기">게시대기</option>
+                        <option value="게시중">게시중</option>
+                        <option value="게시종료">게시종료</option>
+                        <option value="게시중지">게시중지</option>
+                    </select>
+                    <div style="margin: 0 6px 0 11px;">출시일 : </div>
+                    <input type="date" id="release" name="release">
+                </div>
+                <hr/>
+                <div class="regist_flex_box">
+                    <div class="regist_flex_text">브랜드</div><textarea id="brand" class="textaC" name="brand"></textarea>
+                    <div class="texta_cnt"><span id="brand_length"></span> / 100</div>
+                </div>
+                <div class="regist_flex_box">
+                    <div class="regist_flex_text">상품이름</div><textarea id="name" class="textaC" name="name"></textarea>
+                    <div class="texta_cnt" ><span id="name_length"></span> / 100</div>
+                </div>
+                <div class="regist_flex_box">
+                    <div class="regist_flex_text">한글 이름</div><textarea id="korName" class="textaC" name="korName"></textarea>
+                    <div class="texta_cnt" ><span id="korName_length"></span> / 100</div>
+                </div>
+                <div class="regist_flex_box">
+                    <div class="regist_flex_text">모델번호</div><textarea id="modelNumber" class="textaC" name="modelNumber"></textarea>
+                    <div class="texta_cnt"><span id="modelNumber_length"></span> / 100</div>
+                </div>
+                <div class="regist_flex_box">
+                    <div class="regist_flex_text">제품색상</div><textarea id="color" class="textaC" name="color"></textarea>
+                    <div class="texta_cnt"><span id="color_length"></span> / 100</div>
+                </div>
+                <div class="regist_flex_box">
+                    <div class="regist_flex_text">발매가</div><textarea id="releasePrice" class="textaC" name="releasePrice"></textarea>
+                    <div class="texta_cnt"><span id="releasePrice_length"></span> / 100</div>
+                </div>
+                <div class="regist_flex_box">
+                    <div class="regist_flex_text">컬렉션</div><textarea id="collection" class="textaC" name="collection"></textarea>
+                    <div class="texta_cnt" ><span id="collection_length"></span> / 100</div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <form class="row"  onsubmit="return sendit()"  enctype="multipart/form-data" id="form">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="data-table-list">
+                        <p class="regist_top_text">대표 이미지</p>
+                        <div class="filebox">
+                            <input class="upload-name" disabled="disabled">
+                            <label for="ex_filename">파일첨부</label>
+                            <input type="file" id="ex_filename" name="files" class="upload-hidden" onchange="LoadImg(this);">
+                        </div>
+                        <!--                        <div style="width: 100%;margin: 0;text-align: center;padding: 15px 0;"><img id="img_list" style="width: 420px; height: 420px; margin: 0 auto;"></div>-->
+                        <div id="imgbox" style="width: 100%;margin: 0;text-align: center;padding: 15px 0;">
+                            <!--                            <img id='img_list' style='width: 420px; height: 420px; margin: 0 auto;'>-->
+                        </div>
+                        <hr/>
+                        <p class="regist_top_text">추가 이미지</p>
+                        <div class="filebox">
+                            <input class="upload-name" disabled="disabled" multiple>
+                            <label id="ww" for="files">파일첨부</label>
+                            <input type="file" id="files" name="files" class="upload-hidden" multiple>
+                        </div>
+                        <div id="muti_list" style="display:flex;"></div>
+                        <div>
+                            <input style="color:black; float: right; font-weight: 600; border: 1px solid; border-radius: 5px; width: 63px; text-align: center; background: white; margin-top: 32px; padding: 5px 0 3px;"  type="submit" value="수정">
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- End Realtime sts area-->
+<!-- Start Footer area-->
+<div th:replace="fragment/footer :: footer"></div>
+<!-- End Footer area-->
+<div th:replace="fragment/script :: script"></div>
+</body>
+</html>

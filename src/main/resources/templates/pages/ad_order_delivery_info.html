@@ -1,0 +1,120 @@
+<html class="no-js" lang="ko"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org/">
+
+<!-- head.html -->
+<div th:replace="fragment/head :: head"></div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<!-- head.html 끝-->
+<script>
+    $(function(){
+        let id = $('#id').val();
+        axios.get('/api/dev_delivery/'+id, {
+        }).then(function(response) {
+            console.log(response);
+            let email = response.data.data.email;
+            let hp = response.data.data.hp;
+            let statusD = response.data.data.deliveryApiResponse.deliveryStatus;
+            let devCompany = response.data.data.deliveryApiResponse.devCompany;
+            let trackNum = response.data.data.deliveryApiResponse.trackNum;
+            let regdate = response.data.data.deliveryApiResponse.regdate;
+            let zipcode = response.data.data.addressApiResponse.zipcode;
+            let detail1 = response.data.data.addressApiResponse.detail1;
+            let detail2 = response.data.data.addressApiResponse.detail2;
+            let name = response.data.data.addressApiResponse.name;
+            let brand = response.data.data.productApiResponse.brand;
+            let proId = response.data.data.productApiResponse.id;
+            let proName = response.data.data.productApiResponse.name;
+            let sizeType = response.data.data.size;
+
+
+            $('#email').append(email);
+            $('#hpC').append(hp);
+            $('#nameD').append(name);
+            $('#addressD').append("[ "+zipcode+" ] - "+detail1+" "+detail2);
+            $('#statusD').append(statusD);
+            $('#companyD').append(devCompany);
+            $('#TnumD').append(trackNum);
+            $('#regD').append(regdate.substring(2, 10));
+            $('#proName').append(proName);
+            $('#proId').append(proId);
+            $('#size').append(sizeType);
+            $('#brand').append(brand);
+
+
+
+
+
+
+        }).catch(function(err){
+            console.log(err);
+        });
+    });
+</script>
+<body>
+<!-- Start Header Top Area -->
+<div th:replace="fragment/header :: header"></div>
+<!-- End Header Top Area -->
+<!-- Mobile Menu start -->
+<div th:replace="fragment/mo_menu :: mo_menu"></div>
+<!-- Mobile Menu end -->
+<!-- Main Menu area start-->
+<div th:replace="fragment/menu :: menu"></div>
+<!-- Main Menu area End-->
+<!-- Start Status area -->
+<div class="data-table-area">
+    <div class="container table_top">
+        <div class="data-table-list">
+            <div class="basic-tb-hd">
+                <h2>배송 정보</h2>
+                <p>Delivery information</p>
+            </div>
+            <input type="hidden" id="id" name="id" th:value="${id}">
+        </div>
+    </div>
+    <div class="container delivery_info_container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="data-table-list">
+                    <div class="deli_info_flex">
+                        <div class="deli_info_box">
+                            <p class="regist_top_text">구매자 정보</p>
+                            <div><p class="delivery_info">아이디 : </p><span id="email"></span></div>
+                            <div><p class="delivery_info">연락처 : </p><span id="hpC"></span></div>
+                        </div>
+                        <hr class="hr"/>
+                        <div class="deli_info_box">
+                            <p class="regist_top_text">배송 정보</p>
+                            <div><p class="delivery_info">수취인 : </p><span id="nameD"></span></div>
+                            <div><p class="delivery_info">배송지 : </p><span id="addressD"></span></div>
+                            <div><p class="delivery_info">배송상태 : </p><span id="statusD"></span></div>
+                            <div><p class="delivery_info">택배사 : </p><span id="companyD"></span></div>
+                            <div><p class="delivery_info">송장번호 : </p><span id="TnumD"></span></div>
+                            <div><p class="delivery_info">구매일 : </p><span id="regD"></span></div>
+                        </div>
+                    </div>
+                    <hr/>
+                    <div class="deli_info_flex">
+                        <div class="deli_info_box">
+                            <p class="regist_top_text">상품 정보</p>
+                            <div><p class="delivery_info">상품명 : </p><span id="proName"></span></div>
+                            <div><p class="delivery_info">상품번호 : </p><span id="proId"></span></div>
+                            <div><p class="delivery_info">브랜드 : </p><span id="brand"></span></div>
+                            <div><p class="delivery_info">사이즈 : </p><span id="size"></span></div>
+                        </div>
+                    </div>
+                    <div class="delivery_info_B"><button class="delivery_info_listB" onclick="location.href='/pages/order/delivery'">목록</button></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Realtime sts area-->
+<!-- Start Footer area-->
+<div th:replace="fragment/footer :: footer"></div>
+<!-- End Footer area-->
+<div th:replace="fragment/script :: script"></div>
+</body>
+
+</html>
