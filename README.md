@@ -18,5 +18,7 @@
 + 상품별 평균, 최근 가격 등을 알수 있는 정확한 정보 확인 가능
 
 ## 구동 화면
-  * 메인 화면
-![ex_screenshot](/image/main1.png)
+ * 메인 화면1
+![main1](/image/main1.png)
+ * 메인 화면2
+![main2](/image/main2.png)
