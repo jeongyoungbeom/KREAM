@@ -31,7 +31,7 @@
   * Shop 화면
 ![shop](/image/shop.png)
   * Shop 화면 디테일1
-![shopdetail1](/image/shopdetail1.png)
+![shopdetail](/image/shopdetail.png)
   * Shop 화면 디테일2
 ![shopdetail2](/image/shopdetail2.png)
   * Style 화면
