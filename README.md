@@ -10,3 +10,5 @@
 * 사용 기술 : JDBC, thymeleaf, jQuery, Ajax, Spring boot 2.5, Mail API, JPA/Hibernate, Restful Api, queryDSL
 
 # 프로젝트 상세내용
+
+## 구현목표
