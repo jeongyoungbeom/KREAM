@@ -19,4 +19,4 @@
 
 ## 구동 화면
   * 메인 화면
-![ex_screenshot](./이미지/.png)
+![ex_screenshot](이미지.png)
