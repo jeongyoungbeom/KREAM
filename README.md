@@ -18,7 +18,23 @@
 + 상품별 평균, 최근 가격 등을 알수 있는 정확한 정보 확인 가능
 
 ## 구동 화면
- * 메인 화면1
+  * 메인 화면1
 ![main1](/image/main1.png)
- * 메인 화면2
+  * 메인 화면2
 ![main2](/image/main2.png)
+  * 로그인 화면
+![login](/image/login.png)
+  * 마이 페이지 화면
+![mypage](/image/mypage.png)
+  * 정보 수정 화면
+![edit](/image/edit.png)
+  * Shop 화면
+![shop](/image/shop.png)
+  * Shop 화면 디테일1
+![shopdetail1](/image/shopdetail1.png)
+  * Shop 화면 디테일2
+![shopdetail2](/image/shopdetail2.png)
+  * Style 화면
+![style](/image/style.png)
+  * 관리자 화면
+![admin](/image/admin.png)
