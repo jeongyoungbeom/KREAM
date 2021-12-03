@@ -7,4 +7,6 @@
 #### 주제 : 아이템 리셀
 #### 개발 : Intellij, Oracle
 #### 사용 언어 : JAVA(JDK 11), Oracle SQL, Html5, CSS3, Javascript ES6
-#### 사용 기술 : JDBC, thymeleaf, jQuery, Ajax, Spring boot 2.5, Mail API, JPA/Hibernate, Restful Api, queryDSL 
+#### 사용 기술 : JDBC, thymeleaf, jQuery, Ajax, Spring boot 2.5, Mail API, JPA/Hibernate, Restful Api, queryDSL
+
+# 프로젝트 상세내용
