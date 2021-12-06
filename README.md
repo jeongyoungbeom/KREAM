@@ -10,6 +10,7 @@
 * 사용 기술 : JDBC, thymeleaf, jQuery, Ajax, Spring boot 2.5, Mail API, JPA/Hibernate, Rest Api, queryDSL
 
 # 프로젝트 상세내용
+https://youtu.be/fnKwFXnUFaA
 
 ## 구현목표
 + 원하는 조건의 상품만 확인 할수 있도록 맞춤 검색 필터 세분화
