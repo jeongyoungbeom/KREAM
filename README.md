@@ -10,7 +10,7 @@
 * 사용 기술 : JDBC, thymeleaf, jQuery, Ajax, Spring boot 2.5, Mail API, JPA/Hibernate, Rest Api, queryDSL
 
 # 프로젝트 상세내용
-<iframe width="640" height="360" src="https://youtu.be/fnKwFXnUFaA" frameborder="0" gesture="media" allowfullscreen=""></iframe>
+<iframe width="1280" height="693" src="https://www.youtube.com/embed/fnKwFXnUFaA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ## 구현목표
 + 원하는 조건의 상품만 확인 할수 있도록 맞춤 검색 필터 세분화
