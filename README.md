@@ -10,8 +10,7 @@
 * 사용 기술 : JDBC, thymeleaf, jQuery, Ajax, Spring boot 2.5, Mail API, JPA/Hibernate, Rest Api, queryDSL
 
 # 프로젝트 상세내용
-[![Video Label](/image/main1.png)](https://youtu.be/fnKwFXnUFaA)
-
+<iframe width="640" height="360" src="https://youtu.be/fnKwFXnUFaA" frameborder="0" gesture="media" allowfullscreen=""></iframe>
 ## 구현목표
 + 원하는 조건의 상품만 확인 할수 있도록 맞춤 검색 필터 세분화
 + 상품을 원하는 가격에 판매, 구매요청 할수 있도록 입찰시스템 구현
