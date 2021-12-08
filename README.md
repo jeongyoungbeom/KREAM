@@ -10,10 +10,6 @@
 * 사용 기술 : JDBC, thymeleaf, jQuery, Ajax, Spring boot 2.5, Mail API, JPA/Hibernate, Rest Api, queryDSL
 
 # 프로젝트 상세내용
-
-## 시연 영상
-![동영상](./image/동영상.gif)
-
 ## 구현목표
 > 사용자 페이지
 1. 입찰 시스템 구현(구매입찰/판매입찰)
@@ -27,6 +23,9 @@
 2. 배송현황 관리
 3. 문의 및 공지사항 관리
 4. 상품관리(상품 등록/수정 및 게시상태)
+
+## 시연 영상
+![동영상](./image/동영상.gif)
 
 ## ERD
 ![ERD](/image/ERD1.png)
