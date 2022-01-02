@@ -32,7 +32,6 @@ public interface ProductRepository extends JpaRepository<Product,Long>, JpaSpeci
 
     @Query("SELECT count(*) FROM Product AS m WHERE m.postStatus = ?1 and LOWER(brand || collection || category || name || korName || modelNumber) like %?2%")
     Long countAllByByBrandOrCollectionOrCategoryOrNameOrKorNameOrModelNumber(PostStatus postStatus, String keywords);
-
     Long countByPostStatus(PostStatus postStatus);
 
     @Override

@@ -10,6 +10,7 @@ import com.project.kream.Model.response.*;
 import com.project.kream.Repository.*;
 import com.project.kream.Repository.Specification.ProductSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -337,7 +338,7 @@ public class ProductService extends BaseService<ProductApiRequest, ProductApiRes
                 .map(productTag -> {
                     Style style = productTag.getStyle();
                     Customer customer = style.getCustomer();
-                    StyleCustomer styleCustomer = customer.getStyleCustomer();
+                    StyleCustomer styleCustomer = customer.getStyleCustomerList().get(0);
 
                     List<ProductHashtagApiResponse> productHashtagApiResponses = style.getStyleHashTagList().stream()
                             .map(hashTag -> {
@@ -870,7 +871,7 @@ public class ProductService extends BaseService<ProductApiRequest, ProductApiRes
         List<StylePickApiResponse> stylePickApiResponseList = stylePickList.stream()
                 .map(style -> {
                     Customer customer = style.getCustomer();
-                    StyleCustomer styleCustomer = customer.getStyleCustomer();
+                    StyleCustomer styleCustomer = customer.getStyleCustomerList().get(0);
                     StylePickApiResponse stylePickApiResponse = StylePickApiResponse.builder()
                             .id(style.getId())
                             .profileName(styleCustomer.getProfileName())
@@ -884,7 +885,7 @@ public class ProductService extends BaseService<ProductApiRequest, ProductApiRes
         List<StyleHashTagListApiResponse> styleHashTagListApiResponseList = hashTagList.stream()
                 .map(style -> {
                     Customer customer = style.getCustomer();
-                    StyleCustomer styleCustomer = customer.getStyleCustomer();
+                    StyleCustomer styleCustomer = customer.getStyleCustomerList().get(0);
                     StyleHashTagListApiResponse styleHashTagListApiResponse = StyleHashTagListApiResponse.builder()
                             .id(style.getId())
                             .profileName(styleCustomer.getProfileName())

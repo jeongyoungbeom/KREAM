@@ -3,19 +3,16 @@ package com.project.kream.Model.Entity;
 import com.project.kream.Model.enumclass.CustomerRank;
 import com.project.kream.Model.enumclass.CustomerRole;
 import com.project.kream.Model.enumclass.CustomerType;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.util.List;
 
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
-@Builder
+@AllArgsConstructor
 @SequenceGenerator(
         name="seq_customer",
         sequenceName = "seq_customer",
@@ -23,7 +20,6 @@ import java.util.List;
         allocationSize = 1
 )
 @Entity
-@DynamicUpdate
 public class Customer extends DateEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_customer")
@@ -40,54 +36,94 @@ public class Customer extends DateEntity{
     private String image;
     private Long point;
     private String message;
+
     @Enumerated(EnumType.STRING)
     private CustomerRank rank;
+
     @Enumerated(EnumType.STRING)
     private CustomerType type;
+
     @Enumerated(EnumType.STRING)
     private CustomerRole role;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "customer", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     private List<Cart> cartList;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "customer", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     private List<Address> addressList;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "customer", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     private List<CardInfo> cardInfoList;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "customer", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     private List<Purchase> purchaseList;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "customer", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     private List<Sales> salesList;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "customer", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     private List<Style> styleList;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "customer", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     private List<CustomerQna> customerQnaList;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "customer", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     private List<ProductQna> productQnaList;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "following", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "following", cascade = CascadeType.ALL)
     private List<Follow> followingList;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "follower", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL)
     private List<Follow> followerList;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "customer", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     private List<StyleLike> styleLikeList;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "customer", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     private List<ReplyLike> replyLikeList;
 
-    @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL)
-    private Account account;
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    private List<Account> accountList;
 
-    @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL)
-    private StyleCustomer styleCustomer;
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    private List<StyleCustomer> styleCustomerList;
+
+
+    @Builder
+    public Customer(String email, String userid, String userpw, String hp, String shoesize, String agreement, String privacyPolicy, String smsAllow, String emailAllow, String image, Long point, String message, CustomerRank customerRank, CustomerType customerType, CustomerRole customerRole) {
+        this.email = email;
+        this.userid = userid;
+        this.userpw = userpw;
+        this.hp = hp;
+        this.shoesize = shoesize;
+        this.agreement = agreement;
+        this.privacyPolicy = privacyPolicy;
+        this.smsAllow = smsAllow;
+        this.emailAllow = emailAllow;
+        this.image = image;
+        this.point = point;
+        this.message = message;
+        this.rank = customerRank;
+        this.type = customerType;
+        this.role = customerRole;
+    }
+
+    public void update(String email, String userid, String userpw, String hp, String shoesize, String agreement, String privacyPolicy, String smsAllow, String emailAllow, String image, Long point, String message) {
+        this.email = email;
+        this.userid = userid;
+        this.userpw = userpw;
+        this.hp = hp;
+        this.shoesize = shoesize;
+        this.agreement = agreement;
+        this.privacyPolicy = privacyPolicy;
+        this.smsAllow = smsAllow;
+        this.emailAllow = emailAllow;
+        this.image = image;
+        this.point = point;
+        this.message = message;
+
+    }
+
 
 }
 

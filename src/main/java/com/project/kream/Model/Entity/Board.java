@@ -1,17 +1,15 @@
 package com.project.kream.Model.Entity;
 
 import com.project.kream.Model.enumclass.BoardCategory;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
-@Builder
+@AllArgsConstructor
 @Entity
 @SequenceGenerator(
         name="seq_board",
@@ -30,4 +28,18 @@ public class Board extends DateEntity{
     @Enumerated(EnumType.STRING)
     private BoardCategory category;
 
+    @Builder
+    public Board(String title, String content, String registrant, BoardCategory category) {
+        this.title = title;
+        this.content = content;
+        this.registrant = registrant;
+        this.category = category;
+    }
+
+    public void update(String title, String content, String registrant, BoardCategory category){
+        this.title = title;
+        this.content = content;
+        this.registrant = registrant;
+        this.category = category;
+    }
 }

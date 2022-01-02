@@ -1,5 +1,6 @@
 package com.project.kream.Model.response;
 
+import com.project.kream.Model.Entity.Board;
 import com.project.kream.Model.enumclass.BoardCategory;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,4 +18,11 @@ public class BoardSearchApiResponse {
     private BoardCategory boardCategory;
     private String title;
     private LocalDateTime regdate;
+
+    public BoardSearchApiResponse(Board board){
+        this.id = board.getId();
+        this.boardCategory = board.getCategory();
+        this.title = board.getTitle();
+        this.regdate = board.getRegdate();
+    }
 }

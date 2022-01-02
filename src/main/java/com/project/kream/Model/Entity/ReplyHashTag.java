@@ -4,9 +4,10 @@ import lombok.*;
 
 import javax.persistence.*;
 
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Entity
 @Builder
 @SequenceGenerator(
@@ -20,9 +21,9 @@ public class ReplyHashTag {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_reply_hash_tag")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     StyleReply styleReply;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     HashTag hashTag;
 }

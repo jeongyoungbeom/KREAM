@@ -6,9 +6,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.util.List;
 
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Entity
 @Builder
 @SequenceGenerator(
@@ -28,16 +29,16 @@ public class StyleReply extends DateEntity {
     private Long groupNum;
     private Long groupId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Style style;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Customer customer;
 
-    @OneToMany(fetch=FetchType.LAZY ,mappedBy = "styleReply",cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "styleReply",cascade = CascadeType.REMOVE)
     private List<ReplyLike> replyLikeList;
 
-    @OneToMany(fetch=FetchType.LAZY ,mappedBy = "styleReply",cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "styleReply",cascade = CascadeType.REMOVE)
     private List<ReplyHashTag> replyHashTagList;
 
 }

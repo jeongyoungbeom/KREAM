@@ -1,15 +1,13 @@
 package com.project.kream.Model.Entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @Entity
 @SequenceGenerator(
@@ -23,9 +21,9 @@ public class Follow {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_follow")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Customer following;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Customer follower;
 }

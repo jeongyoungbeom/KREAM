@@ -1,15 +1,13 @@
 package com.project.kream.Model.Entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Builder
 @SequenceGenerator(
@@ -25,6 +23,6 @@ public class Transaction extends DateEntity{
     private String sizeType;
     private Long price;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Product product;
 }

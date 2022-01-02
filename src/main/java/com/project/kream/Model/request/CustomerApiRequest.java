@@ -1,5 +1,6 @@
 package com.project.kream.Model.request;
 
+import com.project.kream.Model.Entity.Customer;
 import com.project.kream.Model.enumclass.CustomerRank;
 import com.project.kream.Model.enumclass.CustomerRole;
 import com.project.kream.Model.enumclass.CustomerType;
@@ -34,4 +35,24 @@ public class CustomerApiRequest {
     private Long regdate;
     private String startDatetime;
     private String endDatetime;
+
+    public Customer toEntity(String userpw) {
+        return Customer.builder()
+                .email(email)
+                .userid(userid)
+                .userpw(userpw)
+                .hp(hp)
+                .shoesize(shoesize)
+                .agreement(agreement)
+                .privacyPolicy(privacyPolicy)
+                .smsAllow(smsAllow)
+                .emailAllow(emailAllow)
+                .image(image)
+                .point(point)
+                .message(message)
+                .customerRank(CustomerRank.BRONZE)
+                .customerType(CustomerType.일반)
+                .customerRole(CustomerRole.USER)
+                .build();
+    }
 }

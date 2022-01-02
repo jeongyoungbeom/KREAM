@@ -156,7 +156,7 @@ public class StyleService extends BaseService<StyleApiRequest, StyleApiResponse,
         List<StyleHitListApiResponse> styleListApiResponseHitList = styleList.stream()
                 .map(style -> {
                     Customer customer = style.getCustomer();
-                    StyleCustomer styleCustomer = customer.getStyleCustomer();
+                    StyleCustomer styleCustomer = customer.getStyleCustomerList().get(0);
                     List<StyleHashTagNameApiResponse> styleHashTagNameApiResponseList = style.getStyleHashTagList().stream()
                             .map(styleHashTag -> {
                                 StyleHashTagNameApiResponse styleHashTagNameApiResponse = StyleHashTagNameApiResponse.builder()
@@ -205,7 +205,7 @@ public class StyleService extends BaseService<StyleApiRequest, StyleApiResponse,
         List<StyleHitListApiResponse> styleListApiResponseHitList = styleList.stream()
                 .map(style -> {
                     Customer customer = style.getCustomer();
-                    StyleCustomer styleCustomer = customer.getStyleCustomer();
+                    StyleCustomer styleCustomer = customer.getStyleCustomerList().get(0);
                     List<StyleHashTagNameApiResponse> styleHashTagNameApiResponseList = style.getStyleHashTagList().stream()
                             .map(styleHashTag -> {
                                 StyleHashTagNameApiResponse styleHashTagNameApiResponse = StyleHashTagNameApiResponse.builder()
@@ -297,8 +297,8 @@ public class StyleService extends BaseService<StyleApiRequest, StyleApiResponse,
                 .map(follow -> {
                     FollowingListApiResponse followingListApiResponse = FollowingListApiResponse.builder()
                             .id(follow.getFollowing().getId())
-                            .profileName(follow.getFollowing().getStyleCustomer().getProfileName())
-                            .name(follow.getFollowing().getStyleCustomer().getName())
+                            .profileName(follow.getFollowing().getStyleCustomerList().get(0).getProfileName())
+                            .name(follow.getFollowing().getStyleCustomerList().get(0).getName())
                             .originFileName(follow.getFollowing().getImage())
                             .followingBoolean(followRepository.existsByFollowingIdAndFollowerId(follow.getFollowing().getId(), sessionId))
                             .build();
@@ -310,22 +310,22 @@ public class StyleService extends BaseService<StyleApiRequest, StyleApiResponse,
                 .map(follow -> {
                     FollowerListApiResponse followerListApiResponse = FollowerListApiResponse.builder()
                             .id(follow.getFollower().getId())
-                            .profileName(follow.getFollower().getStyleCustomer().getProfileName())
-                            .name(follow.getFollower().getStyleCustomer().getName())
+                            .profileName(follow.getFollower().getStyleCustomerList().get(0).getProfileName())
+                            .name(follow.getFollower().getStyleCustomerList().get(0).getName())
                             .originFileName(follow.getFollower().getImage())
                             .followerBoolean(followRepository.existsByFollowingIdAndFollowerId(follow.getFollower().getId(), sessionId))
                             .build();
                     return followerListApiResponse;
                 }).collect(Collectors.toList());
 
-        String intro = customer1.getStyleCustomer().getIntro();
+        String intro = customer1.getStyleCustomerList().get(0).getIntro();
         if(intro == null){
             intro = "정보없음";
         }
 
         StyleUserInfoApiResponse styleUserInfoApiResponse = StyleUserInfoApiResponse.builder()
-                .userid(customer1.getStyleCustomer().getProfileName())
-                .name(customer1.getStyleCustomer().getName())
+                .userid(customer1.getStyleCustomerList().get(0).getProfileName())
+                .name(customer1.getStyleCustomerList().get(0).getName())
                 .userImg(customer1.getImage())
                 .intro(intro)
                 .followerListApiResponseList(followerListApiResponseList)
@@ -390,8 +390,8 @@ public class StyleService extends BaseService<StyleApiRequest, StyleApiResponse,
                 .map(follow -> {
                     FollowingListApiResponse followingListApiResponse = FollowingListApiResponse.builder()
                             .id(follow.getFollowing().getId())
-                            .profileName(follow.getFollowing().getStyleCustomer().getProfileName())
-                            .name(follow.getFollowing().getStyleCustomer().getName())
+                            .profileName(follow.getFollowing().getStyleCustomerList().get(0).getProfileName())
+                            .name(follow.getFollowing().getStyleCustomerList().get(0).getName())
                             .originFileName(follow.getFollowing().getImage())
                             .followingBoolean(false)
                             .build();
@@ -403,22 +403,22 @@ public class StyleService extends BaseService<StyleApiRequest, StyleApiResponse,
                 .map(follow -> {
                     FollowerListApiResponse followerListApiResponse = FollowerListApiResponse.builder()
                             .id(follow.getFollower().getId())
-                            .profileName(follow.getFollower().getStyleCustomer().getProfileName())
-                            .name(follow.getFollower().getStyleCustomer().getName())
+                            .profileName(follow.getFollower().getStyleCustomerList().get(0).getProfileName())
+                            .name(follow.getFollower().getStyleCustomerList().get(0).getName())
                             .originFileName(follow.getFollower().getImage())
                             .followerBoolean(false)
                             .build();
                     return followerListApiResponse;
                 }).collect(Collectors.toList());
 
-        String intro = customer1.getStyleCustomer().getIntro();
+        String intro = customer1.getStyleCustomerList().get(0).getIntro();
         if(intro == null){
             intro = "정보없음";
         }
 
         StyleUserInfoApiResponse styleUserInfoApiResponse = StyleUserInfoApiResponse.builder()
-                .userid(customer1.getStyleCustomer().getProfileName())
-                .name(customer1.getStyleCustomer().getName())
+                .userid(customer1.getStyleCustomerList().get(0).getProfileName())
+                .name(customer1.getStyleCustomerList().get(0).getName())
                 .userImg(customer1.getImage())
                 .intro(intro)
                 .followerListApiResponseList(followerListApiResponseList)
@@ -439,7 +439,7 @@ public class StyleService extends BaseService<StyleApiRequest, StyleApiResponse,
         List<StyleHashListApiResponse> styleHashListApiResponseList = styleList.stream()
                 .map(style -> {
                     Customer customer = style.getCustomer();
-                    StyleCustomer styleCustomer = customer.getStyleCustomer();
+                    StyleCustomer styleCustomer = customer.getStyleCustomerList().get(0);
                     List<StyleHashTagNameApiResponse> styleHashTagNameApiResponseList = style.getStyleHashTagList().stream()
                             .map(styleHashTag -> {
                                 StyleHashTagNameApiResponse styleHashTagNameApiResponse = StyleHashTagNameApiResponse.builder()
@@ -486,7 +486,7 @@ public class StyleService extends BaseService<StyleApiRequest, StyleApiResponse,
         List<StyleHashListApiResponse> styleHashListApiResponseList = styleList.stream()
                 .map(style -> {
                     Customer customer = style.getCustomer();
-                    StyleCustomer styleCustomer = customer.getStyleCustomer();
+                    StyleCustomer styleCustomer = customer.getStyleCustomerList().get(0);
                     List<StyleHashTagNameApiResponse> styleHashTagNameApiResponseList = style.getStyleHashTagList().stream()
                             .map(styleHashTag -> {
                                 StyleHashTagNameApiResponse styleHashTagNameApiResponse = StyleHashTagNameApiResponse.builder()
@@ -533,7 +533,7 @@ public class StyleService extends BaseService<StyleApiRequest, StyleApiResponse,
         List<StyleDetailListApiResponse> styleDetailListApiResponses = styleList.stream()
                 .map(style -> {
                     Customer customer = style.getCustomer();
-                    StyleCustomer styleCustomer = customer.getStyleCustomer();
+                    StyleCustomer styleCustomer = customer.getStyleCustomerList().get(0);
                     List<StyleImgListApiResponse> styleImgListApiResponseList = style.getStyleImgList().stream()
                             .map(styleImg -> {
                                 StyleImgListApiResponse styleImgListApiResponse = StyleImgListApiResponse.builder()
@@ -566,7 +566,7 @@ public class StyleService extends BaseService<StyleApiRequest, StyleApiResponse,
                     List<StyleReplyDetailApiResponse> styleReplyDetailApiResponseList = styleReplyList.stream()
                             .map(styleReply -> {
                                 Customer customer1 = styleReply.getCustomer();
-                                StyleCustomer styleCustomer1 = customer1.getStyleCustomer();
+                                StyleCustomer styleCustomer1 = customer1.getStyleCustomerList().get(0);
 
                                 StyleReplyDetailApiResponse styleReplyDetailApiResponse = StyleReplyDetailApiResponse.builder()
                                         .id(styleReply.getId())
@@ -608,7 +608,7 @@ public class StyleService extends BaseService<StyleApiRequest, StyleApiResponse,
         List<StyleDetailListApiResponse> styleDetailListApiResponses = styleList.stream()
                 .map(style -> {
                     Customer customer = style.getCustomer();
-                    StyleCustomer styleCustomer = customer.getStyleCustomer();
+                    StyleCustomer styleCustomer = customer.getStyleCustomerList().get(0);
                     List<StyleImgListApiResponse> styleImgListApiResponseList = style.getStyleImgList().stream()
                             .map(styleImg -> {
                                 StyleImgListApiResponse styleImgListApiResponse = StyleImgListApiResponse.builder()
@@ -641,7 +641,7 @@ public class StyleService extends BaseService<StyleApiRequest, StyleApiResponse,
                     List<StyleReplyDetailApiResponse> styleReplyDetailApiResponseList = styleReplyList.stream()
                             .map(styleReply -> {
                                 Customer customer1 = styleReply.getCustomer();
-                                StyleCustomer styleCustomer1 = customer1.getStyleCustomer();
+                                StyleCustomer styleCustomer1 = customer1.getStyleCustomerList().get(0);
 
                                 StyleReplyDetailApiResponse styleReplyDetailApiResponse = StyleReplyDetailApiResponse.builder()
                                         .id(styleReply.getId())
@@ -683,7 +683,7 @@ public class StyleService extends BaseService<StyleApiRequest, StyleApiResponse,
         List<StyleDetailListApiResponse> styleDetailListApiResponses = styleList.stream()
                 .map(style -> {
                     Customer customer = style.getCustomer();
-                    StyleCustomer styleCustomer = customer.getStyleCustomer();
+                    StyleCustomer styleCustomer = customer.getStyleCustomerList().get(0);
                     List<StyleImgListApiResponse> styleImgListApiResponseList = style.getStyleImgList().stream()
                             .map(styleImg -> {
                                 StyleImgListApiResponse styleImgListApiResponse = StyleImgListApiResponse.builder()
@@ -716,7 +716,7 @@ public class StyleService extends BaseService<StyleApiRequest, StyleApiResponse,
                     List<StyleReplyDetailApiResponse> styleReplyDetailApiResponseList = styleReplyList.stream()
                             .map(styleReply -> {
                                 Customer customer1 = styleReply.getCustomer();
-                                StyleCustomer styleCustomer1 = customer1.getStyleCustomer();
+                                StyleCustomer styleCustomer1 = customer1.getStyleCustomerList().get(0);
 
                                 StyleReplyDetailApiResponse styleReplyDetailApiResponse = StyleReplyDetailApiResponse.builder()
                                         .id(styleReply.getId())
@@ -760,7 +760,7 @@ public class StyleService extends BaseService<StyleApiRequest, StyleApiResponse,
         List<StyleDetailListApiResponse> styleDetailListApiResponses = styleList.stream()
                 .map(style -> {
                     Customer customer = style.getCustomer();
-                    StyleCustomer styleCustomer = customer.getStyleCustomer();
+                    StyleCustomer styleCustomer = customer.getStyleCustomerList().get(0);
                     List<StyleImgListApiResponse> styleImgListApiResponseList = style.getStyleImgList().stream()
                             .map(styleImg -> {
                                 StyleImgListApiResponse styleImgListApiResponse = StyleImgListApiResponse.builder()
@@ -793,7 +793,7 @@ public class StyleService extends BaseService<StyleApiRequest, StyleApiResponse,
                     List<StyleReplyDetailApiResponse> styleReplyDetailApiResponseList = styleReplyList.stream()
                             .map(styleReply -> {
                                 Customer customer1 = styleReply.getCustomer();
-                                StyleCustomer styleCustomer1 = customer1.getStyleCustomer();
+                                StyleCustomer styleCustomer1 = customer1.getStyleCustomerList().get(0);
 
 
                                 StyleReplyDetailApiResponse styleReplyDetailApiResponse = StyleReplyDetailApiResponse.builder()
@@ -836,7 +836,7 @@ public class StyleService extends BaseService<StyleApiRequest, StyleApiResponse,
         List<StyleDetailListApiResponse> styleDetailListApiResponses = styleList.stream()
                 .map(style -> {
                     Customer customer = style.getCustomer();
-                    StyleCustomer styleCustomer = customer.getStyleCustomer();
+                    StyleCustomer styleCustomer = customer.getStyleCustomerList().get(0);
                     List<StyleImgListApiResponse> styleImgListApiResponseList = style.getStyleImgList().stream()
                             .map(styleImg -> {
                                 StyleImgListApiResponse styleImgListApiResponse = StyleImgListApiResponse.builder()
@@ -869,7 +869,7 @@ public class StyleService extends BaseService<StyleApiRequest, StyleApiResponse,
                     List<StyleReplyDetailApiResponse> styleReplyDetailApiResponseList = styleReplyList.stream()
                             .map(styleReply -> {
                                 Customer customer1 = styleReply.getCustomer();
-                                StyleCustomer styleCustomer1 = customer.getStyleCustomer();
+                                StyleCustomer styleCustomer1 = customer.getStyleCustomerList().get(0);
 
 
                                 StyleReplyDetailApiResponse styleReplyDetailApiResponse = StyleReplyDetailApiResponse.builder()

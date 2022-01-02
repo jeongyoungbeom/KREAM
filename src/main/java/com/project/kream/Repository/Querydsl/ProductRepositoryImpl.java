@@ -64,7 +64,6 @@ public class ProductRepositoryImpl implements ProductCustom {
                         .orderBy(amount.desc())
                         .fetch();
             }
-
             else{
                 result = queryFactory.select(Projections.constructor(ProductApiResponse.class, product.id, product.brand, product.collection, product.category, product.subCategory, product.korName, product.name, product.gender, product.release, product.releasePrice, product.modelNumber, product.color, product.postStatus, product.regdate,
                                 ExpressionUtils.as(JPAExpressions.select(transaction.count()).from(transaction).where(transaction.product.id.eq(product.id)), amount),
@@ -224,6 +223,7 @@ public class ProductRepositoryImpl implements ProductCustom {
                                 product.postStatus.eq(PostStatus.게시중))
                         .orderBy(product.release.desc())
                         .fetch();
+
             }
         }
         return result;

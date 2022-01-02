@@ -16,13 +16,13 @@ public class AccountRestController extends CrudController<AccountApiRequest, Acc
 
     // 계좌 등록
     @PostMapping("/api/account_register")
-    public Header<AccountApiResponse> create(@RequestBody Header<AccountApiRequest> request) {
+    public Long create(@RequestBody Header<AccountApiRequest> request) {
         return accountService.create(request);
     }
 
     // 계좌 수정
     @PutMapping("/api/account_update")
-    public Header<AccountApiResponse> update(@RequestBody Header<AccountApiRequest> request) {
+    public Long update(@RequestBody Header<AccountApiRequest> request) {
         return accountService.update(request);
     }
 

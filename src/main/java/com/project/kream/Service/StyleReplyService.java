@@ -119,7 +119,7 @@ public class StyleReplyService extends BaseService<StyleReplyApiRequest, StyleRe
         List<StyleReplyDetailApiResponse> styleReplyDetailApiResponseList = styleReplyList.stream()
                 .map(styleReply -> {
                     Customer customer1 = styleReply.getCustomer();
-                    StyleCustomer styleCustomer1 = customer1.getStyleCustomer();
+                    StyleCustomer styleCustomer1 = customer1.getStyleCustomerList().get(0);
                     StyleReplyDetailApiResponse styleReplyDetailApiResponse = StyleReplyDetailApiResponse.builder()
                             .id(styleReply.getId())
                             .customerId(customer1.getId())
@@ -143,7 +143,7 @@ public class StyleReplyService extends BaseService<StyleReplyApiRequest, StyleRe
                 }).collect(Collectors.toList());
 
         StyleReplyPopApiResponse styleReplyPopApiResponse = StyleReplyPopApiResponse.builder()
-                .styleCustomerId(style.getCustomer().getStyleCustomer().getProfileName())
+                .styleCustomerId(style.getCustomer().getStyleCustomerList().get(0).getProfileName())
                 .content(style.getContent())
                 .regdate(style.getRegdate())
                 .styleHashTagNameApiResponseList(styleHashTagNameApiResponseList)

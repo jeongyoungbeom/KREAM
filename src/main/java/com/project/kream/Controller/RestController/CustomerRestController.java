@@ -26,7 +26,7 @@ public class CustomerRestController extends CrudController<CustomerApiRequest, C
 
     // 회원등록
     @PostMapping("/api/customer_register")
-    public Header<CustomerApiResponse> create(@RequestBody Header<CustomerApiRequest> request) {
+    public Header<Long> create(@RequestBody Header<CustomerApiRequest> request) {
         return customerService.create(request);
     }
     // 마이페이지
@@ -43,7 +43,7 @@ public class CustomerRestController extends CrudController<CustomerApiRequest, C
 
     // 회원수정
     @PatchMapping("/api/customer_update")
-    public Header<CustomerApiResponse> update(@RequestBody Header<CustomerApiRequest> request) {
+    public Long update(@RequestBody Header<CustomerApiRequest> request) {
         return customerService.update(request);
     }
 
@@ -105,12 +105,6 @@ public class CustomerRestController extends CrudController<CustomerApiRequest, C
     @PostMapping("/api/customer_dataList")
     public Header<List<CustomerSearchApiResponse>> dataList(@RequestBody Header<CustomerApiRequest> request,@PageableDefault(size = 10, sort={"id"}, direction= Sort.Direction.DESC) Pageable pageable){
         return customerService.dataList(request, pageable);
-    }
-
-    // 이미지 변경
-    @PatchMapping("/api/customer_image_update")
-    public Header<CustomerApiResponse> imageUpdate(@RequestBody Header<CustomerApiRequest> request) {
-        return customerService.imageUpdate(request);
     }
 
     // 회원 탈퇴

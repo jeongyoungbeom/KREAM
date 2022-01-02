@@ -4,9 +4,10 @@ import lombok.*;
 
 import javax.persistence.*;
 
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Entity
 @Builder
 @SequenceGenerator(
@@ -23,6 +24,6 @@ public class StyleCustomer {
     private String name;
     private String intro;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    Customer customer;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Customer customer;
 }

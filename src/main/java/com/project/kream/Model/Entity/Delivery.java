@@ -2,16 +2,14 @@ package com.project.kream.Model.Entity;
 
 
 import com.project.kream.Model.enumclass.DeliveryStatus;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Builder
 @SequenceGenerator(
@@ -30,6 +28,6 @@ public class Delivery extends DateEntity {
     private String devCompany;
     private Long trackNum;
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Purchase purchase;
 }

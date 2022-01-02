@@ -5,9 +5,10 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.List;
 
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Entity
 @Builder
 @SequenceGenerator(
@@ -22,9 +23,9 @@ public class HashTag {
     private Long id;
     private String tagName;
 
-    @OneToMany(fetch=FetchType.LAZY ,mappedBy = "hashTag",cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "hashTag",cascade = CascadeType.REMOVE)
     private List<StyleHashTag> styleHashTagList;
 
-    @OneToMany(fetch=FetchType.LAZY ,mappedBy = "hashTag",cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "hashTag",cascade = CascadeType.REMOVE)
     private List<ReplyHashTag> replyHashTagList;
 }

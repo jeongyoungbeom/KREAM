@@ -1,16 +1,14 @@
 package com.project.kream.Model.Entity;
 
 import com.project.kream.Model.enumclass.CardFlag;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @Entity
 @SequenceGenerator(
@@ -32,6 +30,6 @@ public class CardInfo {
     @Enumerated(EnumType.STRING)
     private CardFlag cardFlag;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Customer customer;
 }

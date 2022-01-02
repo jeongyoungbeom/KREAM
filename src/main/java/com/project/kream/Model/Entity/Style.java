@@ -7,9 +7,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.util.List;
 
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Entity
 @Builder
 @SequenceGenerator(
@@ -26,21 +27,21 @@ public class Style extends DateEntity {
     private String content;
     private Long hit;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Customer customer;
 
-    @OneToMany(fetch=FetchType.LAZY ,mappedBy = "style",cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "style",cascade = CascadeType.REMOVE)
     private List<StyleReply> styleReplyList;
 
-    @OneToMany(fetch=FetchType.LAZY ,mappedBy = "style",cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "style",cascade = CascadeType.REMOVE)
     private List<ProductTag> productTagList;
 
-    @OneToMany(fetch=FetchType.LAZY ,mappedBy = "style",cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "style",cascade = CascadeType.REMOVE)
     private List<StyleImg> styleImgList;
 
-    @OneToMany(fetch=FetchType.LAZY ,mappedBy = "style",cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "style",cascade = CascadeType.REMOVE)
     private List<StyleLike> styleLikeList;
 
-    @OneToMany(fetch=FetchType.LAZY ,mappedBy = "style",cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "style",cascade = CascadeType.REMOVE)
     private List<StyleHashTag> styleHashTagList;
 }

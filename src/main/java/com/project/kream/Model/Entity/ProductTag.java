@@ -4,9 +4,10 @@ import lombok.*;
 
 import javax.persistence.*;
 
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Entity
 @Builder
 @SequenceGenerator(
@@ -20,7 +21,7 @@ public class ProductTag {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_tag")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Style style;
 
     @OneToOne

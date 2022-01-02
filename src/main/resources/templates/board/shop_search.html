@@ -56,8 +56,6 @@
         })
         ]).then(function (response) {
 
-
-
             console.log(response);
             let pro_con = $(' <div class="sec_flex_box default_list">');
             for (let i in response[0].data.data) {
@@ -84,7 +82,6 @@
                     '<div class="sec_price">' +
                     '<div class="sec_num">' + $price + '</div><div class="sec_won">원</div></div><div class="sec_price_text">즉시 구매가</div>' +
                     '</a></div>'
-
                 )
                 pro_con.append(con);
             }

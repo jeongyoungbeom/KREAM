@@ -195,7 +195,7 @@ public class PurchaseService extends BaseService<PurchaseApiRequest, PurchaseApi
     public Header<PurchaseUserApiResponse> detailInfo(Long id){
         Purchase purchase = purchaseRepository.getById(id);
 
-        Delivery delivery = purchase.getDelivery();
+        Delivery delivery = purchase.getDeliveryList().get(0);
         String devCompany;
         Long trackNum;
 
@@ -203,8 +203,8 @@ public class PurchaseService extends BaseService<PurchaseApiRequest, PurchaseApi
             devCompany = "정보없음";
             trackNum = 0L;
         }else{
-            devCompany = purchase.getDelivery().getDevCompany();
-            trackNum = purchase.getDelivery().getTrackNum();
+            devCompany = purchase.getDeliveryList().get(0).getDevCompany();
+            trackNum = purchase.getDeliveryList().get(0).getTrackNum();
         }
 
         Long salesPrice = salesRepository.findBySizeTypeAndProductId(purchase.getSizeType(), purchase.getProduct().getId());

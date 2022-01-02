@@ -4,9 +4,10 @@ import lombok.*;
 
 import javax.persistence.*;
 
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Entity
 @Builder
 @SequenceGenerator(
@@ -20,9 +21,9 @@ public class StyleHashTag {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_style_hash_tag")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     Style style;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     HashTag hashTag;
 }

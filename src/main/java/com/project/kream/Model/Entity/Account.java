@@ -1,16 +1,13 @@
 package com.project.kream.Model.Entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
-@Builder
+@AllArgsConstructor
 @Entity
 @SequenceGenerator(
         name="seq_account",
@@ -26,7 +23,20 @@ public class Account {
     private String accountNumber;
     private String name;
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Customer customer;
 
+    @Builder
+    public Account(String bank, String accountNumber, String name, Customer customer) {
+        this.bank = bank;
+        this.accountNumber = accountNumber;
+        this.name = name;
+        this.customer = customer;
+    }
+
+    public void update(String bank, String accountNumber, String name) {
+        this.bank = bank;
+        this.accountNumber = accountNumber;
+        this.name = name;
+    }
 }

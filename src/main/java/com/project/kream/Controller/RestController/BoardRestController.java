@@ -24,13 +24,13 @@ public class BoardRestController extends CrudController<BoardApiRequest, BoardAp
 
     // 글 등록
     @PostMapping("/api/board_register")
-    public Header<BoardApiResponse> create(@RequestBody Header<BoardApiRequest> request) {
+    public Long create(@RequestBody Header<BoardApiRequest> request) {
         return boardService.create(request);
     }
 
     // 글 수정
     @PutMapping("/api/board_update")
-    public Header<BoardApiResponse> update(@RequestBody Header<BoardApiRequest> request) {
+    public Long update(@RequestBody Header<BoardApiRequest> request) {
         return boardService.update(request);
     }
     // 글 리스트(조건)
@@ -62,7 +62,7 @@ public class BoardRestController extends CrudController<BoardApiRequest, BoardAp
 
     // 글 삭제
    @DeleteMapping("/api/board_delete/{id}")
-    public Header<BoardApiResponse> delete(@PathVariable Long id){
+    public int delete(@PathVariable Long id){
         return boardService.delete(id);
    }
 

@@ -1,5 +1,6 @@
 package com.project.kream.Model.request;
 
+import com.project.kream.Model.Entity.Board;
 import com.project.kream.Model.enumclass.BoardCategory;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,4 +22,13 @@ public class BoardApiRequest {
     private LocalDateTime regdate;
     private String startDatetime;
     private String endDatetime;
+
+    public Board toEntity(){
+        return Board.builder()
+                .title(title)
+                .content(content)
+                .registrant(registrant)
+                .category(category)
+                .build();
+    }
 }

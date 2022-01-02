@@ -57,4 +57,5 @@ public interface PurchaseRepository extends JpaRepository<Purchase,Long>, Purcha
 
     @Query("select p from Purchase p where p.customer.id = ?1 and p.regdate between ?2 and ?3")
     List<Purchase> findAllByCustomerIdAndRegdate(Long customerId, LocalDateTime regdate1, LocalDateTime regdate2);
+
 }

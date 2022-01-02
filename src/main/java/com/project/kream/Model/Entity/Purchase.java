@@ -3,17 +3,16 @@ package com.project.kream.Model.Entity;
 import com.project.kream.Model.enumclass.PurchaseStatus1;
 import com.project.kream.Model.enumclass.PurchaseStatus2;
 import com.project.kream.Model.enumclass.PurchaseStatus3;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.util.List;
 
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Builder
 @EntityListeners(AuditingEntityListener.class)
@@ -40,21 +39,21 @@ public class Purchase extends DateEntity {
     @Enumerated(EnumType.STRING)
     private PurchaseStatus3 status3;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Product product;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Customer customer;
 
-    @OneToOne(mappedBy = "purchase")
-    private Delivery delivery;
+    @OneToMany(mappedBy = "purchase")
+    private List<Delivery> deliveryList;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     private Address address;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     private CardInfo cardInfo;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     private Sales sales;
 }

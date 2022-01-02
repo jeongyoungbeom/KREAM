@@ -14,6 +14,7 @@ import com.project.kream.Repository.SalesRepository;
 import com.project.kream.Repository.Specification.CustomerSpecification;
 import com.project.kream.Repository.WithdrawalRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,6 +28,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
+@Transactional
 @Service
 @RequiredArgsConstructor
 public class CustomerService extends BaseService<CustomerApiRequest, CustomerApiResponse, Customer> {
@@ -39,42 +42,19 @@ public class CustomerService extends BaseService<CustomerApiRequest, CustomerApi
     private final WithdrawalRepository withdrawalRepository;
     private final PurchaseRepository purchaseRepository;
 
-
-    public Header<CustomerApiResponse> create(Header<CustomerApiRequest> request) {
+    public Header<Long> create(Header<CustomerApiRequest> request) {
         CustomerApiRequest customerApiRequest = request.getData();
-
-        Customer customer = Customer.builder()
-                .email(customerApiRequest.getEmail())
-                .userid(customerApiRequest.getUserid())
-                .userpw(passwordEncoder.encode(customerApiRequest.getUserpw()))
-                .hp(customerApiRequest.getHp())
-                .shoesize(customerApiRequest.getShoesize())
-                .agreement(customerApiRequest.getAgreement())
-                .privacyPolicy(customerApiRequest.getPrivacyPolicy())
-                .emailAllow(customerApiRequest.getEmailAllow())
-                .smsAllow(customerApiRequest.getSmsAllow())
-                .image(customerApiRequest.getImage())
-                .point(customerApiRequest.getPoint())
-                .message(customerApiRequest.getMessage())
-                .rank(CustomerRank.BRONZE)
-                .type(CustomerType.일반)
-                .role(CustomerRole.USER)
-                .build();
-        Customer customer1 = baseRepository.save(customer);
+        Customer customer1 = baseRepository.save(customerApiRequest.toEntity(passwordEncoder.encode(customerApiRequest.getUserpw())));
 
         String email = customer1.getEmail();
-        styleCustomerService.create(customer1.getId(), email.substring(0,email.indexOf("@")));
 
-        return Header.OK(response(customer1));
+        styleCustomerService.create(customer1.getId(), email.substring(0,email.indexOf("@")));
+        return Header.OK(customer1.getId());
     }
 
     public Header<CustomerApiResponse> read(Long id){
-        return baseRepository.findById(id)
-                .map(customer -> response(customer))
-                .map(Header::OK)
-                .orElseGet(
-                        () -> Header.ERROR("데이터 없음")
-                );
+        Customer customer = customerRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 유저가 없음"));
+        return Header.OK(new CustomerApiResponse(customer));
     }
 
 
@@ -104,61 +84,19 @@ public class CustomerService extends BaseService<CustomerApiRequest, CustomerApi
         return passwordEncoder.matches(userpw, customer.getUserpw());
     }
 
-    public Header<CustomerApiResponse> update(Header<CustomerApiRequest> request) {
-        CustomerApiRequest customerApiRequest = request.getData();
-        Optional<Customer> customer = baseRepository.findById(customerApiRequest.getId());
 
-        return customer.map(user ->{
-                    user.setEmail(customerApiRequest.getEmail());
-                    user.setUserid(customerApiRequest.getUserid());
-                    if (customerApiRequest.getNewuserpw() != null){
-                        user.setUserpw(passwordEncoder.encode(customerApiRequest.getNewuserpw()));
-                    }else{
-                        user.setUserpw(customerApiRequest.getUserpw());
-                    }
-                    user.setHp(customerApiRequest.getHp());
-                    user.setShoesize(customerApiRequest.getShoesize());
-                    user.setAgreement(customerApiRequest.getAgreement());
-                    user.setPrivacyPolicy(customerApiRequest.getPrivacyPolicy());
-                    user.setSmsAllow(customerApiRequest.getSmsAllow());
-                    user.setEmailAllow(customerApiRequest.getEmailAllow());
-                    user.setMessage((customerApiRequest.getMessage()));
-                    user.setImage(customerApiRequest.getImage());
-                    user.setPoint(customerApiRequest.getPoint());
-                    user.setRank(customerApiRequest.getRank());
-                    user.setType(customerApiRequest.getType());
-                    return user;
-                }).map(custom -> baseRepository.save(custom))
-                .map(custom -> response(custom))
-                .map(Header::OK)
-                .orElseGet(() -> Header.ERROR("데이터가 없습니다."));
+    public Long update(Header<CustomerApiRequest> request) {
+        CustomerApiRequest customerApiRequest = request.getData();
+        Customer customer = customerRepository.findById(customerApiRequest.getId()).orElseThrow(() -> new IllegalArgumentException("해당유저 없음"));
+
+        customer.update(customerApiRequest.getEmail(), customer.getUserid(), customer.getUserpw(), customerApiRequest.getHp(), customerApiRequest.getShoesize(), customerApiRequest.getAgreement(), customerApiRequest.getPrivacyPolicy(), customerApiRequest.getSmsAllow(), customerApiRequest.getEmailAllow(), customerApiRequest.getImage(), customerApiRequest.getPoint(), customerApiRequest.getMessage());
+        return customerApiRequest.getId();
     }
 
     public Header<List<CustomerListApiResponse>> List(CustomerType type, Pageable pageable){
         Page<Customer> customerList = customerRepository.findAllByType(type, pageable);
         List<CustomerListApiResponse> customerListApiResponseList = customerList.stream()
-                .map(customer -> {
-                    CustomerListApiResponse customerListApiResponse = CustomerListApiResponse.builder()
-                            .id(customer.getId())
-                            .email(customer.getEmail())
-                            .userid(customer.getUserid())
-                            .userpw(customer.getUserpw())
-                            .hp(customer.getHp())
-                            .shoesize(customer.getShoesize())
-                            .agreement(customer.getAgreement())
-                            .privacyPolicy(customer.getPrivacyPolicy())
-                            .emailAllow(customer.getEmailAllow())
-                            .smsAllow(customer.getSmsAllow())
-                            .image(customer.getImage())
-                            .point(customer.getPoint())
-                            .message(customer.getMessage())
-                            .rank(customer.getRank())
-                            .type(customer.getType())
-                            .role(customer.getRole())
-                            .regdate(customer.getRegdate())
-                            .build();
-                    return customerListApiResponse;
-                })
+                .map(CustomerListApiResponse::new)
                 .collect(Collectors.toList());
 
         int countPage = 5;
@@ -180,28 +118,6 @@ public class CustomerService extends BaseService<CustomerApiRequest, CustomerApi
         return Header.OK(customerListApiResponseList, pagination);
     }
 
-    public CustomerApiResponse response(Customer customer){
-        CustomerApiResponse customerApiResponse = CustomerApiResponse.builder()
-                .id(customer.getId())
-                .email(customer.getEmail())
-                .userid(customer.getUserid())
-                .userpw(customer.getUserpw())
-                .hp(customer.getHp())
-                .shoesize(customer.getShoesize())
-                .agreement(customer.getAgreement())
-                .privacyPolicy(customer.getPrivacyPolicy())
-                .emailAllow(customer.getEmailAllow())
-                .smsAllow(customer.getSmsAllow())
-                .image(customer.getImage())
-                .rank(customer.getRank())
-                .point(customer.getPoint())
-                .message(customer.getMessage())
-                .type(customer.getType())
-                .role(customer.getRole())
-                .regdate(customer.getRegdate())
-                .build();
-        return customerApiResponse;
-    }
     public void searchPW(String email, String hp){
         Customer customer = customerRepository.findByEmailAndHp(email, hp);
         mailService.execMail(customer.getEmail());
@@ -228,61 +144,24 @@ public class CustomerService extends BaseService<CustomerApiRequest, CustomerApi
         List<CustomerMypagePurchaseApiResponse> customerMypagePurchaseApiResponseList = purchaseList.stream()
                 .map(purchase -> {
                     Product product = purchase.getProduct();
-                    CustomerMypagePurchaseApiResponse customerMypagePurchaseApiResponse = CustomerMypagePurchaseApiResponse.builder()
-                            .id(purchase.getId())
-                            .name(product.getName())
-                            .size(purchase.getSizeType())
-                            .originFileName(product.getProImgList().get(0).getOrigFileName())
-                            .status1(purchase.getStatus1())
-                            .status2(purchase.getStatus2())
-                            .status3(purchase.getStatus3())
-                            .build();
-                    return customerMypagePurchaseApiResponse;
+                    return new CustomerMypagePurchaseApiResponse(product, purchase);
                 }).collect(Collectors.toList());
 
         List<Sales> salesList = customer.getSalesList();
         List<CustomerMypageSalesApiResponse> customerMypageSalesApiResponseList = salesList.stream()
                 .map(sales -> {
                     Product product = sales.getProduct();
-                    CustomerMypageSalesApiResponse customerMypageSalesApiResponse = CustomerMypageSalesApiResponse.builder()
-                            .id(sales.getId())
-                            .name(product.getName())
-                            .size(sales.getSizeType())
-                            .originFileName(product.getProImgList().get(0).getOrigFileName())
-                            .status1(sales.getStatus1())
-                            .status2(sales.getStatus2())
-                            .status3(sales.getStatus3())
-                            .build();
-                    return customerMypageSalesApiResponse;
+                    return new CustomerMypageSalesApiResponse(product, sales);
                 }).collect(Collectors.toList());
 
         List<Cart> cartList = customer.getCartList();
         List<CustomerMypageCartApiResponse> customerMypageCartApiResponseList = cartList.stream()
                 .map(cart -> {
                     Product product = cart.getProduct();
-
-                    CustomerMypageCartApiResponse customerMypageCartApiResponse = CustomerMypageCartApiResponse.builder()
-                            .id(cart.getId())
-                            .productId(product.getId())
-                            .name(product.getName())
-                            .brand(product.getBrand())
-                            .originFileName(product.getProImgList().get(0).getOrigFileName())
-                            .price(salesRepository.findByProductId(product.getId()))
-                            .build();
-                    return customerMypageCartApiResponse;
+                    return new CustomerMypageCartApiResponse(product, cart, salesRepository.findByProductId(product.getId()));
                 }).collect(Collectors.toList());
 
-        CustomerMypage1ApiResponse customerMypage1ApiResponse = CustomerMypage1ApiResponse.builder()
-                .userid(customer.getUserid())
-                .email(customer.getEmail())
-                .rank(customer.getRank())
-                .point(customer.getPoint())
-                .originFileName(customer.getImage())
-                .customerMypagePurchaseApiResponseList(customerMypagePurchaseApiResponseList)
-                .customerMypageSalesApiResponseList(customerMypageSalesApiResponseList)
-                .customerMypageCartApiResponseList(customerMypageCartApiResponseList)
-                .build();
-        return Header.OK(customerMypage1ApiResponse);
+        return Header.OK(new CustomerMypage1ApiResponse(customer, customerMypagePurchaseApiResponseList, customerMypageSalesApiResponseList, customerMypageCartApiResponseList));
     }
 
     // 구매내역
@@ -296,21 +175,7 @@ public class CustomerService extends BaseService<CustomerApiRequest, CustomerApi
         List<CustomerPurchaseInfoApiResponse> customerPurchaseInfoApiResponseList = purchaseList.stream()
                 .map(purchase -> {
                     Product product = purchase.getProduct();
-
-                    CustomerPurchaseInfoApiResponse customerPurchaseInfoApiResponse = CustomerPurchaseInfoApiResponse.builder()
-                            .id(purchase.getId())
-                            .productId(product.getId())
-                            .name(product.getName())
-                            .originFileName(product.getProImgList().get(0).getOrigFileName())
-                            .size(purchase.getSizeType())
-                            .price(purchase.getPrice())
-                            .period(purchase.getPeriod())
-                            .status1(purchase.getStatus1())
-                            .status2(purchase.getStatus2())
-                            .status2(purchase.getStatus2())
-                            .regdate(purchase.getRegdate())
-                            .build();
-                    return customerPurchaseInfoApiResponse;
+                    return new CustomerPurchaseInfoApiResponse(product, purchase);
                 }).collect(Collectors.toList());
 
         return Header.OK(customerPurchaseInfoApiResponseList);
@@ -326,21 +191,7 @@ public class CustomerService extends BaseService<CustomerApiRequest, CustomerApi
         List<CustomerSalesInfoApiResponse> customerSalesInfoApiResponseList = salesList.stream()
                 .map(sales -> {
                     Product product = sales.getProduct();
-
-                    CustomerSalesInfoApiResponse customerSalesInfoApiResponse = CustomerSalesInfoApiResponse.builder()
-                            .id(sales.getId())
-                            .productId(product.getId())
-                            .name(product.getName())
-                            .originFileName(product.getProImgList().get(0).getOrigFileName())
-                            .size(sales.getSizeType())
-                            .price(sales.getPrice())
-                            .period(sales.getPeriod())
-                            .status1(sales.getStatus1())
-                            .status2(sales.getStatus2())
-                            .status3(sales.getStatus3())
-                            .regdate(sales.getRegdate())
-                            .build();
-                    return customerSalesInfoApiResponse;
+                    return new CustomerSalesInfoApiResponse(product, sales);
                 }).collect(Collectors.toList());
 
         return Header.OK(customerSalesInfoApiResponseList);
@@ -355,16 +206,7 @@ public class CustomerService extends BaseService<CustomerApiRequest, CustomerApi
         List<CustomerCartInfoApiResponse> customerCartInfoApiResponseList = cartList.stream()
                 .map(cart -> {
                     Product product = cart.getProduct();
-                    CustomerCartInfoApiResponse customerCartInfoApiResponse = CustomerCartInfoApiResponse.builder()
-                            .id(cart.getId())
-                            .productId(product.getId())
-                            .name(product.getName())
-                            .brand(product.getBrand())
-                            .originFileName(product.getProImgList().get(0).getOrigFileName())
-                            .size(cart.getSizeType())
-                            .price(salesRepository.findByProductId(product.getId()))
-                            .build();
-                    return customerCartInfoApiResponse;
+                    return new CustomerCartInfoApiResponse(product, cart, salesRepository.findByProductId(product.getId()));
                 }).collect(Collectors.toList());
 
         return Header.OK(customerCartInfoApiResponseList);
@@ -377,26 +219,13 @@ public class CustomerService extends BaseService<CustomerApiRequest, CustomerApi
 
         List<Address> addressList = customer.getAddressList();
         List<CustomerAddressApiResponse> customerAddressApiResponses = addressList.stream()
-                .map(address -> {
-                    CustomerAddressApiResponse customerAddressApiResponse = CustomerAddressApiResponse.builder()
-                            .zipcode(address.getZipcode())
-                            .address1(address.getDetail1())
-                            .address2(address.getDetail2())
-                            .build();
-                    return customerAddressApiResponse;
-                }).collect(Collectors.toList());
+                .map(CustomerAddressApiResponse::new).collect(Collectors.toList());
 
         List<CardInfo> cardInfoList = customer.getCardInfoList();
         List<CustomerCardInfoApiResponse> customerCardInfoApiResponses = cardInfoList.stream()
-                .map(cardInfo -> {
-                    CustomerCardInfoApiResponse customerCardInfoApiResponse = CustomerCardInfoApiResponse.builder()
-                            .cardCompany(cardInfo.getCardCompany())
-                            .cardNumber(cardInfo.getCardNumber())
-                            .build();
-                    return customerCardInfoApiResponse;
-                }).collect(Collectors.toList());
+                .map(CustomerCardInfoApiResponse::new).collect(Collectors.toList());
 
-        Account account = customer.getAccount();
+        Account account = customer.getAccountList().get(0);
         String AccountNumber = "";
         String Bank = "";
         String Name = "";
@@ -410,43 +239,14 @@ public class CustomerService extends BaseService<CustomerApiRequest, CustomerApi
             Name = account.getName();
         }
 
-        CustomerInfoApiResponse customerInfoApiResponse = CustomerInfoApiResponse.builder()
-                .userid(customer.getEmail())
-                .userpw(customer.getUserpw())
-                .name(customer.getUserid())
-                .hp(customer.getHp())
-                .shoesize(customer.getShoesize())
-                .rank(customer.getRank())
-                .bank(Bank)
-                .message(customer.getMessage())
-                .agreement(customer.getAgreement())
-                .accountNumber(AccountNumber)
-                .accountname(Name)
-                .privacyPolicy(customer.getPrivacyPolicy())
-                .smsAllow(customer.getSmsAllow())
-                .emailAllow(customer.getEmailAllow())
-                .customerAddressApiResponseList(customerAddressApiResponses)
-                .customerCardInfoApiResponseList(customerCardInfoApiResponses)
-                .build();
-
-        return Header.OK(customerInfoApiResponse);
+        return Header.OK(new CustomerInfoApiResponse(customer, Bank, AccountNumber, Name, customerAddressApiResponses, customerCardInfoApiResponses));
     }
 
     public Header<List<CustomerSearchApiResponse>> dataList(Header<CustomerApiRequest> request, Pageable pageable){
         Page<Customer> customerList = customerSpecification.searchCustomerList(request, pageable);
 
         List<CustomerSearchApiResponse> customerSearchApiResponseList = customerList.stream()
-                .map(customer -> {
-                    CustomerSearchApiResponse customerSearchApiResponse = CustomerSearchApiResponse.builder()
-                            .id(customer.getId())
-                            .email(customer.getEmail())
-                            .userid(customer.getUserid())
-                            .rank(customer.getRank())
-                            .message(customer.getMessage())
-                            .regdate(customer.getRegdate())
-                            .build();
-                    return customerSearchApiResponse;
-                }).collect(Collectors.toList());
+                .map(CustomerSearchApiResponse::new).collect(Collectors.toList());
 
         int countPage = 5;
         int startPage = ((customerList.getNumber()) / countPage) * countPage + 1;
@@ -455,31 +255,7 @@ public class CustomerService extends BaseService<CustomerApiRequest, CustomerApi
             endPage = customerList.getTotalPages();
         }
 
-        Pagination pagination = Pagination.builder()
-                .totalPages(customerList.getTotalPages())
-                .totalElements(customerList.getTotalElements())
-                .currentPage(customerList.getNumber())
-                .currentElements(customerList.getNumberOfElements())
-                .startPage(startPage)
-                .endPage(endPage)
-                .build();
-
-        return Header.OK(customerSearchApiResponseList, pagination);
-    }
-
-
-    // 이미지 업로드
-    public Header<CustomerApiResponse> imageUpdate(Header<CustomerApiRequest> request) {
-        CustomerApiRequest customerApiRequest = request.getData();
-        Optional<Customer> customer = baseRepository.findById(customerApiRequest.getId());
-
-        return customer.map(user ->{
-                    user.setImage(customerApiRequest.getImage());
-                    return user;
-                }).map(custom -> baseRepository.save(custom))
-                .map(custom -> response(custom))
-                .map(Header::OK)
-                .orElseGet(() -> Header.ERROR("데이터가 없습니다."));
+        return Header.OK(customerSearchApiResponseList, new Pagination(customerList, startPage, endPage));
     }
 
 }

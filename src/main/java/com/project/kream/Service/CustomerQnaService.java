@@ -109,4 +109,5 @@ public class CustomerQnaService extends BaseService<CustomerQnaApiRequest, Custo
                 .build();
         return customerQnaApiResponse;
     }
+
 }

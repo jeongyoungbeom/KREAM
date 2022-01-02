@@ -4,9 +4,10 @@ import lombok.*;
 
 import javax.persistence.*;
 
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Entity
 @Builder
 @SequenceGenerator(
@@ -20,10 +21,10 @@ public class StyleLike {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_style_like")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Customer customer;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Style style;
 
 }
