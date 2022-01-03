@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+
 @Entity
 @SequenceGenerator(
         name="seq_customer_qna",
@@ -37,4 +37,23 @@ public class CustomerQna extends UpdateEntity{
     @ManyToOne(fetch = FetchType.LAZY)
     private Customer customer;
 
+    @Builder
+    public CustomerQna(QnaStauts status, CustomerQnaType type, String title, String content, String answer,  Customer customer) {
+        this.status = status;
+        this.type = type;
+        this.title = title;
+        this.content = content;
+        this.answer = answer;
+        this.customer = customer;
+    }
+
+    public void update(QnaStauts status, CustomerQnaType type, String title, String content, String answer, String acomment, Customer customer){
+        this.status = status;
+        this.type = type;
+        this.title = title;
+        this.content = content;
+        this.answer = answer;
+        this.acomment = acomment;
+        this.customer = customer;
+    }
 }

@@ -16,18 +16,13 @@ public class CartRestController extends CrudController<CartApiRequest, CartApiRe
 
     // 관심상품 등록
     @PostMapping("/api/cart_register")
-    public Header<CartApiResponse> create(@RequestBody Header<CartApiRequest> request) {
+    public Long create(@RequestBody Header<CartApiRequest> request) {
         return cartService.create(request);
-    }
-
-    @PutMapping("/api/cart_update")
-    public Header<CartApiResponse> update(Header<CartApiRequest> request) {
-        return null;
     }
 
     // 마이페이지
     @DeleteMapping("/api/cart_delete/{cartId}")
-    public Header<CartApiResponse> myDelete(@PathVariable Long cartId){
+    public int myDelete(@PathVariable Long cartId){
         return cartService.myDelete(cartId);
     }
 

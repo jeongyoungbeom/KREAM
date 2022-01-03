@@ -18,12 +18,12 @@ public class CardInfoRestController extends CrudController<CardInfoApiRequest, C
 
     // 카드 등록
     @PostMapping("/api/cardInfo_register")
-    public Header<CardInfoApiResponse> create(@RequestBody Header<CardInfoApiRequest> request) {
+    public Long create(@RequestBody Header<CardInfoApiRequest> request) {
         return cardInfoService.create(request);
     }
     // 카드 플래그 수정
     @PutMapping("/api/cardInfo_flag_update")
-    public Header<CardInfoApiResponse> flagUpdate(@RequestBody Header<CardInfoApiRequest> request) {
+    public Long flagUpdate(@RequestBody Header<CardInfoApiRequest> request) {
         return cardInfoService.flagUpdate(request);
     }
     // 카드 리스트(회원아이디로 조회)
@@ -34,7 +34,7 @@ public class CardInfoRestController extends CrudController<CardInfoApiRequest, C
 
     // 카드 삭제
     @DeleteMapping("/api/cardInfo_delete/{id}")
-    public Header<CardInfoApiResponse> delete(@PathVariable Long id){
+    public int delete(@PathVariable Long id){
         return cardInfoService.delete(id);
     }
 

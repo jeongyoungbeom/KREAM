@@ -1,5 +1,6 @@
 package com.project.kream.Model.response;
 
+import com.project.kream.Model.Entity.CustomerQna;
 import com.project.kream.Model.enumclass.CustomerQnaType;
 import com.project.kream.Model.enumclass.QnaStauts;
 import lombok.AllArgsConstructor;
@@ -24,4 +25,17 @@ public class CustomerQnaApiResponse {
     private String answer;
     private String acomment;
     private Long customerId;
+
+    public CustomerQnaApiResponse(CustomerQna customerQna) {
+        this.id = customerQna.getId();
+        this.status = customerQna.getStatus();
+        this.type = customerQna.getType();
+        this.title = customerQna.getTitle();
+        this.content = customerQna.getContent();
+        this.regdate = customerQna.getRegdate();
+        this.modifiedDate = customerQna.getIsmodified();
+        this.answer = customerQna.getAnswer();
+        this.acomment = customerQna.getAcomment();
+        this.customerId = customerQna.getCustomer().getId();
+    }
 }

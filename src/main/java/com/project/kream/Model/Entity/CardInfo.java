@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+
 @Entity
 @SequenceGenerator(
         name="seq_card_info",
@@ -32,4 +32,25 @@ public class CardInfo {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Customer customer;
+
+    @Builder
+    public CardInfo(String cardCompany, String cardNumber, String expiration, String birthdate, String cardpw, CardFlag cardFlag, Customer customer) {
+        this.cardCompany = cardCompany;
+        this.cardNumber = cardNumber;
+        this.expiration = expiration;
+        this.birthdate = birthdate;
+        this.cardpw = cardpw;
+        this.cardFlag = cardFlag;
+        this.customer = customer;
+    }
+
+    public void update(String cardCompany, String cardNumber, String expiration, String birthdate, String cardpw, CardFlag cardFlag, Customer customer){
+        this.cardCompany = cardCompany;
+        this.cardNumber = cardNumber;
+        this.expiration = expiration;
+        this.birthdate = birthdate;
+        this.cardpw = cardpw;
+        this.cardFlag = cardFlag;
+        this.customer = customer;
+    }
 }

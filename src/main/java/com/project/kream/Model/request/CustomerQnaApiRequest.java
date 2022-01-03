@@ -1,5 +1,7 @@
 package com.project.kream.Model.request;
 
+import com.project.kream.Model.Entity.Customer;
+import com.project.kream.Model.Entity.CustomerQna;
 import com.project.kream.Model.enumclass.CustomerQnaType;
 import com.project.kream.Model.enumclass.QnaStauts;
 import lombok.AllArgsConstructor;
@@ -24,4 +26,15 @@ public class CustomerQnaApiRequest {
     private String answer;
     private String acomment;
     private Long customerId;
+
+    public CustomerQna toEntity(Customer customer){
+        return CustomerQna.builder()
+                .status(status)
+                .type(type)
+                .title(title)
+                .content(content)
+                .answer(answer)
+                .customer(customer)
+                .build();
+    }
 }

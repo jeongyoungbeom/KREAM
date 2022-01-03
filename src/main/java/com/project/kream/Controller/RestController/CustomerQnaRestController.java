@@ -21,7 +21,7 @@ public class CustomerQnaRestController extends CrudController<CustomerQnaApiRequ
 
     // 1:1 문의 등록
     @PostMapping("/api/customer_Qna_register")
-    public Header<CustomerQnaApiResponse> create(@RequestBody Header<CustomerQnaApiRequest> request) {
+    public Long create(@RequestBody Header<CustomerQnaApiRequest> request) {
         return customerQnaService.create(request);
     }
 
@@ -33,13 +33,13 @@ public class CustomerQnaRestController extends CrudController<CustomerQnaApiRequ
 
     // 1:1 문의 수정
     @PutMapping("/api/customer_Qna_update")
-    public Header<CustomerQnaApiResponse> update(@RequestBody Header<CustomerQnaApiRequest> request) {
+    public Long update(@RequestBody Header<CustomerQnaApiRequest> request) {
         return customerQnaService.update(request);
     }
 
     // 1:1 문의 삭제
     @DeleteMapping("/api/customer_Qna_delete/{id}")
-    public Header<CustomerQnaApiResponse> delete(@PathVariable Long id){
+    public int delete(@PathVariable Long id){
         return customerQnaService.delete(id);
     }
 
