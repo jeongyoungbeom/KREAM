@@ -44,45 +44,45 @@ public class ProductService extends BaseService<ProductApiRequest, ProductApiRes
 
 
 
-    public Header<ProductApiResponse> create(ProductApiRequest request, MultipartHttpServletRequest mutilRequest) {
-        Product product = Product.builder()
-                .brand(request.getBrand())
-                .korName(request.getKorName())
-                .collection(request.getCollection())
-                .category(request.getCategory())
-                .name(request.getName())
-                .gender(request.getGender())
-                .release(request.getRelease())
-                .subCategory(request.getSubCategory())
-                .releasePrice(request.getReleasePrice())
-                .modelNumber(request.getModelNumber())
-                .color((request.getColor()))
-                .postStatus(request.getPostStatus())
-                .build();
+//    public Header<ProductApiResponse> create(ProductApiRequest request, MultipartHttpServletRequest mutilRequest) {
+//        Product product = Product.builder()
+//                .brand(request.getBrand())
+//                .korName(request.getKorName())
+//                .collection(request.getCollection())
+//                .category(request.getCategory())
+//                .name(request.getName())
+//                .gender(request.getGender())
+//                .release(request.getRelease())
+//                .subCategory(request.getSubCategory())
+//                .releasePrice(request.getReleasePrice())
+//                .modelNumber(request.getModelNumber())
+//                .color((request.getColor()))
+//                .postStatus(request.getPostStatus())
+//                .build();
+//
+//        Product newproEntity = baseRepository.save(product);
 
-        Product newproEntity = baseRepository.save(product);
-
-        List<MultipartFile> fileList = mutilRequest.getFiles("files");
-        String path = "C:\\Users\\jybeo\\Desktop\\final\\src\\main\\resources\\static\\lib\\product\\";
-
-        for(MultipartFile mf : fileList){
-            if(mf.getSize() >0){
-                String originFileName = mf.getOriginalFilename();
-                long fileSize = mf.getSize();
-
-                String safeFile = path + originFileName;
-                try{
-                    mf.transferTo(new File(safeFile));
-                    proimgService.create(originFileName, fileSize,  safeFile,  newproEntity.getId());
-                }catch (IllegalStateException e){
-                    e.printStackTrace();
-                }catch (IOException e){
-                    e.printStackTrace();
-                }
-            }
-        }
-        return Header.OK(response(newproEntity));
-    }
+//        List<MultipartFile> fileList = mutilRequest.getFiles("files");
+//        String path = "C:\\Users\\jybeo\\Desktop\\final\\src\\main\\resources\\static\\lib\\product\\";
+//
+//        for(MultipartFile mf : fileList){
+//            if(mf.getSize() >0){
+//                String originFileName = mf.getOriginalFilename();
+//                long fileSize = mf.getSize();
+//
+//                String safeFile = path + originFileName;
+//                try{
+//                    mf.transferTo(new File(safeFile));
+//                    proimgService.create(originFileName, fileSize,  safeFile,  newproEntity.getId());
+//                }catch (IllegalStateException e){
+//                    e.printStackTrace();
+//                }catch (IOException e){
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+//        return Header.OK(response(newproEntity));
+//    }
 
     public Header<ProductApiResponse> update(ProductApiRequest request) {
 

@@ -22,10 +22,10 @@ public class ProductRestController extends CrudController<ProductApiRequest, Pro
     private final ProductService productService;
 
     //상품 등록
-    @PostMapping("/api/pro_register")
-    public Header<ProductApiResponse> create(@RequestPart(value = "data") ProductApiRequest request, MultipartHttpServletRequest mutilRequest) throws Exception{
-        return productService.create(request, mutilRequest);
-    }
+//    @PostMapping("/api/pro_register")
+//    public Header<ProductApiResponse> create(@RequestPart(value = "data") ProductApiRequest request, MultipartHttpServletRequest mutilRequest) throws Exception{
+//        return productService.create(request, mutilRequest);
+//    }
 
     //상품 업데이트
     @PutMapping("/api/pro_update")

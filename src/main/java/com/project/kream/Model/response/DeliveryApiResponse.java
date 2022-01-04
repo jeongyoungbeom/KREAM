@@ -1,5 +1,6 @@
 package com.project.kream.Model.response;
 
+import com.project.kream.Model.Entity.Delivery;
 import com.project.kream.Model.enumclass.DeliveryStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,5 +20,13 @@ public class DeliveryApiResponse {
     private String devCompany;
     private Long trackNum;
     private LocalDateTime regdate;
-    private PurchaseApiResponse purchaseApiResponse;
+
+    public DeliveryApiResponse(Delivery delivery) {
+        this.id = delivery.getId();
+        this.purchaseId = delivery.getPurchase().getId();
+        this.deliveryStatus = delivery.getDeliveryStatus();
+        this.devCompany = delivery.getDevCompany();
+        this.trackNum = delivery.getTrackNum();
+        this.regdate = delivery.getRegdate();
+    }
 }

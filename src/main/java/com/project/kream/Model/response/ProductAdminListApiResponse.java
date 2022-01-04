@@ -1,5 +1,6 @@
 package com.project.kream.Model.response;
 
+import com.project.kream.Model.Entity.Purchase;
 import com.project.kream.Model.enumclass.Category;
 import com.project.kream.Model.enumclass.PostStatus;
 import lombok.AllArgsConstructor;

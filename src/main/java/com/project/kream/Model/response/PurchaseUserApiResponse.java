@@ -38,4 +38,28 @@ public class PurchaseUserApiResponse {
     private Long trackNum;
     private Long salesPrice;
     private Long purchasePrice;
+
+    public PurchaseUserApiResponse(Purchase purchase, String devCompany, Long trackNum, Long salesPrice, Long purchasePrice) {
+        this.orderNumber = purchase.getId();
+        this.period = purchase.getPeriod();
+        this.status1 = purchase.getStatus1();
+        this.status2 = purchase.getStatus2();
+        this.productId = purchase.getProduct().getId();
+        this.productName = purchase.getProduct().getName();
+        this.size = purchase.getSizeType();
+        this.originFileName = purchase.getProduct().getProImgList().get(0).getOrigFileName();
+        this.price = purchase.getPrice();
+        this.regdate = purchase.getRegdate();
+        this.name = purchase.getAddress().getName();
+        this.hp = purchase.getAddress().getHp();
+        this.zipcode = purchase.getAddress().getZipcode();
+        this.address1 = purchase.getAddress().getDetail1();
+        this.address2 = purchase.getAddress().getDetail2();
+        this.cardCompany = purchase.getCardInfo().getCardCompany();
+        this.cardNumber = purchase.getCardInfo().getCardNumber();
+        this.devCompany = devCompany;
+        this.trackNum = trackNum;
+        this.salesPrice = salesPrice;
+        this.purchasePrice = purchasePrice;
+    }
 }

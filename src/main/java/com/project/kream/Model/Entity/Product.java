@@ -6,6 +6,7 @@ import com.project.kream.Model.enumclass.SubCategory;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -13,7 +14,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Builder
 @SequenceGenerator(
         name="seq_product",
         sequenceName = "seq_product",
@@ -55,6 +55,4 @@ public class Product extends DateEntity {
 
     @OneToMany(mappedBy = "product",cascade = CascadeType.ALL,orphanRemoval=true)
     private List<ProSize> proSizeList;
-
-
 }

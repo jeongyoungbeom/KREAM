@@ -21,13 +21,13 @@ public class PurchaseRestController extends CrudController<PurchaseApiRequest, P
 
     //구매입찰 등록
     @PostMapping("/api/purchase_register")
-    public Header<PurchaseApiResponse> create(@RequestBody Header<PurchaseApiRequest> request) {
+    public Long create(@RequestBody Header<PurchaseApiRequest> request) {
         return purchaseService.create(request);
     }
 
     //구매입찰 수정
     @PutMapping("/api/purchase_update")
-    public Header<PurchaseApiResponse> update(@RequestBody Header<PurchaseApiRequest> request) {
+    public Long update(@RequestBody Header<PurchaseApiRequest> request) {
         return purchaseService.update(request);
     }
 
@@ -57,7 +57,7 @@ public class PurchaseRestController extends CrudController<PurchaseApiRequest, P
 
     //해당 id의 구매입찰 데이터 삭제
     @DeleteMapping("/api/purchase_delete/{id}")
-    public Header<PurchaseApiResponse> delete(@PathVariable Long id){
+    public int delete(@PathVariable Long id){
         return purchaseService.delete(id);
     }
 

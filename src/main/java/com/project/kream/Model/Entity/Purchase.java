@@ -7,6 +7,7 @@ import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -14,7 +15,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Builder
 @EntityListeners(AuditingEntityListener.class)
 @SequenceGenerator(
         name="seq_purchase",
@@ -56,4 +56,36 @@ public class Purchase extends DateEntity {
 
     @OneToOne(fetch = FetchType.LAZY)
     private Sales sales;
+
+    @Builder
+    public Purchase(LocalDateTime regdate, Long price, Long period, String sizeType, PurchaseStatus1 status1, PurchaseStatus2 status2, PurchaseStatus3 status3, Product product, Customer customer, List<Delivery> deliveryList, Address address, CardInfo cardInfo, Sales sales) {
+        super(regdate);
+        this.price = price;
+        this.period = period;
+        this.sizeType = sizeType;
+        this.status1 = status1;
+        this.status2 = status2;
+        this.status3 = status3;
+        this.product = product;
+        this.customer = customer;
+        this.deliveryList = deliveryList;
+        this.address = address;
+        this.cardInfo = cardInfo;
+        this.sales = sales;
+    }
+
+    public void update(Long price, Long period, String sizeType, PurchaseStatus1 status1, PurchaseStatus2 status2, PurchaseStatus3 status3, Product product, Customer customer, List<Delivery> deliveryList, Address address, CardInfo cardInfo, Sales sales){
+        this.price = price;
+        this.period = period;
+        this.sizeType = sizeType;
+        this.status1 = status1;
+        this.status2 = status2;
+        this.status3 = status3;
+        this.product = product;
+        this.customer = customer;
+        this.deliveryList = deliveryList;
+        this.address = address;
+        this.cardInfo = cardInfo;
+        this.sales = sales;
+    }
 }

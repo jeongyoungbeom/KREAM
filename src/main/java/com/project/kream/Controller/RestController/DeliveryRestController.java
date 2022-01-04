@@ -23,13 +23,14 @@ public class DeliveryRestController extends CrudController<DeliveryApiRequest, D
 
     // 배송정보 등록
     @PostMapping("/api/dev_register")
-    public Header<DeliveryApiResponse> create(@RequestBody Header<DeliveryApiRequest> request) {
+    public Header<Long> create(@RequestBody Header<DeliveryApiRequest> request) {
         return deliveryService.create(request);
     }
 
     //배송정보 업데이트
     @PutMapping("/api/dev_update")
-    public Header<DeliveryApiResponse> update(@RequestBody Header<DeliveryApiRequest> request) {
+    public Long update(@RequestBody Header<DeliveryApiRequest> request) {
+        System.out.println(request);
         return deliveryService.update(request);
     }
 
@@ -41,7 +42,7 @@ public class DeliveryRestController extends CrudController<DeliveryApiRequest, D
 
     // 배송삭제
     @DeleteMapping("/api/dev_delete/{id}")
-    public Header<DeliveryApiResponse> delete(@PathVariable Long id){
+    public int delete(@PathVariable Long id){
         return deliveryService.delete(id);
     }
 
