@@ -33,6 +33,7 @@ public class BoardRestController extends CrudController<BoardApiRequest, BoardAp
     public Long update(@RequestBody Header<BoardApiRequest> request) {
         return boardService.update(request);
     }
+
     // 글 리스트(조건)
     @GetMapping("/api/board_list/{category}")
     public Header<List<BoardApiResponse>> categoryList(@PathVariable BoardCategory category){

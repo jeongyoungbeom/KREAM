@@ -1,15 +1,10 @@
 package com.project.kream.Model.response;
 
+import com.project.kream.Model.Entity.Address;
 import com.project.kream.Model.enumclass.AddressFlag;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
-@NoArgsConstructor
-@Builder
-@AllArgsConstructor
+@Getter
 public class ProductAddressApiResponse {
     private String name;
     private String hp;
@@ -18,4 +13,14 @@ public class ProductAddressApiResponse {
     private String address2;
     private Long addressId;
     private AddressFlag addressFlag;
+
+    public ProductAddressApiResponse(Address address) {
+        this.name = address.getName();
+        this.hp = address.getHp();
+        this.zipcode = address.getZipcode();
+        this.address1 = address.getDetail1();
+        this.address2 = address.getDetail2();
+        this.addressId = address.getId();
+        this.addressFlag = address.getFlag();
+    }
 }

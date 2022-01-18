@@ -52,7 +52,7 @@ public class StyleService extends BaseService<StyleApiRequest, StyleApiResponse,
         Style newStyle = baseRepository.save(style);
 
         List<MultipartFile> fileList = multipart.getFiles("files");
-        String path = "C:\\Users\\jybeo\\Desktop\\final\\src\\main\\resources\\static\\lib\\styleImg\\";
+        String path = "/Users/soyounjeong/EditKream/src/main/resources/static/lib/styleImg";
 
         for(MultipartFile mf : fileList){
             String originFileName = mf.getOriginalFilename();
@@ -120,7 +120,7 @@ public class StyleService extends BaseService<StyleApiRequest, StyleApiResponse,
 
     public Header<StyleApiResponse> upload(Long id, MultipartHttpServletRequest multiRequest){
         List<MultipartFile> fileList = multiRequest.getFiles("files");
-        String path = "C:\\Users\\jybeo\\Desktop\\final\\src\\main\\resources\\static\\lib\\styleImg\\";
+        String path = "/Users/soyounjeong/EditKream/src/main/resources/static/lib/styleImg";
 
         List<StyleImg> styleImgList = styleImgRepository.findAllByStyleId(id);
         styleImgList.stream().map(styleImg ->{

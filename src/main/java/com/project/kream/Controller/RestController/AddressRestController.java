@@ -18,18 +18,19 @@ public class AddressRestController extends CrudController<AddressApiRequest, Add
 
     // 주소 등록
     @PostMapping("/api/Address_register")
-    public Header<AddressApiResponse> create(@RequestBody Header<AddressApiRequest> request) {
+    public Header<Long> create(@RequestBody Header<AddressApiRequest> request) {
         return addressService.create(request);
     }
 
+    // 기본 배송지 수정
     @PutMapping("/api/Address_flag_update")
-    public Header<AddressApiResponse> flagUpdate(@RequestBody Header<AddressApiRequest> request) {
+    public Long flagUpdate(@RequestBody Header<AddressApiRequest> request) {
         return addressService.flagUpdate(request);
     }
 
     // 주소 수정
     @PutMapping("/api/Address_update")
-    public Header<AddressApiResponse> update(@RequestBody Header<AddressApiRequest> request) {
+    public Long update(@RequestBody Header<AddressApiRequest> request) {
         return addressService.update(request);
     }
 
@@ -41,7 +42,7 @@ public class AddressRestController extends CrudController<AddressApiRequest, Add
 
     // 주소 삭제
     @DeleteMapping("/api/Address_delete/{id}")
-    public Header<AddressApiResponse> delete(@PathVariable Long id){
+    public int delete(@PathVariable Long id){
         return addressService.delete(id);
     }
 

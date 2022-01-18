@@ -19,38 +19,19 @@ public class TransactionService extends BaseService<TransactionApiRequest, Trans
     private final ProductRepository productRepository;
     private final TransactionRepository transactionRepository;
 
-    public Header<TransactionApiResponse> create(TransactionApiRequest request){
-        Transaction transaction = Transaction.builder()
-                .sizeType(request.getSizeType())
-                .product(productRepository.getById(request.getProductId()))
-                .build();
+    public Long create(Header<TransactionApiRequest> request){
 
-        Transaction newTransaction = baseRepository.save(transaction);
-
-        return Header.OK(response(newTransaction));
+        TransactionApiRequest transactionApiRequest = request.getData();
+        Transaction transaction = transactionRepository.save(transactionApiRequest.toEntity(productRepository.getById(transactionApiRequest.getProductId())));
+        return transaction.getId();
     }
 
     public Header<List<TransactionListApiResponse>> transList(Long productId){
         List<Transaction> transactionList = transactionRepository.findAllByProductIdOrderByRegdateAsc(productId);
         List<TransactionListApiResponse> transactionListApiResponseList = transactionList.stream()
-                .map(transaction -> {
-                    TransactionListApiResponse transactionListApiResponse = TransactionListApiResponse.builder()
-                            .sizeType(transaction.getSizeType())
-                            .price(transaction.getPrice())
-                            .regdate(transaction.getRegdate())
-                            .build();
-                    return transactionListApiResponse;
-                }).collect(Collectors.toList());
+                .map(TransactionListApiResponse::new).collect(Collectors.toList());
 
         return Header.OK(transactionListApiResponseList);
     }
 
-    public TransactionApiResponse response(Transaction transaction){
-        TransactionApiResponse transactionApiResponse = TransactionApiResponse.builder()
-                .id(transaction.getId())
-                .sizeType(transaction.getSizeType())
-                .productId(transaction.getProduct().getId())
-                .build();
-        return transactionApiResponse;
-    }
 }

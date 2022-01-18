@@ -1,18 +1,16 @@
 package com.project.kream.Model.response;
 
-import com.project.kream.Model.enumclass.SalesStatus1;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
-@NoArgsConstructor
-@Builder
-@AllArgsConstructor
+@Getter
 public class ProductSalesSizeApiResponse {
     private String size;
     private Long price;
     private Long cnt;
-    private SalesStatus1 salesStatus1;
+
+    public ProductSalesSizeApiResponse(String size, Long price, Long cnt) {
+        this.size = size;
+        this.price = price;
+        this.cnt = cnt;
+    }
 }

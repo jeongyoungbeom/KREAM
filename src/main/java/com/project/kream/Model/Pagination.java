@@ -21,12 +21,19 @@ public class Pagination {
     private int startPage;
     private int endPage;
 
-    public Pagination(Page<?> customerList, int startPage, int endPage) {
-        this.totalPages = customerList.getTotalPages();
-        this.totalElements = customerList.getTotalElements();
-        this.currentPage = customerList.getNumber();
-        this.currentElements = customerList.getNumberOfElements();
+    public Pagination(Page<?> list, int startPage, int endPage) {
+        this.totalPages = list.getTotalPages();
+        this.totalElements = list.getTotalElements();
+        this.currentPage = list.getNumber();
+        this.currentElements = list.getNumberOfElements();
         this.startPage = startPage;
         this.endPage = endPage;
+    }
+
+    public Pagination(Page<?> list) {
+        this.totalPages = list.getTotalPages();
+        this.totalElements = list.getTotalElements();
+        this.currentPage = list.getNumber();
+        this.currentElements = list.getNumberOfElements();
     }
 }

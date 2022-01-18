@@ -21,50 +21,21 @@ public class ProductTagService extends BaseService<ProductTagApiRequest, Product
     private final ProductTagRepository productTagRepository;
     private final StyleRepository styleRepository;
 
-    public Header<ProductTagApiResponse> create(Long productId, Long styleId) {
-        ProductTag productTag = ProductTag.builder()
-                .style(styleRepository.getById(styleId))
-                .product(productRepository.getById(productId))
-                .build();
-
-        ProductTag newtagdata = baseRepository.save(productTag);
-
-        return Header.OK(response(newtagdata));
-    }
-
-    public Header<ProductTagApiResponse> update(Header<ProductTagApiRequest> request) {
-        return null;
+    public Header<Long> create(Long productId, Long styleId) {
+        ProductTagApiRequest productTagApiRequest = new ProductTagApiRequest();
+        ProductTag newtagdata = baseRepository.save(productTagApiRequest.toEntity(styleRepository.getById(styleId), productRepository.getById(productId)));
+        return Header.OK(newtagdata.getId());
     }
 
     public Header<ProductTagApiResponse> read(Long id) {
-        return productTagRepository.findById(id)
-                .map(pro -> response(pro))
-                .map(Header::OK)
-                .orElseGet(
-                        () -> Header.ERROR("데이터 없음")
-                );
+        return Header.OK(new ProductTagApiResponse(productTagRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("데이터가 없습니다."))));
     }
-
-        public ProductTagApiResponse response(ProductTag productTag){
-            ProductTagApiResponse productTagApiResponse = ProductTagApiResponse.builder()
-                    .id(productTag.getId())
-                    .styleId(productTag.getStyle().getId())
-                    .productId(productTag.getProduct().getId())
-                    .name(productTag.getProduct().getName())
-//                    .originFileName(productTag.getProduct().getProImgList().get(0).getOrigFileName())
-                    .releasePrice(productTag.getProduct().getReleasePrice())
-                    .build();
-            return productTagApiResponse;
-        }
-
 
         public Header<List<ProductTagApiResponse>> list(){
             List<ProductTag> productTagList = baseRepository.findAll();
-
             List<ProductTagApiResponse> productTagApiResponseList = productTagList.stream()
-                    .map(tagData -> response(tagData))
+                    .map(ProductTagApiResponse::new)
                     .collect(Collectors.toList());
-
             return Header.OK(productTagApiResponseList);
 
         }

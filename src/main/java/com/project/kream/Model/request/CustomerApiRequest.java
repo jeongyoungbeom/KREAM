@@ -4,16 +4,10 @@ import com.project.kream.Model.Entity.Customer;
 import com.project.kream.Model.enumclass.CustomerRank;
 import com.project.kream.Model.enumclass.CustomerRole;
 import com.project.kream.Model.enumclass.CustomerType;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
+@Getter
 public class CustomerApiRequest {
     private Long id;
     private String email;
@@ -50,9 +44,9 @@ public class CustomerApiRequest {
                 .image(image)
                 .point(point)
                 .message(message)
-                .customerRank(CustomerRank.BRONZE)
-                .customerType(CustomerType.일반)
-                .customerRole(CustomerRole.USER)
+                .rank(CustomerRank.BRONZE)
+                .type(CustomerType.일반)
+                .role(CustomerRole.USER)
                 .build();
     }
 }

@@ -31,13 +31,13 @@ public class DashBoardService {
         LocalDateTime startTime = nowTime.atStartOfDay();
         LocalDateTime endTime = LocalDateTime.of(nowTime, LocalTime.of(23, 59, 59));
 
-        Long CustomerCnt = customerRepository.CustomerCnt(CustomerType.일반);
-        Long ProductCnt = productRepository.ProductCnt();
-        Long StyleCnt = styleRepository.StyleCnt();
-        Long TransactionCnt = transactionRepository.TransactionCnt();
-        Long NowCustomerCnt = customerRepository.NowCustomerCnt(startTime, endTime);
-        Long NowWithdrawalCnt = withdrawalRepository.NowWithdrawalCnt(startTime, endTime);
-        Long NowTransactionCnt = transactionRepository.NowTransactionCnt(startTime, endTime);
+        Long customerCnt = customerRepository.CustomerCnt(CustomerType.일반);
+        Long productCnt = productRepository.ProductCnt();
+        Long styleCnt = styleRepository.StyleCnt();
+        Long transactionCnt = transactionRepository.TransactionCnt();
+        Long nowCustomerCnt = customerRepository.NowCustomerCnt(startTime, endTime);
+        Long nowWithdrawalCnt = withdrawalRepository.NowWithdrawalCnt(startTime, endTime);
+        Long nowTransactionCnt = transactionRepository.NowTransactionCnt(startTime, endTime);
 
 
         Long delivery = deliveryRepository.deliveryCnt(DeliveryStatus.배송중);
@@ -52,18 +52,6 @@ public class DashBoardService {
         // 중
         String waitingCnt = String.format("%.2f" ,((double)waiting / (double)sum) * 100);
 
-        DashBoardApiResponse dashBoardApiResponse = DashBoardApiResponse.builder()
-                .CustomerCnt(CustomerCnt)
-                .ProductCnt(ProductCnt)
-                .StyleCnt(StyleCnt)
-                .TransactionCnt(TransactionCnt)
-                .NowCustomerCnt(NowCustomerCnt)
-                .NowWithdrawalCnt(NowWithdrawalCnt)
-                .NowTransactionCnt(NowTransactionCnt)
-                .deliveryCnt(deliveryCnt)
-                .completedCnt(completedCnt)
-                .waitingCnt(waitingCnt)
-                .build();
-        return Header.OK(dashBoardApiResponse);
+        return Header.OK(new DashBoardApiResponse(customerCnt, productCnt, styleCnt, transactionCnt, nowCustomerCnt, nowWithdrawalCnt, nowTransactionCnt, deliveryCnt, completedCnt, waitingCnt));
     }
 }

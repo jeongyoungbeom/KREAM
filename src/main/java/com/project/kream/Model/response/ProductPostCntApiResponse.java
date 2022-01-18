@@ -1,18 +1,20 @@
 package com.project.kream.Model.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Getter
 public class ProductPostCntApiResponse {
     private Long allCnt;
     private Long waitCnt;
     private Long ingCnt;
     private Long stopCnt;
     private Long finishCnt;
+
+    public ProductPostCntApiResponse(Long allCnt, Long waitCnt, Long ingCnt, Long stopCnt, Long finishCnt) {
+        this.allCnt = allCnt;
+        this.waitCnt = waitCnt;
+        this.ingCnt = ingCnt;
+        this.stopCnt = stopCnt;
+        this.finishCnt = finishCnt;
+    }
 }

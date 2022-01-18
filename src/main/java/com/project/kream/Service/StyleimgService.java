@@ -20,59 +20,35 @@ public class StyleimgService extends BaseService<StyleimgApiRequest, StyleimgApi
     private final StyleRepository styleRepository;
     private final StyleimgRepository styleimgRepository;
 
-    public Header<StyleimgApiResponse> create(String originFileName, Long fileSize, String safeFile, Long idx) {
-        StyleImg styleimg = StyleImg.builder()
+    public Header<Long> create(String originFileName, Long fileSize, String safeFile, Long idx) {
+        StyleimgApiRequest styleimgApiRequest = StyleimgApiRequest.builder()
                 .origFileName(originFileName)
                 .filePath(safeFile)
                 .fileSize(fileSize)
-                .style(styleRepository.getById(idx))
+                .styleId(idx)
                 .build();
-
-        StyleImg newstyleimg = baseRepository.save(styleimg);
-
-        return Header.OK(response(newstyleimg));
+        StyleImg styleImg = styleimgRepository.save(styleimgApiRequest.toEntity(styleRepository.getById(idx)));
+        return Header.OK(styleImg.getId());
     }
 
-    public Header<StyleimgApiResponse> update(Header<StyleimgApiRequest> request) {
-       StyleimgApiRequest styleimgApiRequest = request.getData();
-        Optional<StyleImg> styleimg = styleimgRepository.findById(styleimgApiRequest.getId());
-        return styleimg.map(stimg ->{
-            stimg.setStyle(styleRepository.getById(styleimgApiRequest.getStyleId()));
-            stimg.setFilePath(styleimgApiRequest.getFilePath());
-
-            return stimg;
-        }).map(stimg -> baseRepository.save(stimg))
-                .map(stimg -> response(stimg))
-                .map(Header::OK)
-                .orElseGet(() -> Header.ERROR("데이터가없습니다"));
-
-    }
 
     public Header<List<StyleimgApiResponse>> list(){
         List<StyleImg> styleImgs = baseRepository.findAll();
         List<StyleimgApiResponse> styleimgApiResponseList = styleImgs.stream()
-                .map(stimg -> response(stimg))
+                .map(StyleimgApiResponse::new)
                 .collect(Collectors.toList());
 
         return Header.OK(styleimgApiResponseList);
     }
 
-    public Header delete(Long id){
+    public int delete(Long id){
         Optional<StyleImg> styleimg = styleimgRepository.findById(id);
-        return styleimg.map(stimg ->{
-            baseRepository.delete(stimg);
-            return Header.OK();
-        }).orElseGet(() -> Header.ERROR("데이터없음"));
+        if(styleimg.isPresent()){
+            styleimgRepository.delete(styleimg.get());
+            return 1;
+        }
+        return 0;
     }
 
-    public StyleimgApiResponse response(StyleImg styleimg){
-        StyleimgApiResponse styleimgApiResponse = StyleimgApiResponse.builder()
-                .id(styleimg.getId())
-                .styleId(styleimg.getStyle().getId())
-                .filePath(styleimg.getFilePath())
-                .build();
-        return styleimgApiResponse;
-
-    }
 
 }

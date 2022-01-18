@@ -1,16 +1,11 @@
 package com.project.kream.Model.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.project.kream.Model.Entity.Product;
+import lombok.*;
 
 import java.util.List;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Getter
 public class ProductDetailApiResponse {
     private Long id;
     private String brand;
@@ -27,7 +22,27 @@ public class ProductDetailApiResponse {
     private List<ProductCollectionApiResponse> productCollectionApiResponseList;
     private List<ProductStyleTagApiResponse> productStyleTagApiResponseList;
     private List<ProductTransactionApiResponse> productTransactionApiResponseList;
-    private List<ProductRegdateApiResponse> productRegdateApiResponseList;
+//    private List<ProductRegdateApiResponse> productRegdateApiResponseList;
     private List<ProductImgApiResponse> productImgApiResponseList;
     private List<ProductTopTransactionApiResponse> productTopTransactionApiResponseList;
+
+    public ProductDetailApiResponse(Product product, List<ProductSizeApiResponse> productSizeApiResponseList, List<ProductPurchaseSizeApiResponse> productPurchaseSizeApiResponseList, List<ProductSalesSizeApiResponse> productSalesSizeApiResponseList, List<ProductCollectionApiResponse> productCollectionApiResponseList, List<ProductStyleTagApiResponse> productStyleTagApiResponseList, List<ProductTransactionApiResponse> productTransactionApiResponseList, List<ProductImgApiResponse> productImgApiResponseList, List<ProductTopTransactionApiResponse> productTopTransactionApiResponseList) {
+        this.id = product.getId();
+        this.brand = product.getBrand();
+        this.korName = product.getKorName();
+        this.name = product.getName();
+        this.collection = product.getCollection();
+        this.release = product.getRelease();
+        this.releasePrice = product.getReleasePrice();
+        this.modelNumber = product.getModelNumber();
+        this.color = product.getColor();
+        this.productSizeApiResponseList = productSizeApiResponseList;
+        this.productPurchaseSizeApiResponseList = productPurchaseSizeApiResponseList;
+        this.productSalesSizeApiResponseList = productSalesSizeApiResponseList;
+        this.productCollectionApiResponseList = productCollectionApiResponseList;
+        this.productStyleTagApiResponseList = productStyleTagApiResponseList;
+        this.productTransactionApiResponseList = productTransactionApiResponseList;
+        this.productImgApiResponseList = productImgApiResponseList;
+        this.productTopTransactionApiResponseList = productTopTransactionApiResponseList;
+    }
 }

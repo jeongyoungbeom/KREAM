@@ -1,18 +1,14 @@
 package com.project.kream.Model.request;
 
+import com.project.kream.Model.Entity.Customer;
+import com.project.kream.Model.Entity.ProductQna;
 import com.project.kream.Model.enumclass.ProductQnaType;
 import com.project.kream.Model.enumclass.QnaStauts;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
+@Getter
 public class ProductQnaApiRequest {
     private Long id;
     private QnaStauts status;
@@ -24,4 +20,14 @@ public class ProductQnaApiRequest {
     private String answer;
     private String acomment;
     private Long customerId;
+
+    public ProductQna toEntity(Customer customer){
+        return ProductQna.builder()
+                .status(status)
+                .type(type)
+                .title(title)
+                .content(content)
+                .customer(customer)
+                .build();
+    }
 }

@@ -1,15 +1,14 @@
 package com.project.kream.Model.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
-@NoArgsConstructor
-@Builder
-@AllArgsConstructor
+@Getter
 public class ProductSizeApiResponse {
         private String size;
         private Long cnt;
+
+        public ProductSizeApiResponse(String size, Long cnt) {
+                this.size = size;
+                this.cnt = cnt;
+        }
 }

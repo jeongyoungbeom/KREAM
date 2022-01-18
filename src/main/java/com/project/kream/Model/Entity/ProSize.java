@@ -24,4 +24,8 @@ public class ProSize {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Product product;
+
+    public void update(String sizeType) {
+        this.sizeType = sizeType;
+    }
 }

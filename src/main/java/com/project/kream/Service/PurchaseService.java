@@ -5,8 +5,6 @@ import com.project.kream.Model.Header;
 import com.project.kream.Model.Pagination;
 import com.project.kream.Model.enumclass.PurchaseStatus1;
 import com.project.kream.Model.enumclass.PurchaseStatus2;
-import com.project.kream.Model.enumclass.SalesStatus1;
-import com.project.kream.Model.enumclass.SalesStatus2;
 import com.project.kream.Model.request.PurchaseApiRequest;
 import com.project.kream.Model.response.*;
 import com.project.kream.Repository.*;
@@ -34,7 +32,7 @@ public class PurchaseService extends BaseService<PurchaseApiRequest, PurchaseApi
     public Long create(Header<PurchaseApiRequest> request) {
         System.out.println(request);
         PurchaseApiRequest purchaseApiRequest = request.getData();
-        Purchase newpurchase = null;
+//        Purchase newpurchase = null;
         Long purcharseId = 0L;
         if(purchaseApiRequest.getSalasId() == null) {
             purcharseId = purchaseRepository.save(purchaseApiRequest.toEntity(productRepository.getById(purchaseApiRequest.getProductId()), customerRepository.getById(purchaseApiRequest.getCustomerId()), addressRepository.getById(purchaseApiRequest.getAddressId()),cardInfoRepository.getById(purchaseApiRequest.getCardInfo()))).getId();
@@ -75,6 +73,7 @@ public class PurchaseService extends BaseService<PurchaseApiRequest, PurchaseApi
         if(endPage > purchaseList.getTotalPages()) {
             endPage = purchaseList.getTotalPages();
         }
+
         return Header.OK(purchaseListApiResponseList, new Pagination(purchaseList, startPage, endPage));
     }
 
@@ -87,6 +86,7 @@ public class PurchaseService extends BaseService<PurchaseApiRequest, PurchaseApi
         return 0;
     }
 
+
     // 관리자 입찰현황
     public Header<PurchaseAdminApiResponse> purchaseinfo(Long id){
         Purchase purchase = purchaseRepository.getById(id);
@@ -94,7 +94,21 @@ public class PurchaseService extends BaseService<PurchaseApiRequest, PurchaseApi
         Product product = purchase.getProduct();
         CardInfo cardInfo = purchase.getCardInfo();
 
-        return Header.OK(new PurchaseAdminApiResponse(purchase));
+        PurchaseAdminApiResponse purchaseAdminApiResponse = PurchaseAdminApiResponse.builder()
+                .userid(customer.getUserid())
+                .productId(product.getId())
+                .productName(product.getKorName())
+                .brand(product.getBrand())
+                .size(purchase.getSizeType())
+                .price(purchase.getPrice())
+                .regdate(purchase.getRegdate())
+                .email(customer.getEmail())
+                .cardNumber(cardInfo.getCardNumber())
+                .cardCompany(cardInfo.getCardCompany())
+                .status3(purchase.getStatus3())
+                .build();
+
+        return Header.OK(purchaseAdminApiResponse);
     }
 
 
@@ -102,12 +116,11 @@ public class PurchaseService extends BaseService<PurchaseApiRequest, PurchaseApi
     public Header<PurchaseUserApiResponse> detailInfo(Long id){
         Purchase purchase = purchaseRepository.getById(id);
 
-//        Delivery delivery = purchase.getDeliveryList().get(0);
-
+        Delivery delivery = purchase.getDeliveryList().get(0);
         String devCompany;
         Long trackNum;
 
-        if (purchase.getDeliveryList().isEmpty()) {
+        if (delivery==null) {
             devCompany = "정보없음";
             trackNum = 0L;
         }else{
@@ -118,7 +131,30 @@ public class PurchaseService extends BaseService<PurchaseApiRequest, PurchaseApi
         Long salesPrice = salesRepository.findBySizeTypeAndProductId(purchase.getSizeType(), purchase.getProduct().getId());
         Long purchasePrice = purchaseRepository.findBySizeTypeAndProductId(purchase.getSizeType(), purchase.getProduct().getId());
 
-        return Header.OK(new PurchaseUserApiResponse(purchase, devCompany, trackNum, salesPrice, purchasePrice));
+        PurchaseUserApiResponse purchaseUserApiResponse = PurchaseUserApiResponse.builder()
+                .orderNumber(purchase.getId())
+                .period(purchase.getPeriod())
+                .status1(purchase.getStatus1())
+                .status2(purchase.getStatus2())
+                .productId(purchase.getProduct().getId())
+                .productName(purchase.getProduct().getName())
+                .size(purchase.getSizeType())
+                .originFileName(purchase.getProduct().getProImgList().get(0).getOrigFileName())
+                .price(purchase.getPrice())
+                .regdate(purchase.getRegdate())
+                .name(purchase.getAddress().getName())
+                .hp(purchase.getAddress().getHp())
+                .cardNumber(purchase.getCardInfo().getCardNumber())
+                .cardCompany(purchase.getCardInfo().getCardCompany())
+                .zipcode(purchase.getAddress().getZipcode())
+                .address1(purchase.getAddress().getDetail1())
+                .address2(purchase.getAddress().getDetail2())
+                .devCompany(devCompany)
+                .trackNum(trackNum)
+                .salesPrice(salesPrice)
+                .purchasePrice(purchasePrice)
+                .build();
+        return Header.OK(purchaseUserApiResponse);
 
     }
 

@@ -1,15 +1,12 @@
 package com.project.kream.Model.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.project.kream.Model.Entity.Account;
+import com.project.kream.Model.Entity.Product;
+import lombok.*;
 
 import java.util.List;
-@Data
-@NoArgsConstructor
-@Builder
-@AllArgsConstructor
+
+@Getter
 public class ProductSellFinalResponse {
     private Long id;
     private String name;
@@ -23,4 +20,19 @@ public class ProductSellFinalResponse {
     private String bank;
     private String accountNumber;
     private List<ProductAddressApiResponse> productAddressApiResponseList;
+
+    public ProductSellFinalResponse(Product product, Account account, String size, Long price, List<ProductAddressApiResponse> productAddressApiResponseList) {
+        this.id = id;
+        this.name = name;
+        this.korName = korName;
+        this.originFileName = originFileName;
+        this.size = size;
+        this.modelNumber = modelNumber;
+        this.accountName = accountName;
+        this.accountId = accountId;
+        this.price = price;
+        this.bank = bank;
+        this.accountNumber = accountNumber;
+        this.productAddressApiResponseList = productAddressApiResponseList;
+    }
 }

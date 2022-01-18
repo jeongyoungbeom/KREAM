@@ -1,16 +1,13 @@
 package com.project.kream.Model.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.project.kream.Model.Entity.Customer;
+import com.project.kream.Model.Entity.Style;
+import com.project.kream.Model.Entity.StyleCustomer;
+import lombok.*;
 
 import java.util.List;
 
-@Data
-@NoArgsConstructor
-@Builder
-@AllArgsConstructor
+@Getter
 public class ProductStyleTagApiResponse {
     private Long styleId;
     private String userId;
@@ -22,4 +19,15 @@ public class ProductStyleTagApiResponse {
     private Long hit;
     private List<ProductHashtagApiResponse> productHashtagApiResponseList;
 
+    public ProductStyleTagApiResponse(Style style, StyleCustomer styleCustomer, Customer customer, Long imgCnt, Long replyCnt, List<ProductHashtagApiResponse> productHashtagApiResponseList) {
+        this.styleId = style.getId();
+        this.userId = styleCustomer.getProfileName();
+        this.userImg = customer.getImage();
+        this.styleImg = style.getStyleImgList().get(0).getOrigFileName();
+        this.content = style.getContent();
+        this.imgCnt = imgCnt;
+        this.replyCnt = replyCnt;
+        this.hit = style.getHit();
+        this.productHashtagApiResponseList = productHashtagApiResponseList;
+    }
 }

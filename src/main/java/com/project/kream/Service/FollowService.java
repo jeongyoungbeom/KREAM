@@ -16,11 +16,11 @@ public class FollowService extends BaseService<FollowApiRequest, FollowApiRespon
 
     public boolean link(Long followingId, Long followerId){
         if(!linked(followingId, followerId)){
-            Follow follow = Follow.builder()
-                    .follower(customerRepository.getById(followerId))
-                    .following(customerRepository.getById(followingId))
+            FollowApiRequest followApiRequest = FollowApiRequest.builder()
+                    .followerId(followerId)
+                    .followingId(followingId)
                     .build();
-            baseRepository.save(follow);
+            followRepository.save(followApiRequest.toEntity(customerRepository.getById(followerId), customerRepository.getById(followingId)));
         }else{
             followRepository.deleteByFollowingIdAndFollowerId(followingId, followerId);
         }

@@ -14,6 +14,7 @@ import com.project.kream.Repository.SalesRepository;
 import com.project.kream.Repository.Specification.CustomerSpecification;
 import com.project.kream.Repository.WithdrawalRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.With;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -41,6 +42,7 @@ public class CustomerService extends BaseService<CustomerApiRequest, CustomerApi
     private final StyleCustomerService styleCustomerService;
     private final WithdrawalRepository withdrawalRepository;
     private final PurchaseRepository purchaseRepository;
+    private final WithdrawalService withdrawalService;
 
     public Header<Long> create(Header<CustomerApiRequest> request) {
         CustomerApiRequest customerApiRequest = request.getData();
@@ -58,20 +60,15 @@ public class CustomerService extends BaseService<CustomerApiRequest, CustomerApi
     }
 
 
-    public Header delete(Long id){
+    public int delete(Long id){
         Optional<Customer> optionalCustomer = customerRepository.findById(id);
         Customer newCustomer = optionalCustomer.get();
-
-        Withdrawal withdrawal = Withdrawal.builder()
-                .email(newCustomer.getEmail())
-                .hp(newCustomer.getHp())
-                .build();
-        withdrawalRepository.save(withdrawal);
+       withdrawalService.create(newCustomer.getEmail(), newCustomer.getHp());
 
         return optionalCustomer.map(customer -> {
             baseRepository.delete(customer);
-            return Header.OK();
-        }).orElseGet(() -> Header.ERROR("데이터 없음"));
+            return 1;
+        }).orElseThrow(() -> new IllegalArgumentException("데이터가 없습니다."));
     }
 
     public Long session(String email){
@@ -84,7 +81,7 @@ public class CustomerService extends BaseService<CustomerApiRequest, CustomerApi
         return passwordEncoder.matches(userpw, customer.getUserpw());
     }
 
-
+    @Transactional
     public Long update(Header<CustomerApiRequest> request) {
         CustomerApiRequest customerApiRequest = request.getData();
         Customer customer = customerRepository.findById(customerApiRequest.getId()).orElseThrow(() -> new IllegalArgumentException("해당유저 없음"));
@@ -106,16 +103,7 @@ public class CustomerService extends BaseService<CustomerApiRequest, CustomerApi
             endPage =  customerList.getTotalPages();
         }
 
-        Pagination pagination = Pagination.builder()
-                .totalPages( customerList.getTotalPages())
-                .totalElements( customerList.getTotalElements())
-                .currentPage( customerList.getNumber())
-                .currentElements( customerList.getNumberOfElements())
-                .startPage(startPage)
-                .endPage(endPage)
-                .build();
-
-        return Header.OK(customerListApiResponseList, pagination);
+        return Header.OK(customerListApiResponseList, new Pagination(customerList, startPage, endPage));
     }
 
     public void searchPW(String email, String hp){

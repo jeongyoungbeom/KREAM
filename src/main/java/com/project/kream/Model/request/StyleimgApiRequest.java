@@ -1,5 +1,7 @@
 package com.project.kream.Model.request;
 
+import com.project.kream.Model.Entity.Style;
+import com.project.kream.Model.Entity.StyleImg;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,5 +17,14 @@ public class StyleimgApiRequest {
     private String filePath;
     private Long fileSize;
     private Long styleId;
+
+    public StyleImg toEntity(Style style){
+        return StyleImg.builder()
+                .origFileName(origFileName)
+                .filePath(filePath)
+                .fileSize(fileSize)
+                .style(style)
+                .build();
+    }
 
 }

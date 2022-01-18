@@ -1,15 +1,10 @@
 package com.project.kream.Model.response;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.project.kream.Model.Entity.ProductTag;
+import lombok.*;
 
-@Data
-@NoArgsConstructor
-@Builder
-@AllArgsConstructor
+@Getter
 public class ProductTagApiResponse {
     private Long id;
     private Long styleId;;
@@ -18,4 +13,12 @@ public class ProductTagApiResponse {
     private Long releasePrice;
     private String name;
 
+    public ProductTagApiResponse(ProductTag productTag) {
+        this.id = productTag.getId();
+        this.styleId = productTag.getStyle().getId();
+        this.productId = productTag.getProduct().getId();
+        this.originFileName = productTag.getProduct().getProImgList().get(0).getOrigFileName();
+        this.releasePrice = productTag.getProduct().getReleasePrice();
+        this.name = productTag.getProduct().getName();
+    }
 }

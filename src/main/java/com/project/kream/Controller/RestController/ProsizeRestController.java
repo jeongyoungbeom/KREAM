@@ -18,12 +18,12 @@ public class ProsizeRestController extends CrudController<ProsizeApiRequest, Pro
     private final ProsizeService prosizeService;
 
     @PostMapping("/api/prosize_register") //제품 사이즈 등록
-    public Header<ProsizeApiResponse> create(@RequestBody Header<ProsizeApiRequest> request) {
+    public Header<Long> create(@RequestBody Header<ProsizeApiRequest> request) {
         return prosizeService.create(request);
     }
 
     @PutMapping("/api/prosize_update")
-    public Header<ProsizeApiResponse> update(@RequestBody Header<ProsizeApiRequest> request) {
+    public Header<Long> update(@RequestBody Header<ProsizeApiRequest> request) {
         return prosizeService.update(request);
     }
 

@@ -1,16 +1,17 @@
 package com.project.kream.Model.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.project.kream.Model.Entity.ProSize;
+import lombok.*;
 
-@Data
-@NoArgsConstructor
-@Builder
-@AllArgsConstructor
+@Getter
 public class ProsizeApiResponse {
     private Long id;
     private Long productId;
     private String sizeType;
+
+    public ProsizeApiResponse(ProSize proSize) {
+        this.id = proSize.getId();
+        this.productId = proSize.getProduct().getId();
+        this.sizeType = proSize.getSizeType();
+    }
 }

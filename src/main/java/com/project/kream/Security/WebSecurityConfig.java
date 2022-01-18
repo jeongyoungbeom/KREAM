@@ -38,18 +38,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                             , "/faq", "/faq/policy", "/faq/common", "/faq/buying", "/faq/selling"
                             ,"/search", "/product/**", "/api/**"
                             ,"/social/trending", "/social/tags/**", "/social/popular", "/social/following/empty"
-                            , "/social/profile/**", "/social/following"
+                            , "/social/profile/**", "/social/following", "/pages/**"
                     ).permitAll()   // 모두 접근 가능
                     .antMatchers().hasRole("USER")   // USER, ADMIN 만 접근 가능
-                    .antMatchers(
-                            "/pages/postm_info/**","/pages/notice/postmange","/pages/content/manage"
-                            ,"/pages/inquire/product", "/pages/product_info/**", "/pages/product_edit/**", "/pages/inquire/customer"
-                            ,"/pages/customer_info/**", "/pages/product_edit/**", "/pages/order/search","/pages/search_info/**"
-                            ,"/pages/order/paycheck","/pages/order/delivery","/pages/order/bidcheck","/pages/order/sales"
-                            ,"/pages/sales_info/**","/pages/product/regist","/pages/product/check","/pages/product/detail/**",
-                            "/pages/product/edit/**","/pages","/pages/member/all","/pages/member/withdrawal"
-                            ,"/pages/member/leave","/pages/rank/**","/pages/info/**","/pages/black/**","/pages/black_info/**"
-                    ).hasRole("ADMIN") // ADMIN만 접근 가능
+//                    .antMatchers(
+//                            "/pages/postm_info/**","/pages/notice/postmange","/pages/content/manage"
+//                            ,"/pages/inquire/product", "/pages/product_info/**", "/pages/product_edit/**", "/pages/inquire/customer"
+//                            ,"/pages/customer_info/**", "/pages/product_edit/**", "/pages/order/search","/pages/search_info/**"
+//                            ,"/pages/order/paycheck","/pages/order/delivery","/pages/order/bidcheck","/pages/order/sales"
+//                            ,"/pages/sales_info/**","/pages/product/regist","/pages/product/check","/pages/product/detail/**",
+//                            "/pages/product/edit/**","/pages","/pages/member/all","/pages/member/withdrawal"
+//                            ,"/pages/member/leave","/pages/rank/**","/pages/info/**","/pages/black/**","/pages/black_info/**"
+//                    ).hasRole("ADMIN") // ADMIN만 접근 가능
                     .anyRequest().authenticated()   // 나머지 요청들은 권한의 종류에 상관 없이 권한이 있어야 접근 가능
                 .and()
                 .formLogin()

@@ -1,5 +1,6 @@
 package com.project.kream.Model.request;
 
+import com.project.kream.Model.Entity.Product;
 import com.project.kream.Model.enumclass.Category;
 import com.project.kream.Model.enumclass.PostStatus;
 import com.project.kream.Model.enumclass.SubCategory;
@@ -77,4 +78,21 @@ public class ProductApiRequest {
     private Long price5;
     private Long price6;
     private String orderFlag;
+
+    public Product toEntity() {
+        return Product.builder()
+                .brand(brand)
+                .korName(korName)
+                .collection(collection)
+                .category(category)
+                .name(name)
+                .gender(gender)
+                .release(release)
+                .subCategory(subCategory)
+                .releasePrice(releasePrice)
+                .modelNumber(modelNumber)
+                .color(color)
+                .postStatus(postStatus)
+                .build();
+    }
 }

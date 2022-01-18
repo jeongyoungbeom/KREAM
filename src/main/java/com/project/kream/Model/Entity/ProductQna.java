@@ -7,7 +7,6 @@ import lombok.*;
 import javax.persistence.*;
 
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -36,5 +35,13 @@ public class ProductQna extends UpdateEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Customer customer;
 
+    public void update(QnaStauts status, ProductQnaType type, String title, String content, String answer, String acomment){
+        this.status = status;
+        this.type = type;
+        this.title = title;
+        this.content = content;
+        this.answer = answer;
+        this.acomment = acomment;
+    }
 }
 

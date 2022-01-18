@@ -10,9 +10,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Entity
 @SequenceGenerator(
         name="seq_product",
@@ -55,4 +55,20 @@ public class Product extends DateEntity {
 
     @OneToMany(mappedBy = "product",cascade = CascadeType.ALL,orphanRemoval=true)
     private List<ProSize> proSizeList;
+
+    public void update(String brand, String collection, String name, String korName, String gender, String release, Long releasePrice, String modelNumber, String color, Category category, SubCategory subCategory, PostStatus postStatus) {
+        this.brand = brand;
+        this.collection = collection;
+        this.name = name;
+        this.korName = korName;
+        this.gender = gender;
+        this.release = release;
+        this.releasePrice = releasePrice;
+        this.modelNumber = modelNumber;
+        this.color = color;
+        this.category = category;
+        this.subCategory = subCategory;
+        this.postStatus = postStatus;
+    }
+
 }

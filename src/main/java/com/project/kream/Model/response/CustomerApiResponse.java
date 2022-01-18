@@ -4,18 +4,12 @@ import com.project.kream.Model.Entity.Customer;
 import com.project.kream.Model.enumclass.CustomerRank;
 import com.project.kream.Model.enumclass.CustomerRole;
 import com.project.kream.Model.enumclass.CustomerType;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
+@Getter
 public class CustomerApiResponse {
     private Long id;
     private String email;

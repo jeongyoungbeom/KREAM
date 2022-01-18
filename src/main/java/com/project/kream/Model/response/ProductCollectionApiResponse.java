@@ -1,20 +1,23 @@
 package com.project.kream.Model.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.project.kream.Model.Entity.Product;
+import lombok.*;
 
 import java.util.List;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Getter
 public class ProductCollectionApiResponse {
     private Long id;
     private String oringinFileName;
     private String brand;
     private String name;
     private Long price;
+
+    public ProductCollectionApiResponse(Product product, Long price) {
+        this.id = product.getId();
+        this.oringinFileName = product.getName();
+        this.brand = product.getBrand();
+        this.name = product.getName();
+        this.price = price;
+    }
 }

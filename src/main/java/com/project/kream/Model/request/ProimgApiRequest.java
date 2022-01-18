@@ -1,22 +1,21 @@
 package com.project.kream.Model.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.project.kream.Model.Entity.ProImg;
+import com.project.kream.Model.Entity.Product;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Data
-@NoArgsConstructor
-@Builder
-@AllArgsConstructor
+@Getter
 public class ProimgApiRequest {
-    private Long id;
-    private String origFileName;
-    private String filePath;
-    private Long fileSize;
-    private Long productId;
-    private LocalDateTime regdate;
+
+    public ProImg toEntity(String origFileName, Long fileSize, String safeFile, Product product){
+        return ProImg.builder()
+                .origFileName(origFileName)
+                .filePath(safeFile)
+                .fileSize(fileSize)
+                .product(product)
+                .build();
+    }
 
 }

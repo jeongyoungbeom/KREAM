@@ -1,6 +1,7 @@
 package com.project.kream.Model.response;
 
 import com.project.kream.Model.Entity.Address;
+import com.project.kream.Model.Entity.Customer;
 import com.project.kream.Model.enumclass.AddressFlag;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -36,4 +37,5 @@ public class AddressApiResponse {
         this.flag = address.getFlag();
         this.regdate = address.getRegdate();
     }
+    //
 }

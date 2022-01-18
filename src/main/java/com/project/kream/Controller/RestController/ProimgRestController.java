@@ -15,17 +15,4 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class ProimgRestController extends CrudController<ProimgApiRequest, ProimgApiResponse, ProImg> {
     private final ProimgService proimgService;
-
-    // 이미지 등록
-    @PostMapping("/api/img_register")
-    public Header<ProimgApiResponse> create(Header<ProimgApiRequest> request) {
-        return null;
-    }
-
-    // 이미지 수정
-    @PutMapping("/api/img_update")
-    public Header<ProimgApiResponse> update(Header<ProimgApiRequest> request) {
-        return proimgService.update(request);
-    }
-
 }

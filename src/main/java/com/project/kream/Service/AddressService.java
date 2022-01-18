@@ -19,78 +19,51 @@ public class AddressService extends BaseService<AddressApiRequest, AddressApiRes
     private final CustomerRepository customerRepository;
     private final AddressRepository addressRepository;
 
-    public Header<AddressApiResponse> create(Header<AddressApiRequest> request) {
+    public Header<Long> create(Header<AddressApiRequest> request) {
         AddressApiRequest addressApiRequest = request.getData();
-
-        Address address = Address.builder()
-                .name(addressApiRequest.getName())
-                .hp(addressApiRequest.getHp())
-                .zipcode(addressApiRequest.getZipcode())
-                .detail1(addressApiRequest.getDetail1())
-                .detail2(addressApiRequest.getDetail2())
-                .flag(addressApiRequest.getFlag())
-                .customer(customerRepository.getById(addressApiRequest.getCustomerId()))
-                .build();
-        Address newAddress = baseRepository.save(address);
-        return Header.OK(response(newAddress));
+        Address address = addressRepository.save(addressApiRequest.toEntity(customerRepository.getById(addressApiRequest.getCustomerId())));
+        return Header.OK(address.getId());
 
     }
 
-    public Header<AddressApiResponse> update(Header<AddressApiRequest> request) {
+    // 주소 수정
+    public Long update(Header<AddressApiRequest> request) {
         AddressApiRequest addressApiRequest = request.getData();
-        Optional<Address> optionalAddress = baseRepository.findById(addressApiRequest.getId());
-        return optionalAddress.map(address ->{
-            address.setName(addressApiRequest.getName());
-            address.setHp(addressApiRequest.getHp());
-            address.setZipcode(addressApiRequest.getZipcode());
-            address.setDetail1(addressApiRequest.getDetail1());
-            address.setDetail2(addressApiRequest.getDetail2());
-            address.setFlag(addressApiRequest.getFlag());
-            return address;
-        }).map(address -> baseRepository.save(address))
-                .map(address -> response(address))
-                .map(Header::OK)
-                .orElseGet(() -> Header.ERROR("데이터가 없습니다"));
+        Address address = addressRepository.findById(addressApiRequest.getId()).orElseThrow(() -> new IllegalArgumentException("해당 주소 없음"));
+
+        address.update(addressApiRequest.getName(), addressApiRequest.getHp(), addressApiRequest.getZipcode(), addressApiRequest.getDetail1(), addressApiRequest.getDetail2(), addressApiRequest.getFlag());
+        return addressApiRequest.getId();
     }
 
     // 기본 배송지 수정(Service)
-    public Header<AddressApiResponse> flagUpdate(Header<AddressApiRequest> request) {
+    public Long flagUpdate(Header<AddressApiRequest> request) {
         AddressApiRequest addressApiRequest = request.getData();
-        Optional<Address> optionalAddress = baseRepository.findById(addressApiRequest.getId());
-        return optionalAddress.map(address ->{
-                    address.setId(addressApiRequest.getId());
-                    address.setFlag(addressApiRequest.getFlag());
-                    return address;
-                }).map(address -> baseRepository.save(address))
-                .map(address -> response(address))
-                .map(Header::OK)
-                .orElseGet(() -> Header.ERROR("데이터가 없습니다"));
+        Address address = addressRepository.getById(addressApiRequest.getId());
+        address.update(addressApiRequest.getId(), addressApiRequest.getFlag());
+        return address.getId();
     }
 
     public Header<AddressApiResponse> read(Long id){
-        return baseRepository.findById(id)
-                .map(address -> response(address))
-                .map(Header::OK)
-                .orElseGet(
-                        () -> Header.ERROR("데이터 없음")
-                );
+        Address address = addressRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 주소 없음"));
+        return Header.OK(new AddressApiResponse(address));
+
     }
 
     public Header<List<AddressApiResponse>> List(Long id){
         List<Address> addressList = addressRepository.findAllByCustomerId(id);
         List<AddressApiResponse> addressApiResponseList = addressList.stream()
-                .map(newaddress -> response(newaddress))
+                .map(AddressApiResponse::new)
                 .collect(Collectors.toList());
         return Header.OK(addressApiResponseList);
     }
 
-    public Header delete(Long id) {
+    public int delete(Long id) {
         Optional<Address> optionalAddress = baseRepository.findById(id);
-
-        return optionalAddress.map(address -> {
-            baseRepository.delete(address);
-            return Header.OK();
-        }).orElseGet(() -> Header.ERROR("데이터 없음"));
+        if(optionalAddress.isPresent()){
+            addressRepository.delete(optionalAddress.get());
+            return 1;
+        }
+        return 0;
     }
 
 

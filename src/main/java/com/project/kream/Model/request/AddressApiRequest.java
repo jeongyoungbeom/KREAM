@@ -1,5 +1,7 @@
 package com.project.kream.Model.request;
 
+import com.project.kream.Model.Entity.Address;
+import com.project.kream.Model.Entity.Customer;
 import com.project.kream.Model.enumclass.AddressFlag;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,5 +21,17 @@ public class AddressApiRequest {
     private String detail2;
     private AddressFlag flag;
     private Long customerId;
+
+    public Address toEntity(Customer customer){
+        return Address.builder()
+                .name(name)
+                .hp(hp)
+                .zipcode(zipcode)
+                .detail1(detail1)
+                .detail2(detail2)
+                .flag(flag)
+                .customer(customer)
+                .build();
+    }
 
 }

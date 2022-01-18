@@ -13,6 +13,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @SequenceGenerator(
         name="seq_customer",
         sequenceName = "seq_customer",
@@ -87,26 +88,6 @@ public class Customer extends DateEntity{
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     private List<StyleCustomer> styleCustomerList;
-
-
-    @Builder
-    public Customer(String email, String userid, String userpw, String hp, String shoesize, String agreement, String privacyPolicy, String smsAllow, String emailAllow, String image, Long point, String message, CustomerRank customerRank, CustomerType customerType, CustomerRole customerRole) {
-        this.email = email;
-        this.userid = userid;
-        this.userpw = userpw;
-        this.hp = hp;
-        this.shoesize = shoesize;
-        this.agreement = agreement;
-        this.privacyPolicy = privacyPolicy;
-        this.smsAllow = smsAllow;
-        this.emailAllow = emailAllow;
-        this.image = image;
-        this.point = point;
-        this.message = message;
-        this.rank = customerRank;
-        this.type = customerType;
-        this.role = customerRole;
-    }
 
     public void update(String email, String userid, String userpw, String hp, String shoesize, String agreement, String privacyPolicy, String smsAllow, String emailAllow, String image, Long point, String message) {
         this.email = email;

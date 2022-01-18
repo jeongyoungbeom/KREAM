@@ -22,7 +22,6 @@ public class PurchaseNopayApiResponse {
     private LocalDateTime regdate;
     private PurchaseStatus2 purchaseStatus2;
 
-
     public PurchaseNopayApiResponse(Purchase purchase) {
         this.id = purchase.getId();
         this.customerId = purchase.getCustomer().getId();
@@ -30,6 +29,7 @@ public class PurchaseNopayApiResponse {
         this.userid = purchase.getCustomer().getUserid();
         this.name = purchase.getAddress().getName();
         this.regdate = purchase.getRegdate();
-        this.purchaseStatus2  = purchase.getStatus2();
+        this.purchaseStatus2 = purchase.getStatus2();
     }
+    //
 }

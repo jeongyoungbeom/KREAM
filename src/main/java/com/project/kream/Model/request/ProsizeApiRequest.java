@@ -1,16 +1,19 @@
 package com.project.kream.Model.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.project.kream.Model.Entity.ProSize;
+import com.project.kream.Model.Entity.Product;
+import lombok.*;
 
-@Data
-@NoArgsConstructor
-@Builder
-@AllArgsConstructor
+@Getter
 public class ProsizeApiRequest {
     private Long id;
     private Long productId;
     private String sizeType;
+
+    public ProSize toEntity(Product product){
+        return ProSize.builder()
+                .sizeType(sizeType)
+                .product(product)
+                .build();
+    }
 }

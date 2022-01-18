@@ -14,43 +14,20 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class HashTagService extends BaseService<HashTagApiRequest, HashTagApiResponse, HashTag> {
-    private final StyleRepository styleRepository;
-
 
     public Long create(String tagName) {
-        HashTag hashTag = HashTag.builder()
+        HashTagApiRequest hashTagApiRequest = HashTagApiRequest.builder()
                 .tagName(tagName)
                 .build();
-
-        HashTag newhashtag = baseRepository.save(hashTag);
+        HashTag newhashtag = baseRepository.save(hashTagApiRequest.toEntity());
         return newhashtag.getId();
-
-    }
-
-    public Header<HashTagApiResponse> update(Header<HashTagApiRequest> request) {
-        return null;
-    }
-
-
-    public HashTagApiResponse response(HashTag hashTag){
-
-        HashTagApiResponse hashTagApiResponse = HashTagApiResponse.builder()
-                .id(hashTag.getId())
-                .tagName(hashTag.getTagName())
-                .build();
-
-        return hashTagApiResponse;
     }
 
     public Header<List<HashTagApiResponse>> list(){
         List<HashTag> hashTagList = baseRepository.findAll();
-
         List<HashTagApiResponse> hashTagApiResponseList = hashTagList.stream()
-                .map(hashTag -> response(hashTag))
+                .map(HashTagApiResponse::new)
                 .collect(Collectors.toList());
-
         return Header.OK(hashTagApiResponseList);
-
     }
-
 }

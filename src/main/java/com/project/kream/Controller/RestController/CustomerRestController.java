@@ -109,7 +109,7 @@ public class CustomerRestController extends CrudController<CustomerApiRequest, C
 
     // 회원 탈퇴
     @DeleteMapping("/api/customer_delete/{id}")
-    public Header<CustomerApiResponse> delete(@PathVariable Long id){
+    public int delete(@PathVariable Long id){
         return customerService.delete(id);
     }
 

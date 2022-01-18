@@ -9,6 +9,7 @@ import com.project.kream.Repository.ProductRepository;
 import com.project.kream.Repository.ProSizeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,29 +22,19 @@ public class ProsizeService extends BaseService<ProsizeApiRequest, ProsizeApiRes
     private final ProductRepository productRepository;
 
 
-    public Header<ProsizeApiResponse> create(Header<ProsizeApiRequest> request) {
+    public Header<Long> create(Header<ProsizeApiRequest> request) {
         ProsizeApiRequest prosizeApiRequest = request.getData();
-        ProSize prosize = ProSize.builder()
-                .sizeType(prosizeApiRequest.getSizeType())
-                .product(productRepository.getById(prosizeApiRequest.getProductId()))
-                .build();
-
-        ProSize newprosize = baseRepository.save(prosize);
-
-        return Header.OK(response(newprosize));
+        ProSize newprosize = baseRepository.save(prosizeApiRequest.toEntity(productRepository.getById(prosizeApiRequest.getProductId())));
+        return Header.OK(newprosize.getId());
     }
 
-    public Header<ProsizeApiResponse> update(Header<ProsizeApiRequest> request) {
+    @Transactional
+    public Header<Long> update(Header<ProsizeApiRequest> request) {
         ProsizeApiRequest prosizeApiRequest = request.getData();
-        Optional<ProSize> prosize = prosizeRepository.findById(prosizeApiRequest.getId());
+        ProSize prosize = prosizeRepository.findById(prosizeApiRequest.getId()).orElseThrow(() -> new IllegalArgumentException("데이터가 없습니다."));
 
-        return prosize.map(pro ->{
-            pro.setSizeType(prosizeApiRequest.getSizeType());
-            return pro;
-        }).map(pro -> baseRepository.save(pro))
-                .map(pro ->response(pro))
-                .map(Header::OK)
-                .orElseGet(() -> Header.ERROR("데이터가 없습니다"));
+        prosize.update(prosizeApiRequest.getSizeType());
+        return Header.OK(prosizeApiRequest.getId());
     }
 
     public Header delete(Long id){
@@ -57,22 +48,8 @@ public class ProsizeService extends BaseService<ProsizeApiRequest, ProsizeApiRes
     public Header<List<ProsizeApiResponse>> list(){
         List<ProSize> styleEntities = baseRepository.findAll();
         List<ProsizeApiResponse> styleApiResponseList = styleEntities.stream()
-                .map(style ->response(style))
+                .map(ProsizeApiResponse::new)
                 .collect(Collectors.toList());
-
         return Header.OK(styleApiResponseList);
     }
-
-    public ProsizeApiResponse response(ProSize prosize){
-        ProsizeApiResponse prosizeApiResponse = ProsizeApiResponse.builder()
-                .id(prosize.getId())
-                .productId(prosize.getProduct().getId())
-                .sizeType(prosize.getSizeType())
-                .build();
-        return prosizeApiResponse;
-
-    }
-
-
-
 }

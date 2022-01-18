@@ -1,16 +1,22 @@
 package com.project.kream.Model.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.project.kream.Model.Entity.HashTag;
+import lombok.*;
 
-@Data
-@NoArgsConstructor
-@Builder
-@AllArgsConstructor
+@Getter
 public class HashTagApiRequest {
     private Long id;
     private Long styleId;
     private String tagName;
+
+    @Builder
+    public HashTagApiRequest(String tagName) {
+        this.tagName = tagName;
+    }
+
+    public HashTag toEntity(){
+        return HashTag.builder()
+                .tagName(tagName)
+                .build();
+    }
 }
