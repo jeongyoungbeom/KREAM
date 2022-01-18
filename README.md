@@ -9,6 +9,28 @@
 * 사용 언어 : JAVA(JDK 11), Oracle SQL, Html5, CSS3, Javascript ES6
 * 사용 기술 : JDBC, thymeleaf, jQuery, Ajax, Spring boot 2.5, Mail API, JPA/Hibernate, Rest Api, queryDSL
 
+## 현재 코드 
+### 수정 일자
+- 2022년 01월 17일 수정
+  - AddressService
+  - CustomerService
+  - ProductService
+  - PurchaseService
+  - StyleimgService
+  - TransactionService
+  - WithdrawalService
+  - DashBoardService
+  - FollowService
+  - HashTagService
+  - ProductQnaService
+
+- 2022년 01월 18일 수정
+  - ProductService
+  - ProImgService
+  - ProSizeService
+  - ProductTagService
+  - StyleService(수정중)
+
 # 프로젝트 상세내용
 ## 구현목표
 > 사용자 페이지
