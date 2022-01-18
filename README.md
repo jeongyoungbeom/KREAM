@@ -9,7 +9,7 @@
 * 사용 언어 : JAVA(JDK 11), Oracle SQL, Html5, CSS3, Javascript ES6
 * 사용 기술 : JDBC, thymeleaf, jQuery, Ajax, Spring boot 2.5, Mail API, JPA/Hibernate, Rest Api, queryDSL
 
-## 현재 코드 
+## 현재 코드 수정중
 ### 수정 일자
 - 2022년 01월 17일 수정
   - AddressService
