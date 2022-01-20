@@ -24,4 +24,6 @@ public class StyleReplyApiResponse {
     private Long groupNum;
     private Long groupId;
     private LocalDateTime regdate;
+
+
 }

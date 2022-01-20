@@ -43,13 +43,10 @@ public class StyleService extends BaseService<StyleApiRequest, StyleApiResponse,
     private final ReplyLikeService replyLikeService;
     private final FollowService followService;
 
-    public Header<StyleApiResponse> create(StyleApiRequest request, MultipartHttpServletRequest multipart) {
-        Style style = Style.builder()
-                .customer(customerRepository.getById(request.getCustomerId()))
-                .content(request.getContent())
-                .hit(0L)
-                .build();
-        Style newStyle = baseRepository.save(style);
+    public Long create(Header<StyleApiRequest> request, MultipartHttpServletRequest multipart) {
+        StyleApiRequest styleApiRequest = request.getData();
+        Style newStyle = styleRepository.save(styleApiRequest.toEntity(customerRepository.getById(styleApiRequest.getCustomerId())));
+
 
         List<MultipartFile> fileList = multipart.getFiles("files");
         String path = "/Users/soyounjeong/EditKream/src/main/resources/static/lib/styleImg";
@@ -70,11 +67,11 @@ public class StyleService extends BaseService<StyleApiRequest, StyleApiResponse,
             }
         }
 
-        for(Long id : request.getProductId()){
+        for(Long id : styleApiRequest.getProductId()){
             productTagService.create(id, newStyle.getId());
         }
 
-        for(String name : request.getTagName()){
+        for(String name : styleApiRequest.getTagName()){
             if(hashTagRepository.existsByTagName(name)){
                 HashTag HashTag = hashTagRepository.getByTagName(name);
                 styleHashTagService.create(newStyle.getId(), HashTag.getId());
@@ -83,40 +80,36 @@ public class StyleService extends BaseService<StyleApiRequest, StyleApiResponse,
                 styleHashTagService.create(newStyle.getId(), hashTagId);
             }
         }
-        return Header.OK(response(newStyle));
+        return newStyle.getId();
     }
 
-    public Header<StyleApiResponse> update(StyleApiRequest request) {
-        Optional<Style> optionalStyle = styleRepository.findById(request.getId());
-        return optionalStyle.map(style -> {
-                    style.setContent(request.getContent());
 
-                    productTagRepository.deleteAllByStyleId(request.getId());
-                    styleHashTagRepository.deleteAllByStyleId(request.getId());
+    public Long update(Header<StyleApiRequest> request){
+        StyleApiRequest styleApiRequest = request.getData();
+        Style style = styleRepository.findById(styleApiRequest.getId()).orElseThrow(() -> new IllegalArgumentException("해당 유저 없음"));
 
-                    if(request.getProductId().length != 0) {
-                        for (Long id : request.getProductId()) {
-                            productTagService.create(id, style.getId());
-                        }
-                    }
+        if (styleApiRequest.getProductId().length != 0) {
+            for (Long id : styleApiRequest.getProductId()) {
+                productTagService.create(id, style.getId());
+            }
+        }
 
-                    if(request.getTagName().length != 0) {
-                        for (String Name : request.getTagName()) {
-                            if(hashTagRepository.existsByTagName(Name)){
-                                HashTag HashTag = hashTagRepository.getByTagName(Name);
-                                styleHashTagService.create(request.getId(), HashTag.getId());
-                            }else{
-                                Long hashTagId = hashTagService.create(Name);
-                                styleHashTagService.create(request.getId(), hashTagId);
-                            }
-                        }
-                    }
-                    return style;
-                }).map(style -> baseRepository.save(style))
-                .map(this::response)
-                .map(Header::OK)
-                .orElseGet(() -> Header.ERROR("데이터가 없습니다"));
+        if (styleApiRequest.getTagName().length != 0) {
+            for (String Name : styleApiRequest.getTagName()) {
+                if (hashTagRepository.existsByTagName(Name)) {
+                    HashTag HashTag = hashTagRepository.getByTagName(Name);
+                    styleHashTagService.create(styleApiRequest.getId(), HashTag.getId());
+                } else {
+                    Long hashTagId = hashTagService.create(Name);
+                    styleHashTagService.create(styleApiRequest.getId(), hashTagId);
+                }
+            }
+        }
+
+        style.update(styleApiRequest.getContent(), style.getHit(), style.getCustomer(), style.getStyleReplyList(), style.getProductTagList(), style.getStyleImgList(), style.getStyleLikeList(), style.getStyleHashTagList());
+        return  styleApiRequest.getId();
     }
+
 
     public Header<StyleApiResponse> upload(Long id, MultipartHttpServletRequest multiRequest){
         List<MultipartFile> fileList = multiRequest.getFiles("files");
@@ -158,40 +151,12 @@ public class StyleService extends BaseService<StyleApiRequest, StyleApiResponse,
                     Customer customer = style.getCustomer();
                     StyleCustomer styleCustomer = customer.getStyleCustomerList().get(0);
                     List<StyleHashTagNameApiResponse> styleHashTagNameApiResponseList = style.getStyleHashTagList().stream()
-                            .map(styleHashTag -> {
-                                StyleHashTagNameApiResponse styleHashTagNameApiResponse = StyleHashTagNameApiResponse.builder()
-                                        .tagName(styleHashTag.getHashTag().getTagName())
-                                        .build();
-                                return styleHashTagNameApiResponse;
-                            }).collect(Collectors.toList());
+                            .map(StyleHashTagNameApiResponse::new).collect(Collectors.toList());
 
                     List<StyleProductTagApiResponse> styleProductTagApiResponseList = style.getProductTagList().stream()
-                            .map(productTag -> {
-                                Product product = productTag.getProduct();
-                                StyleProductTagApiResponse styleProductTagApiResponse = StyleProductTagApiResponse.builder()
-                                        .productId(productTag.getProduct().getId())
-                                        .name(product.getName())
-                                        .originFileName(product.getProImgList().get(0).getOrigFileName())
-                                        .price(salesRepository.findByProductId(product.getId()))
-                                        .build();
-                                return styleProductTagApiResponse;
-                            }).collect(Collectors.toList());
+                            .map(productTag -> new StyleProductTagApiResponse(productTag.getProduct(), productTag, salesRepository.findByProductId(productTag.getProduct().getId()))).collect(Collectors.toList());
 
-                    StyleHitListApiResponse styleHitListApiResponse = StyleHitListApiResponse.builder()
-                            .userid(styleCustomer.getProfileName())
-                            .userImg(customer.getImage())
-                            .styleCnt(styleImgRepository.countByStyleId(style.getId()))
-                            .content(style.getContent())
-                            .styleId(style.getId())
-                            .replyCnt(styleReplyRepository.countByStyleId(style.getId()))
-                            .styleHashTagNameApiResponseList(styleHashTagNameApiResponseList)
-                            .styleProductTagApiResponseList(styleProductTagApiResponseList)
-                            .styleImg(style.getStyleImgList().get(0).getOrigFileName())
-                            .hitBoolean(styleLikeService.liked(sessionId, style.getId()))
-                            .hit(style.getHit())
-                            .build();
-
-                    return styleHitListApiResponse;
+                    return new StyleHitListApiResponse(style, styleCustomer, customer, styleImgRepository.countByStyleId(style.getId()), styleProductTagApiResponseList, styleHashTagNameApiResponseList,styleReplyRepository.countByStyleId(style.getId()), styleLikeService.liked(sessionId, style.getId()));
                 }).sorted(Comparator.comparingLong(StyleHitListApiResponse::getHit).reversed())
                 .collect(Collectors.toList());
 
@@ -207,40 +172,12 @@ public class StyleService extends BaseService<StyleApiRequest, StyleApiResponse,
                     Customer customer = style.getCustomer();
                     StyleCustomer styleCustomer = customer.getStyleCustomerList().get(0);
                     List<StyleHashTagNameApiResponse> styleHashTagNameApiResponseList = style.getStyleHashTagList().stream()
-                            .map(styleHashTag -> {
-                                StyleHashTagNameApiResponse styleHashTagNameApiResponse = StyleHashTagNameApiResponse.builder()
-                                        .tagName(styleHashTag.getHashTag().getTagName())
-                                        .build();
-                                return styleHashTagNameApiResponse;
-                            }).collect(Collectors.toList());
+                            .map(StyleHashTagNameApiResponse::new).collect(Collectors.toList());
 
                     List<StyleProductTagApiResponse> styleProductTagApiResponseList = style.getProductTagList().stream()
-                            .map(productTag -> {
-                                Product product = productTag.getProduct();
-                                StyleProductTagApiResponse styleProductTagApiResponse = StyleProductTagApiResponse.builder()
-                                        .productId(productTag.getProduct().getId())
-                                        .name(product.getName())
-                                        .originFileName(product.getProImgList().get(0).getOrigFileName())
-                                        .price(salesRepository.findByProductId(product.getId()))
-                                        .build();
-                                return styleProductTagApiResponse;
-                            }).collect(Collectors.toList());
+                            .map(productTag -> new StyleProductTagApiResponse(productTag.getProduct(), productTag,salesRepository.findByProductId(productTag.getProduct().getId()) )).collect(Collectors.toList());
 
-                    StyleHitListApiResponse styleHitListApiResponse = StyleHitListApiResponse.builder()
-                            .userid(styleCustomer.getProfileName())
-                            .userImg(customer.getImage())
-                            .styleCnt(styleImgRepository.countByStyleId(style.getId()))
-                            .content(style.getContent())
-                            .styleId(style.getId())
-                            .replyCnt(styleReplyRepository.countByStyleId(style.getId()))
-                            .styleHashTagNameApiResponseList(styleHashTagNameApiResponseList)
-                            .styleProductTagApiResponseList(styleProductTagApiResponseList)
-                            .styleImg(style.getStyleImgList().get(0).getOrigFileName())
-                            .hitBoolean(false)
-                            .hit(style.getHit())
-                            .build();
-
-                    return styleHitListApiResponse;
+                    return new StyleHitListApiResponse(style,styleCustomer,customer,styleImgRepository.countByStyleId(style.getId()),styleProductTagApiResponseList, styleHashTagNameApiResponseList, styleReplyRepository.countByStyleId(style.getId()), false);
                 }).sorted(Comparator.comparingLong(StyleHitListApiResponse::getHit).reversed())
                 .collect(Collectors.toList());
 
@@ -249,189 +186,67 @@ public class StyleService extends BaseService<StyleApiRequest, StyleApiResponse,
 
     // 유저정보
     public Header<StyleUserInfoApiResponse> styleUserList(Long customerId, Long sessionId) {
-        Customer customer1 = customerRepository.getById(customerId);
-        List<Style> styleList = customer1.getStyleList();
+        Customer customer = customerRepository.getById(customerId);
+        List<Style> styleList = customer.getStyleList();
 
         List<StyleUserListApiResponse> styleUserListApiResponseList = styleList.stream()
                 .map(style -> {
-
                     List<StyleHashTagNameApiResponse> styleHashTagNameApiResponseList = style.getStyleHashTagList().stream()
-                            .map(styleHashTag -> {
-                                StyleHashTagNameApiResponse styleHashTagNameApiResponse = StyleHashTagNameApiResponse.builder()
-                                        .tagName(styleHashTag.getHashTag().getTagName())
-                                        .build();
-                                return styleHashTagNameApiResponse;
-                            }).collect(Collectors.toList());
+                            .map(StyleHashTagNameApiResponse::new).collect(Collectors.toList());
 
                     List<StyleProductTagApiResponse> styleProductTagApiResponseList = style.getProductTagList().stream()
-                            .map(productTag -> {
-                                Product product = productTag.getProduct();
-                                StyleProductTagApiResponse styleProductTagApiResponse = StyleProductTagApiResponse.builder()
-                                        .productId(productTag.getProduct().getId())
-                                        .name(product.getName())
-                                        .originFileName(product.getProImgList().get(0).getOrigFileName())
-                                        .price(salesRepository.findByProductId(product.getId()))
-                                        .build();
-                                return styleProductTagApiResponse;
-                            }).collect(Collectors.toList());
+                            .map(productTag -> new StyleProductTagApiResponse(productTag.getProduct(), productTag,salesRepository.findByProductId(productTag.getProduct().getId()) )).collect(Collectors.toList());
 
-                    StyleUserListApiResponse styleUserListApiResponse = StyleUserListApiResponse.builder()
-                            .styleId(style.getId())
-                            .content(style.getContent())
-                            .replyCnt(styleReplyRepository.countByStyleId(style.getId()))
-                            .styleHashTagNameApiResponseList(styleHashTagNameApiResponseList)
-                            .styleProductTagApiResponseList(styleProductTagApiResponseList)
-                            .styleImg(style.getStyleImgList().get(0).getOrigFileName())
-                            .hitBoolean(styleLikeService.liked(sessionId, style.getId()))
-                            .styleCnt(styleImgRepository.countByStyleId(style.getId()))
-                            .hit(style.getHit())
-                            .regdate(style.getRegdate())
-                            .build();
-                    return styleUserListApiResponse;
+                    return new StyleUserListApiResponse(style, styleProductTagApiResponseList, styleHashTagNameApiResponseList,styleReplyRepository.countByStyleId(style.getId()),styleImgRepository.countByStyleId(style.getId()),styleLikeService.liked(sessionId, style.getId()));
 
                 }).sorted(Comparator.comparing(StyleUserListApiResponse::getRegdate).reversed())
                 .collect(Collectors.toList());
 
-        List<Follow> followerList = customer1.getFollowerList();
+        List<Follow> followerList = customer.getFollowerList();
         List<FollowingListApiResponse> followingListApiResponseList = followerList.stream()
-                .map(follow -> {
-                    FollowingListApiResponse followingListApiResponse = FollowingListApiResponse.builder()
-                            .id(follow.getFollowing().getId())
-                            .profileName(follow.getFollowing().getStyleCustomerList().get(0).getProfileName())
-                            .name(follow.getFollowing().getStyleCustomerList().get(0).getName())
-                            .originFileName(follow.getFollowing().getImage())
-                            .followingBoolean(followRepository.existsByFollowingIdAndFollowerId(follow.getFollowing().getId(), sessionId))
-                            .build();
-                    return followingListApiResponse;
-                }).collect(Collectors.toList());
+                .map(follow -> new FollowingListApiResponse(follow,followRepository.existsByFollowingIdAndFollowerId(follow.getFollowing().getId(), sessionId))).collect(Collectors.toList());
 
-        List<Follow> followingList = customer1.getFollowingList();
+        List<Follow> followingList = customer.getFollowingList();
         List<FollowerListApiResponse> followerListApiResponseList = followingList.stream()
-                .map(follow -> {
-                    FollowerListApiResponse followerListApiResponse = FollowerListApiResponse.builder()
-                            .id(follow.getFollower().getId())
-                            .profileName(follow.getFollower().getStyleCustomerList().get(0).getProfileName())
-                            .name(follow.getFollower().getStyleCustomerList().get(0).getName())
-                            .originFileName(follow.getFollower().getImage())
-                            .followerBoolean(followRepository.existsByFollowingIdAndFollowerId(follow.getFollower().getId(), sessionId))
-                            .build();
-                    return followerListApiResponse;
-                }).collect(Collectors.toList());
+                .map(follow -> new FollowerListApiResponse(follow, followRepository.existsByFollowingIdAndFollowerId(follow.getFollower().getId(), sessionId))).collect(Collectors.toList());
 
-        String intro = customer1.getStyleCustomerList().get(0).getIntro();
+        String intro = customer.getStyleCustomerList().get(0).getIntro();
         if(intro == null){
             intro = "정보없음";
         }
-
-        StyleUserInfoApiResponse styleUserInfoApiResponse = StyleUserInfoApiResponse.builder()
-                .userid(customer1.getStyleCustomerList().get(0).getProfileName())
-                .name(customer1.getStyleCustomerList().get(0).getName())
-                .userImg(customer1.getImage())
-                .intro(intro)
-                .followerListApiResponseList(followerListApiResponseList)
-                .followBoolean(followService.linked(customerId,sessionId))
-                .followerCnt(followRepository.countByFollowingId(customerId))
-                .followingListApiResponseList(followingListApiResponseList)
-                .followingCnt(followRepository.countByFollowerId(customerId))
-                .boardCnt(styleRepository.countByCustomerId(customerId))
-                .styleUserListApiResponseList(styleUserListApiResponseList)
-                .build();
-
-
-        return Header.OK(styleUserInfoApiResponse);
+        return Header.OK(new StyleUserInfoApiResponse(customer, intro, styleRepository.countByCustomerId(customerId), followingListApiResponseList, followRepository.countByFollowingId(customerId), followerListApiResponseList, followRepository.countByFollowerId(customerId), followService.linked(customerId,sessionId), styleUserListApiResponseList));
     }
 
     public Header<StyleUserInfoApiResponse> noStyleUserList(Long customerId) {
-        Customer customer1 = customerRepository.getById(customerId);
-        List<Style> styleList = customer1.getStyleList();
+        Customer customer = customerRepository.getById(customerId);
+        List<Style> styleList = customer.getStyleList();
 
         List<StyleUserListApiResponse> styleUserListApiResponseList = styleList.stream()
                 .map(style -> {
-
                     List<StyleHashTagNameApiResponse> styleHashTagNameApiResponseList = style.getStyleHashTagList().stream()
-                            .map(styleHashTag -> {
-                                StyleHashTagNameApiResponse styleHashTagNameApiResponse = StyleHashTagNameApiResponse.builder()
-                                        .tagName(styleHashTag.getHashTag().getTagName())
-                                        .build();
-                                return styleHashTagNameApiResponse;
-                            }).collect(Collectors.toList());
+                            .map(StyleHashTagNameApiResponse::new).collect(Collectors.toList());
 
                     List<StyleProductTagApiResponse> styleProductTagApiResponseList = style.getProductTagList().stream()
-                            .map(productTag -> {
-                                Product product = productTag.getProduct();
-                                StyleProductTagApiResponse styleProductTagApiResponse = StyleProductTagApiResponse.builder()
-                                        .productId(productTag.getProduct().getId())
-                                        .name(product.getName())
-                                        .originFileName(product.getProImgList().get(0).getOrigFileName())
-                                        .price(salesRepository.findByProductId(product.getId()))
-                                        .build();
-                                return styleProductTagApiResponse;
-                            }).collect(Collectors.toList());
-
-                    StyleUserListApiResponse styleUserListApiResponse = StyleUserListApiResponse.builder()
-                            .styleId(style.getId())
-                            .content(style.getContent())
-                            .replyCnt(styleReplyRepository.countByStyleId(style.getId()))
-                            .styleHashTagNameApiResponseList(styleHashTagNameApiResponseList)
-                            .styleProductTagApiResponseList(styleProductTagApiResponseList)
-                            .styleImg(style.getStyleImgList().get(0).getOrigFileName())
-                            .hitBoolean(false)
-                            .styleCnt(styleImgRepository.countByStyleId(style.getId()))
-                            .hit(style.getHit())
-                            .regdate(style.getRegdate())
-                            .build();
-                    return styleUserListApiResponse;
+                            .map(productTag -> new StyleProductTagApiResponse(productTag.getProduct(), productTag, salesRepository.findByProductId(productTag.getProduct().getId()))).collect(Collectors.toList());
+                    return new StyleUserListApiResponse(style, styleProductTagApiResponseList, styleHashTagNameApiResponseList,styleReplyRepository.countByStyleId(style.getId()), styleImgRepository.countByStyleId(style.getId()), false);
 
                 }).sorted(Comparator.comparing(StyleUserListApiResponse::getRegdate).reversed())
                 .collect(Collectors.toList());
 
-        List<Follow> followerList = customer1.getFollowerList();
+        List<Follow> followerList = customer.getFollowerList();
         List<FollowingListApiResponse> followingListApiResponseList = followerList.stream()
-                .map(follow -> {
-                    FollowingListApiResponse followingListApiResponse = FollowingListApiResponse.builder()
-                            .id(follow.getFollowing().getId())
-                            .profileName(follow.getFollowing().getStyleCustomerList().get(0).getProfileName())
-                            .name(follow.getFollowing().getStyleCustomerList().get(0).getName())
-                            .originFileName(follow.getFollowing().getImage())
-                            .followingBoolean(false)
-                            .build();
-                    return followingListApiResponse;
-                }).collect(Collectors.toList());
+                .map(follow -> new FollowingListApiResponse(follow, false)).collect(Collectors.toList());
 
-        List<Follow> followingList = customer1.getFollowingList();
+        List<Follow> followingList = customer.getFollowingList();
         List<FollowerListApiResponse> followerListApiResponseList = followingList.stream()
-                .map(follow -> {
-                    FollowerListApiResponse followerListApiResponse = FollowerListApiResponse.builder()
-                            .id(follow.getFollower().getId())
-                            .profileName(follow.getFollower().getStyleCustomerList().get(0).getProfileName())
-                            .name(follow.getFollower().getStyleCustomerList().get(0).getName())
-                            .originFileName(follow.getFollower().getImage())
-                            .followerBoolean(false)
-                            .build();
-                    return followerListApiResponse;
-                }).collect(Collectors.toList());
+                .map(follow -> new FollowerListApiResponse(follow, false)).collect(Collectors.toList());
 
-        String intro = customer1.getStyleCustomerList().get(0).getIntro();
+        String intro = customer.getStyleCustomerList().get(0).getIntro();
         if(intro == null){
             intro = "정보없음";
         }
 
-        StyleUserInfoApiResponse styleUserInfoApiResponse = StyleUserInfoApiResponse.builder()
-                .userid(customer1.getStyleCustomerList().get(0).getProfileName())
-                .name(customer1.getStyleCustomerList().get(0).getName())
-                .userImg(customer1.getImage())
-                .intro(intro)
-                .followerListApiResponseList(followerListApiResponseList)
-                .followBoolean(false)
-                .followerCnt(followRepository.countByFollowingId(customerId))
-                .followingListApiResponseList(followingListApiResponseList)
-                .followingCnt(followRepository.countByFollowerId(customerId))
-                .boardCnt(styleRepository.countByCustomerId(customerId))
-                .styleUserListApiResponseList(styleUserListApiResponseList)
-                .build();
-
-
-        return Header.OK(styleUserInfoApiResponse);
+        return Header.OK(new StyleUserInfoApiResponse(customer, intro,styleRepository.countByCustomerId(customerId), followingListApiResponseList, followRepository.countByFollowingId(customerId), followerListApiResponseList, followRepository.countByFollowerId(customerId), false, styleUserListApiResponseList ));
     }
 
     public Header<List<StyleHashListApiResponse>> styleHashList(String tagName, Long sessionId) {
@@ -441,40 +256,12 @@ public class StyleService extends BaseService<StyleApiRequest, StyleApiResponse,
                     Customer customer = style.getCustomer();
                     StyleCustomer styleCustomer = customer.getStyleCustomerList().get(0);
                     List<StyleHashTagNameApiResponse> styleHashTagNameApiResponseList = style.getStyleHashTagList().stream()
-                            .map(styleHashTag -> {
-                                StyleHashTagNameApiResponse styleHashTagNameApiResponse = StyleHashTagNameApiResponse.builder()
-                                        .tagName(styleHashTag.getHashTag().getTagName())
-                                        .build();
-                                return styleHashTagNameApiResponse;
-                            }).collect(Collectors.toList());
+                            .map(StyleHashTagNameApiResponse::new).collect(Collectors.toList());
 
                     List<StyleProductTagApiResponse> styleProductTagApiResponseList = style.getProductTagList().stream()
-                            .map(productTag -> {
-                                Product product = productTag.getProduct();
-                                StyleProductTagApiResponse styleProductTagApiResponse = StyleProductTagApiResponse.builder()
-                                        .productId(productTag.getProduct().getId())
-                                        .name(product.getName())
-                                        .originFileName(product.getProImgList().get(0).getOrigFileName())
-                                        .price(salesRepository.findByProductId(product.getId()))
-                                        .build();
-                                return styleProductTagApiResponse;
-                            }).collect(Collectors.toList());
+                            .map(productTag -> new StyleProductTagApiResponse(productTag.getProduct(), productTag, salesRepository.findByProductId(productTag.getProduct().getId()))).collect(Collectors.toList());
 
-                    StyleHashListApiResponse styleHashListApiResponse = StyleHashListApiResponse.builder()
-                            .userid(styleCustomer.getProfileName())
-                            .styleId(style.getId())
-                            .userImg(customer.getImage())
-                            .styleCnt(styleImgRepository.countByStyleId(style.getId()))
-                            .content(style.getContent())
-                            .replyCnt(styleReplyRepository.countByStyleId(style.getId()))
-                            .styleHashTagNameApiResponseList(styleHashTagNameApiResponseList)
-                            .styleProductTagApiResponseList(styleProductTagApiResponseList)
-                            .styleImg(style.getStyleImgList().get(0).getOrigFileName())
-                            .hit(style.getHit())
-                            .regdate(style.getRegdate())
-                            .hitBoolean(styleLikeService.liked(sessionId, style.getId()))
-                            .build();
-                    return styleHashListApiResponse;
+                    return new StyleHashListApiResponse(styleCustomer, style, customer,styleImgRepository.countByStyleId(style.getId()), styleProductTagApiResponseList, styleHashTagNameApiResponseList, styleReplyRepository.countByStyleId(style.getId()), styleLikeService.liked(sessionId, style.getId()));
 
                 }).sorted(Comparator.comparing(StyleHashListApiResponse::getRegdate).reversed())
                 .collect(Collectors.toList());
@@ -488,40 +275,12 @@ public class StyleService extends BaseService<StyleApiRequest, StyleApiResponse,
                     Customer customer = style.getCustomer();
                     StyleCustomer styleCustomer = customer.getStyleCustomerList().get(0);
                     List<StyleHashTagNameApiResponse> styleHashTagNameApiResponseList = style.getStyleHashTagList().stream()
-                            .map(styleHashTag -> {
-                                StyleHashTagNameApiResponse styleHashTagNameApiResponse = StyleHashTagNameApiResponse.builder()
-                                        .tagName(styleHashTag.getHashTag().getTagName())
-                                        .build();
-                                return styleHashTagNameApiResponse;
-                            }).collect(Collectors.toList());
+                            .map(StyleHashTagNameApiResponse::new).collect(Collectors.toList());
 
                     List<StyleProductTagApiResponse> styleProductTagApiResponseList = style.getProductTagList().stream()
-                            .map(productTag -> {
-                                Product product = productTag.getProduct();
-                                StyleProductTagApiResponse styleProductTagApiResponse = StyleProductTagApiResponse.builder()
-                                        .productId(productTag.getProduct().getId())
-                                        .name(product.getName())
-                                        .originFileName(product.getProImgList().get(0).getOrigFileName())
-                                        .price(salesRepository.findByProductId(product.getId()))
-                                        .build();
-                                return styleProductTagApiResponse;
-                            }).collect(Collectors.toList());
+                            .map(productTag -> new StyleProductTagApiResponse(productTag.getProduct(), productTag, salesRepository.findByProductId(productTag.getProduct().getId()))).collect(Collectors.toList());
 
-                    StyleHashListApiResponse styleHashListApiResponse = StyleHashListApiResponse.builder()
-                            .userid(styleCustomer.getProfileName())
-                            .styleId(style.getId())
-                            .userImg(customer.getImage())
-                            .styleCnt(styleImgRepository.countByStyleId(style.getId()))
-                            .content(style.getContent())
-                            .replyCnt(styleReplyRepository.countByStyleId(style.getId()))
-                            .styleHashTagNameApiResponseList(styleHashTagNameApiResponseList)
-                            .styleProductTagApiResponseList(styleProductTagApiResponseList)
-                            .styleImg(style.getStyleImgList().get(0).getOrigFileName())
-                            .hit(style.getHit())
-                            .regdate(style.getRegdate())
-                            .hitBoolean(false)
-                            .build();
-                    return styleHashListApiResponse;
+                    return new StyleHashListApiResponse(styleCustomer, style, customer,styleImgRepository.countByStyleId(style.getId()), styleProductTagApiResponseList, styleHashTagNameApiResponseList, styleReplyRepository.countByStyleId(style.getId()), false );
 
                 }).sorted(Comparator.comparing(StyleHashListApiResponse::getRegdate).reversed())
                 .collect(Collectors.toList());
@@ -535,73 +294,24 @@ public class StyleService extends BaseService<StyleApiRequest, StyleApiResponse,
                     Customer customer = style.getCustomer();
                     StyleCustomer styleCustomer = customer.getStyleCustomerList().get(0);
                     List<StyleImgListApiResponse> styleImgListApiResponseList = style.getStyleImgList().stream()
-                            .map(styleImg -> {
-                                StyleImgListApiResponse styleImgListApiResponse = StyleImgListApiResponse.builder()
-                                        .origFileName(styleImg.getOrigFileName())
-                                        .build();
-                                return styleImgListApiResponse;
-                            }).collect(Collectors.toList());
+                            .map(StyleImgListApiResponse::new).collect(Collectors.toList());
 
                     List<StyleDetailProductTagApiResponse> styleDetailProductTagApiResponseList = style.getProductTagList().stream()
-                            .map(productTag -> {
-                                Product product = productTag.getProduct();
-                                StyleDetailProductTagApiResponse styleDetailProductTagApiResponse = StyleDetailProductTagApiResponse.builder()
-                                        .id(product.getId())
-                                        .origFileName(product.getProImgList().get(0).getOrigFileName())
-                                        .name(product.getName())
-                                        .price(salesRepository.findByProductId(product.getId()))
-                                        .build();
-                                return styleDetailProductTagApiResponse;
-                            }).collect(Collectors.toList());
+                            .map(productTag -> new StyleDetailProductTagApiResponse(productTag.getProduct(),salesRepository.findByProductId(productTag.getProduct().getId()) )).collect(Collectors.toList());
 
                     List<StyleDetailHashTagApiResponse> styleDetailHashTagApiResponseList = style.getStyleHashTagList().stream()
-                            .map(hashTag -> {
-                                StyleDetailHashTagApiResponse styleDetailHashTagApiResponse = StyleDetailHashTagApiResponse.builder()
-                                        .tagName(hashTag.getHashTag().getTagName())
-                                        .build();
-                                return styleDetailHashTagApiResponse;
-                            }).collect(Collectors.toList());
+                            .map(hashTag -> new StyleDetailHashTagApiResponse(hashTag.getHashTag().getTagName())).collect(Collectors.toList());
 
                     List<StyleReply> styleReplyList = styleReplyRepository.ReplyList(style.getId());
                     List<StyleReplyDetailApiResponse> styleReplyDetailApiResponseList = styleReplyList.stream()
-                            .map(styleReply -> {
-                                Customer customer1 = styleReply.getCustomer();
-                                StyleCustomer styleCustomer1 = customer1.getStyleCustomerList().get(0);
+                            .map(styleReply -> new StyleReplyDetailApiResponse(styleReply, replyLikeService.liked(sessionId, styleReply.getId()))).collect(Collectors.toList());
 
-                                StyleReplyDetailApiResponse styleReplyDetailApiResponse = StyleReplyDetailApiResponse.builder()
-                                        .id(styleReply.getId())
-                                        .customerId(customer1.getId())
-                                        .customerUserid(styleCustomer1.getProfileName())
-                                        .customerOriginFile(customer1.getImage())
-                                        .content(styleReply.getContent())
-                                        .depth(styleReply.getDepth())
-                                        .hit(styleReply.getHit())
-                                        .replyBoolean(replyLikeService.liked(sessionId, styleReply.getId()))
-                                        .regdate(styleReply.getRegdate())
-                                        .build();
-                                return styleReplyDetailApiResponse;
-                            }).collect(Collectors.toList());
-
-                    StyleDetailListApiResponse styleDetailListApiResponse = StyleDetailListApiResponse.builder()
-                            .styleId(style.getId())
-                            .customerId(customer.getId())
-                            .customerUserId(styleCustomer.getProfileName())
-                            .customerOriginFile(customer.getImage())
-                            .hit(style.getHit())
-                            .content(style.getContent())
-                            .styleImgListApiResponseList(styleImgListApiResponseList)
-                            .styleDetailProductTagApiResponseList(styleDetailProductTagApiResponseList)
-                            .styleDetailHashTagApiResponseList(styleDetailHashTagApiResponseList)
-                            .styleReplyDetailApiResponseList(styleReplyDetailApiResponseList)
-                            .hitBoolean(styleLikeService.liked(sessionId, style.getId()))
-                            .followBoolean(followService.linked(customer.getId(),sessionId))
-                            .regdate(style.getRegdate())
-                            .build();
-                    return styleDetailListApiResponse;
+                    return new StyleDetailListApiResponse(style, styleImgListApiResponseList, styleDetailProductTagApiResponseList, styleDetailHashTagApiResponseList, styleReplyDetailApiResponseList,styleLikeService.liked(sessionId, style.getId()),followService.linked(customer.getId(),sessionId));
 
                 }).collect(Collectors.toList());
         return Header.OK(styleDetailListApiResponses);
     }
+    // 여기까지 햇음
 
     public Header<List<StyleDetailListApiResponse>> noDetailList(){
         List<Style> styleList = baseRepository.findAll();
@@ -610,52 +320,17 @@ public class StyleService extends BaseService<StyleApiRequest, StyleApiResponse,
                     Customer customer = style.getCustomer();
                     StyleCustomer styleCustomer = customer.getStyleCustomerList().get(0);
                     List<StyleImgListApiResponse> styleImgListApiResponseList = style.getStyleImgList().stream()
-                            .map(styleImg -> {
-                                StyleImgListApiResponse styleImgListApiResponse = StyleImgListApiResponse.builder()
-                                        .origFileName(styleImg.getOrigFileName())
-                                        .build();
-                                return styleImgListApiResponse;
-                            }).collect(Collectors.toList());
+                            .map(StyleImgListApiResponse::new).collect(Collectors.toList());
 
                     List<StyleDetailProductTagApiResponse> styleDetailProductTagApiResponseList = style.getProductTagList().stream()
-                            .map(productTag -> {
-                                Product product = productTag.getProduct();
-                                StyleDetailProductTagApiResponse styleDetailProductTagApiResponse = StyleDetailProductTagApiResponse.builder()
-                                        .id(product.getId())
-                                        .origFileName(product.getProImgList().get(0).getOrigFileName())
-                                        .name(product.getName())
-                                        .price(salesRepository.findByProductId(product.getId()))
-                                        .build();
-                                return styleDetailProductTagApiResponse;
-                            }).collect(Collectors.toList());
+                            .map(productTag -> new StyleDetailProductTagApiResponse(productTag.getProduct(), salesRepository.findByProductId(productTag.getProduct().getId()) )).collect(Collectors.toList());
 
                     List<StyleDetailHashTagApiResponse> styleDetailHashTagApiResponseList = style.getStyleHashTagList().stream()
-                            .map(hashTag -> {
-                                StyleDetailHashTagApiResponse styleDetailHashTagApiResponse = StyleDetailHashTagApiResponse.builder()
-                                        .tagName(hashTag.getHashTag().getTagName())
-                                        .build();
-                                return styleDetailHashTagApiResponse;
-                            }).collect(Collectors.toList());
+                            .map(hashTag -> new StyleDetailHashTagApiResponse(hashTag.getHashTag().getTagName())).collect(Collectors.toList());
 
                     List<StyleReply> styleReplyList = styleReplyRepository.ReplyList(style.getId());
                     List<StyleReplyDetailApiResponse> styleReplyDetailApiResponseList = styleReplyList.stream()
-                            .map(styleReply -> {
-                                Customer customer1 = styleReply.getCustomer();
-                                StyleCustomer styleCustomer1 = customer1.getStyleCustomerList().get(0);
-
-                                StyleReplyDetailApiResponse styleReplyDetailApiResponse = StyleReplyDetailApiResponse.builder()
-                                        .id(styleReply.getId())
-                                        .customerId(customer1.getId())
-                                        .customerUserid(styleCustomer1.getProfileName())
-                                        .customerOriginFile(customer1.getImage())
-                                        .content(styleReply.getContent())
-                                        .depth(styleReply.getDepth())
-                                        .hit(styleReply.getHit())
-                                        .replyBoolean(false)
-                                        .regdate(styleReply.getRegdate())
-                                        .build();
-                                return styleReplyDetailApiResponse;
-                            }).collect(Collectors.toList());
+                            .map(styleReply -> new StyleReplyDetailApiResponse(styleReply, false)).collect(Collectors.toList());
 
                     StyleDetailListApiResponse styleDetailListApiResponse = StyleDetailListApiResponse.builder()
                             .styleId(style.getId())
@@ -672,11 +347,12 @@ public class StyleService extends BaseService<StyleApiRequest, StyleApiResponse,
                             .followBoolean(false)
                             .regdate(style.getRegdate())
                             .build();
-                    return styleDetailListApiResponse;
+                    return new StyleDetailListApiResponse(style, styleImgListApiResponseList, styleDetailProductTagApiResponseList, styleDetailHashTagApiResponseList, styleReplyDetailApiResponseList, false, false);
 
                 }).collect(Collectors.toList());
         return Header.OK(styleDetailListApiResponses);
     }
+
 
     public Header<List<StyleDetailListApiResponse>> detailFollowingList(Long followerId){
         List<Style> styleList = styleRepository.findAllByFollowerId(followerId);
@@ -685,69 +361,19 @@ public class StyleService extends BaseService<StyleApiRequest, StyleApiResponse,
                     Customer customer = style.getCustomer();
                     StyleCustomer styleCustomer = customer.getStyleCustomerList().get(0);
                     List<StyleImgListApiResponse> styleImgListApiResponseList = style.getStyleImgList().stream()
-                            .map(styleImg -> {
-                                StyleImgListApiResponse styleImgListApiResponse = StyleImgListApiResponse.builder()
-                                        .origFileName(styleImg.getOrigFileName())
-                                        .build();
-                                return styleImgListApiResponse;
-                            }).collect(Collectors.toList());
+                            .map(StyleImgListApiResponse::new).collect(Collectors.toList());
 
                     List<StyleDetailProductTagApiResponse> styleDetailProductTagApiResponseList = style.getProductTagList().stream()
-                            .map(productTag -> {
-                                Product product = productTag.getProduct();
-                                StyleDetailProductTagApiResponse styleDetailProductTagApiResponse = StyleDetailProductTagApiResponse.builder()
-                                        .id(product.getId())
-                                        .origFileName(product.getProImgList().get(0).getOrigFileName())
-                                        .name(product.getName())
-                                        .price(salesRepository.findByProductId(product.getId()))
-                                        .build();
-                                return styleDetailProductTagApiResponse;
-                            }).collect(Collectors.toList());
+                            .map(productTag -> new StyleDetailProductTagApiResponse(productTag.getProduct(),salesRepository.findByProductId(productTag.getProduct().getId()) )).collect(Collectors.toList());
 
                     List<StyleDetailHashTagApiResponse> styleDetailHashTagApiResponseList = style.getStyleHashTagList().stream()
-                            .map(hashTag -> {
-                                StyleDetailHashTagApiResponse styleDetailHashTagApiResponse = StyleDetailHashTagApiResponse.builder()
-                                        .tagName(hashTag.getHashTag().getTagName())
-                                        .build();
-                                return styleDetailHashTagApiResponse;
-                            }).collect(Collectors.toList());
+                            .map(hashTag -> new StyleDetailHashTagApiResponse(hashTag.getHashTag().getTagName())).collect(Collectors.toList());
 
                     List<StyleReply> styleReplyList = styleReplyRepository.ReplyList(style.getId());
                     List<StyleReplyDetailApiResponse> styleReplyDetailApiResponseList = styleReplyList.stream()
-                            .map(styleReply -> {
-                                Customer customer1 = styleReply.getCustomer();
-                                StyleCustomer styleCustomer1 = customer1.getStyleCustomerList().get(0);
+                            .map(styleReply -> new StyleReplyDetailApiResponse(styleReply, replyLikeService.liked(followerId, styleReply.getId()))).collect(Collectors.toList());
 
-                                StyleReplyDetailApiResponse styleReplyDetailApiResponse = StyleReplyDetailApiResponse.builder()
-                                        .id(styleReply.getId())
-                                        .customerId(customer1.getId())
-                                        .customerUserid(styleCustomer1.getProfileName())
-                                        .customerOriginFile(customer1.getImage())
-                                        .content(styleReply.getContent())
-                                        .depth(styleReply.getDepth())
-                                        .hit(styleReply.getHit())
-                                        .replyBoolean(replyLikeService.liked(followerId, styleReply.getId()))
-                                        .regdate(styleReply.getRegdate())
-                                        .build();
-                                return styleReplyDetailApiResponse;
-                            }).collect(Collectors.toList());
-
-                    StyleDetailListApiResponse styleDetailListApiResponse = StyleDetailListApiResponse.builder()
-                            .styleId(style.getId())
-                            .customerId(customer.getId())
-                            .customerUserId(styleCustomer.getProfileName())
-                            .customerOriginFile(customer.getImage())
-                            .hit(style.getHit())
-                            .content(style.getContent())
-                            .styleImgListApiResponseList(styleImgListApiResponseList)
-                            .styleDetailProductTagApiResponseList(styleDetailProductTagApiResponseList)
-                            .styleDetailHashTagApiResponseList(styleDetailHashTagApiResponseList)
-                            .styleReplyDetailApiResponseList(styleReplyDetailApiResponseList)
-                            .hitBoolean(styleLikeService.liked(followerId, style.getId()))
-                            .followBoolean(followService.linked(followerId, customer.getId()))
-                            .regdate(style.getRegdate())
-                            .build();
-                    return styleDetailListApiResponse;
+                    return new StyleDetailListApiResponse(style, styleImgListApiResponseList, styleDetailProductTagApiResponseList, styleDetailHashTagApiResponseList, styleReplyDetailApiResponseList,styleLikeService.liked(followerId, style.getId()), followService.linked(followerId, customer.getId()) );
 
                 }).collect(Collectors.toList());
         return Header.OK(styleDetailListApiResponses);
@@ -762,70 +388,19 @@ public class StyleService extends BaseService<StyleApiRequest, StyleApiResponse,
                     Customer customer = style.getCustomer();
                     StyleCustomer styleCustomer = customer.getStyleCustomerList().get(0);
                     List<StyleImgListApiResponse> styleImgListApiResponseList = style.getStyleImgList().stream()
-                            .map(styleImg -> {
-                                StyleImgListApiResponse styleImgListApiResponse = StyleImgListApiResponse.builder()
-                                        .origFileName(styleImg.getOrigFileName())
-                                        .build();
-                                return styleImgListApiResponse;
-                            }).collect(Collectors.toList());
+                            .map(StyleImgListApiResponse::new).collect(Collectors.toList());
 
                     List<StyleDetailProductTagApiResponse> styleDetailProductTagApiResponseList = style.getProductTagList().stream()
-                            .map(productTag -> {
-                                Product product = productTag.getProduct();
-                                StyleDetailProductTagApiResponse styleDetailProductTagApiResponse = StyleDetailProductTagApiResponse.builder()
-                                        .id(product.getId())
-                                        .origFileName(product.getProImgList().get(0).getOrigFileName())
-                                        .name(product.getName())
-                                        .price(salesRepository.findByProductId(product.getId()))
-                                        .build();
-                                return styleDetailProductTagApiResponse;
-                            }).collect(Collectors.toList());
+                            .map(productTag -> new StyleDetailProductTagApiResponse(productTag.getProduct(),salesRepository.findByProductId(productTag.getProduct().getId()) ) ).collect(Collectors.toList());
 
                     List<StyleDetailHashTagApiResponse> styleDetailHashTagApiResponseList = style.getStyleHashTagList().stream()
-                            .map(hashTag -> {
-                                StyleDetailHashTagApiResponse styleDetailHashTagApiResponse = StyleDetailHashTagApiResponse.builder()
-                                        .tagName(hashTag.getHashTag().getTagName())
-                                        .build();
-                                return styleDetailHashTagApiResponse;
-                            }).collect(Collectors.toList());
+                            .map(hashTag -> new StyleDetailHashTagApiResponse(hashTag.getHashTag().getTagName())).collect(Collectors.toList());
 
                     List<StyleReply> styleReplyList = styleReplyRepository.ReplyList(style.getId());
                     List<StyleReplyDetailApiResponse> styleReplyDetailApiResponseList = styleReplyList.stream()
-                            .map(styleReply -> {
-                                Customer customer1 = styleReply.getCustomer();
-                                StyleCustomer styleCustomer1 = customer1.getStyleCustomerList().get(0);
+                            .map(styleReply -> new StyleReplyDetailApiResponse(styleReply,replyLikeService.liked(sessionId, styleReply.getId())) ).collect(Collectors.toList());
 
-
-                                StyleReplyDetailApiResponse styleReplyDetailApiResponse = StyleReplyDetailApiResponse.builder()
-                                        .id(styleReply.getId())
-                                        .customerId(customer1.getId())
-                                        .customerUserid(styleCustomer1.getProfileName())
-                                        .customerOriginFile(customer1.getImage())
-                                        .content(styleReply.getContent())
-                                        .depth(styleReply.getDepth())
-                                        .hit(styleReply.getHit())
-                                        .replyBoolean(replyLikeService.liked(sessionId, styleReply.getId()))
-                                        .regdate(styleReply.getRegdate())
-                                        .build();
-                                return styleReplyDetailApiResponse;
-                            }).collect(Collectors.toList());
-
-                    StyleDetailListApiResponse styleDetailListApiResponse = StyleDetailListApiResponse.builder()
-                            .styleId(style.getId())
-                            .customerId(customer.getId())
-                            .customerUserId(styleCustomer.getProfileName())
-                            .customerOriginFile(customer.getImage())
-                            .hit(style.getHit())
-                            .content(style.getContent())
-                            .styleImgListApiResponseList(styleImgListApiResponseList)
-                            .styleDetailProductTagApiResponseList(styleDetailProductTagApiResponseList)
-                            .styleDetailHashTagApiResponseList(styleDetailHashTagApiResponseList)
-                            .styleReplyDetailApiResponseList(styleReplyDetailApiResponseList)
-                            .hitBoolean(styleLikeService.liked(sessionId, style.getId()))
-                            .followBoolean(followService.linked(sessionId, customer.getId()))
-                            .regdate(style.getRegdate())
-                            .build();
-                    return styleDetailListApiResponse;
+                    return new StyleDetailListApiResponse(style, styleImgListApiResponseList, styleDetailProductTagApiResponseList, styleDetailHashTagApiResponseList, styleReplyDetailApiResponseList,styleLikeService.liked(sessionId, style.getId()),followService.linked(sessionId, customer.getId()));
 
                 }).collect(Collectors.toList());
         return Header.OK(styleDetailListApiResponses);
@@ -838,103 +413,54 @@ public class StyleService extends BaseService<StyleApiRequest, StyleApiResponse,
                     Customer customer = style.getCustomer();
                     StyleCustomer styleCustomer = customer.getStyleCustomerList().get(0);
                     List<StyleImgListApiResponse> styleImgListApiResponseList = style.getStyleImgList().stream()
-                            .map(styleImg -> {
-                                StyleImgListApiResponse styleImgListApiResponse = StyleImgListApiResponse.builder()
-                                        .origFileName(styleImg.getOrigFileName())
-                                        .build();
-                                return styleImgListApiResponse;
-                            }).collect(Collectors.toList());
+                            .map(StyleImgListApiResponse::new).collect(Collectors.toList());
 
                     List<StyleDetailProductTagApiResponse> styleDetailProductTagApiResponseList = style.getProductTagList().stream()
-                            .map(productTag -> {
-                                Product product = productTag.getProduct();
-                                StyleDetailProductTagApiResponse styleDetailProductTagApiResponse = StyleDetailProductTagApiResponse.builder()
-                                        .id(product.getId())
-                                        .origFileName(product.getProImgList().get(0).getOrigFileName())
-                                        .name(product.getName())
-                                        .price(salesRepository.findByProductId(product.getId()))
-                                        .build();
-                                return styleDetailProductTagApiResponse;
-                            }).collect(Collectors.toList());
+                            .map(productTag -> new StyleDetailProductTagApiResponse(productTag.getProduct(), salesRepository.findByProductId(productTag.getProduct().getId()))).collect(Collectors.toList());
 
                     List<StyleDetailHashTagApiResponse> styleDetailHashTagApiResponseList = style.getStyleHashTagList().stream()
-                            .map(hashTag -> {
-                                StyleDetailHashTagApiResponse styleDetailHashTagApiResponse = StyleDetailHashTagApiResponse.builder()
-                                        .tagName(hashTag.getHashTag().getTagName())
-                                        .build();
-                                return styleDetailHashTagApiResponse;
-                            }).collect(Collectors.toList());
+                            .map(hashTag -> new StyleDetailHashTagApiResponse(hashTag.getHashTag().getTagName())).collect(Collectors.toList());
 
                     List<StyleReply> styleReplyList = styleReplyRepository.ReplyList(style.getId());
                     List<StyleReplyDetailApiResponse> styleReplyDetailApiResponseList = styleReplyList.stream()
-                            .map(styleReply -> {
-                                Customer customer1 = styleReply.getCustomer();
-                                StyleCustomer styleCustomer1 = customer.getStyleCustomerList().get(0);
+                            .map(styleReply -> new StyleReplyDetailApiResponse(styleReply, false)).collect(Collectors.toList());
 
-
-                                StyleReplyDetailApiResponse styleReplyDetailApiResponse = StyleReplyDetailApiResponse.builder()
-                                        .id(styleReply.getId())
-                                        .customerId(customer1.getId())
-                                        .customerUserid(styleCustomer1.getProfileName())
-                                        .customerOriginFile(customer1.getImage())
-                                        .content(styleReply.getContent())
-                                        .depth(styleReply.getDepth())
-                                        .hit(styleReply.getHit())
-                                        .replyBoolean(false)
-                                        .regdate(styleReply.getRegdate())
-                                        .build();
-                                return styleReplyDetailApiResponse;
-                            }).collect(Collectors.toList());
-
-                    StyleDetailListApiResponse styleDetailListApiResponse = StyleDetailListApiResponse.builder()
-                            .styleId(style.getId())
-                            .customerId(customer.getId())
-                            .customerUserId(styleCustomer.getProfileName())
-                            .customerOriginFile(customer.getImage())
-                            .hit(style.getHit())
-                            .content(style.getContent())
-                            .styleImgListApiResponseList(styleImgListApiResponseList)
-                            .styleDetailProductTagApiResponseList(styleDetailProductTagApiResponseList)
-                            .styleDetailHashTagApiResponseList(styleDetailHashTagApiResponseList)
-                            .styleReplyDetailApiResponseList(styleReplyDetailApiResponseList)
-                            .hitBoolean(false)
-                            .followBoolean(false)
-                            .regdate(style.getRegdate())
-                            .build();
-                    return styleDetailListApiResponse;
+                    return new StyleDetailListApiResponse(style, styleImgListApiResponseList, styleDetailProductTagApiResponseList, styleDetailHashTagApiResponseList, styleReplyDetailApiResponseList, false, false);
 
                 }).collect(Collectors.toList());
         return Header.OK(styleDetailListApiResponses);
     }
 
-    public Header delete(Long id){
+
+    public int delete(Long id){
         Optional<Style> optionalStyle = baseRepository.findById(id);
-
-        return optionalStyle.map(style -> {
-            baseRepository.delete(style);
-            return Header.OK();
-        }).orElseGet(() -> Header.ERROR("데이터 없음"));
+        if(optionalStyle.isPresent()){
+            styleRepository.delete(optionalStyle.get());
+            return  1;
+        }
+        return 0;
     }
 
-    public StyleApiResponse response(Style style){
-        StyleApiResponse styleApiResponse = StyleApiResponse.builder()
-                .id(style.getId())
-                .content(style.getContent())
-                .customerId(style.getCustomer().getId())
-                .build();
-        return styleApiResponse;
-    }
+//    public StyleApiResponse response(Style style){
+//        StyleApiResponse styleApiResponse = StyleApiResponse.builder()
+//                .id(style.getId())
+//                .content(style.getContent())
+//                .customerId(style.getCustomer().getId())
+//                .build();
+//        return styleApiResponse;
+//    }
 
     public Header<List<StyleApiResponse>> search(Pageable pageable){
         Page<Style> styles = baseRepository.findAll(pageable);
         List<StyleApiResponse> styleApiResponseList = styles.stream()
-                .map(pro -> response(pro))
+                .map(StyleApiResponse::new)
                 .collect(Collectors.toList());
         Pagination pagination = Pagination.builder()
                 .totalPages(styles.getTotalPages())
                 .totalElements(styles.getTotalElements())
                 .currentPage(styles.getNumber())
                 .build();
+
         return Header.OK(styleApiResponseList, pagination);
     }
 
@@ -944,40 +470,16 @@ public class StyleService extends BaseService<StyleApiRequest, StyleApiResponse,
 
         List<StyleImg> styleImgList = style.getStyleImgList();
         List<StyleImgListApiResponse> styleImgListApiResponseList = styleImgList.stream()
-                .map(styleImg -> {
-                    StyleImgListApiResponse styleImgListApiResponse = StyleImgListApiResponse.builder()
-                            .origFileName(styleImg.getOrigFileName())
-                            .build();
-                    return styleImgListApiResponse;
-                }).collect(Collectors.toList());
+                .map(StyleImgListApiResponse::new).collect(Collectors.toList());
 
         List<ProductTag> productTagList = style.getProductTagList();
         List<StyleProductTagIdApiResponse> styleProductTagIdApiResponseList = productTagList.stream()
-                .map(productTag -> {
-                    StyleProductTagIdApiResponse styleProductTagIdApiResponse = StyleProductTagIdApiResponse.builder()
-                            .productId(productTag.getProduct().getId())
-                            .originFileName(productTag.getProduct().getProImgList().get(0).getOrigFileName())
-                            .name(productTag.getProduct().getName())
-                            .build();
-                    return styleProductTagIdApiResponse;
-                }).collect(Collectors.toList());
+                .map(StyleProductTagIdApiResponse::new).collect(Collectors.toList());
 
         List<StyleHashTag> hashTagList = style.getStyleHashTagList();
         List<StyleHashTagNameApiResponse> styleHashTagNameApiResponseList = hashTagList.stream()
-                .map(styleHashTag -> {
-                    StyleHashTagNameApiResponse styleHashTagNameApiResponse = StyleHashTagNameApiResponse.builder()
-                            .tagName(styleHashTag.getHashTag().getTagName())
-                            .build();
-                    return styleHashTagNameApiResponse;
-                }).collect(Collectors.toList());
+                .map(StyleHashTagNameApiResponse::new).collect(Collectors.toList());
 
-        StyleDetailApiResponse styleDetailApiResponse = StyleDetailApiResponse.builder()
-                .id(style.getId())
-                .content(style.getContent())
-                .styleImgListApiResponseList(styleImgListApiResponseList)
-                .styleProductTagIdApiResponseList(styleProductTagIdApiResponseList)
-                .styleHashTagNameApiResponseList(styleHashTagNameApiResponseList)
-                .build();
-        return Header.OK(styleDetailApiResponse);
+        return Header.OK(new StyleDetailApiResponse(style, styleImgListApiResponseList, styleProductTagIdApiResponseList, styleHashTagNameApiResponseList));
     }
 }

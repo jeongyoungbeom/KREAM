@@ -1,14 +1,13 @@
 package com.project.kream.Model.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.project.kream.Model.Entity.StyleImg;
+import lombok.*;
 
-@Data
-@NoArgsConstructor
-@Builder
-@AllArgsConstructor
+@Getter
 public class StyleImgListApiResponse {
     private String origFileName;
+
+    public StyleImgListApiResponse(StyleImg styleImg) {
+        this.origFileName = styleImg.getOrigFileName();
+    }
 }

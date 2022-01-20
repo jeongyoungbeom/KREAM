@@ -4,6 +4,7 @@ import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -41,4 +42,16 @@ public class StyleReply extends DateEntity {
     @OneToMany(mappedBy = "styleReply",cascade = CascadeType.REMOVE)
     private List<ReplyHashTag> replyHashTagList;
 
+    public void update(String content, Long hit, Long parentId, Long depth, Long groupNum, Long groupId, Style style, Customer customer, List<ReplyLike> replyLikeList, List<ReplyHashTag> replyHashTagList) {
+        this.content = content;
+        this.hit = hit;
+        this.parentId = parentId;
+        this.depth = depth;
+        this.groupNum = groupNum;
+        this.groupId = groupId;
+        this.style = style;
+        this.customer = customer;
+        this.replyLikeList = replyLikeList;
+        this.replyHashTagList = replyHashTagList;
+    }
 }

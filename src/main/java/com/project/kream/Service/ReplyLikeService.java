@@ -18,11 +18,8 @@ public class ReplyLikeService extends BaseService<ReplyLikeApiRequest, ReplyLike
 
     public Long like(Long customerId, Long replyId){
         if(!liked(customerId, replyId)){
-            ReplyLike replyLike = ReplyLike.builder()
-                    .customer(customerRepository.getById(customerId))
-                    .styleReply(styleReplyRepository.getById(replyId))
-                    .build();
-            baseRepository.save(replyLike);
+            ReplyLikeApiRequest replyLikeApiRequest = new ReplyLikeApiRequest();
+            baseRepository.save(replyLikeApiRequest.toEntity(customerRepository.getById(customerId), styleReplyRepository.getById(replyId)));
             styleReplyRepository.updateStyleIdPlus(replyId);
         }else{
             replyLikeRepository.deleteByCustomerIdAndStyleReplyId(customerId, replyId);

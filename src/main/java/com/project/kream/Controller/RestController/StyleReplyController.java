@@ -20,12 +20,12 @@ public class StyleReplyController extends CrudController<StyleReplyApiRequest, S
     private final StyleReplyService styleReplyService;
 
     @PostMapping("/api/st_reply_register")
-    public Header<StyleReplyApiResponse> create(@RequestBody Header<StyleReplyApiRequest> request) {
+    public Long create(@RequestBody Header<StyleReplyApiRequest> request) {
         return styleReplyService.create(request);
     }
 
     @PutMapping("/api/st_reply_update")
-    public Header<StyleReplyApiResponse> update(@RequestBody Header<StyleReplyApiRequest> request) {
+    public Long update(@RequestBody Header<StyleReplyApiRequest> request) {
         return styleReplyService.update(request);
     }
 

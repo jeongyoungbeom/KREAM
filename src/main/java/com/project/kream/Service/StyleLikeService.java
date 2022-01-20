@@ -2,6 +2,7 @@ package com.project.kream.Service;
 
 import com.project.kream.Model.Entity.Style;
 import com.project.kream.Model.Entity.StyleLike;
+import com.project.kream.Model.Header;
 import com.project.kream.Model.request.StyleLikeApiRequest;
 import com.project.kream.Model.response.StyleLikeApiResponse;
 import com.project.kream.Repository.CustomerRepository;
@@ -19,11 +20,8 @@ public class StyleLikeService extends BaseService<StyleLikeApiRequest, StyleLike
 
     public Long like(Long customerId, Long styleId){
         if (!liked(customerId, styleId)){
-            StyleLike styleLike = StyleLike.builder()
-                    .customer(customerRepository.getById(customerId))
-                    .style(styleRepository.getById(styleId))
-                    .build();
-            baseRepository.save(styleLike);
+            StyleLikeApiRequest styleLikeApiRequest = new StyleLikeApiRequest();
+            styleLikeRepository.save(styleLikeApiRequest.toEntity(customerRepository.getById(customerId),styleRepository.getById(styleId)));
             styleRepository.updateStyleIdPlus(styleId);
         }else{
             styleLikeRepository.deleteByCustomerIdAndStyleId(customerId, styleId);

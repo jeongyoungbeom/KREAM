@@ -1,18 +1,22 @@
 package com.project.kream.Model.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.project.kream.Model.Entity.Customer;
+import com.project.kream.Model.Entity.StyleCustomer;
+import lombok.*;
 
-@Data
-@NoArgsConstructor
-@Builder
-@AllArgsConstructor
+@Getter
 public class StyleCustomerApiRequest {
     private Long id;
     private Long customerId;
     private String profileName;
     private String name;
     private String intro;
+
+    public StyleCustomer toEntity(Customer customer, String generatedString, String name){
+        return StyleCustomer.builder()
+                .customer(customer)
+                .profileName(generatedString)
+                .name(name)
+                .build();
+    }
 }

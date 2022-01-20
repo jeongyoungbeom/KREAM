@@ -55,5 +55,15 @@ public class Sales extends DateEntity {
     @OneToOne(fetch = FetchType.LAZY)
     private Purchase purchase;
 
+    public void update(Long price, Long period, String sizeType, SalesStatus1 status1, SalesStatus2 status2, Product product, Customer customer){
+        this.price = price;
+        this.period = period;
+        this.sizeType = sizeType;
+        this.status1 = status1;
+        this.status2 = status2;
+        this.product = product;
+        this.customer = customer;
+    }
+
 
 }

@@ -25,13 +25,13 @@ public class SalesRestController extends CrudController<SalesApiRequest, SalesAp
 
     //판매 입찰 등록
     @PostMapping("/api/sales_register")
-    public Header<SalesApiResponse> create(@RequestBody Header<SalesApiRequest> request) {
+    public Header<Long> create(@RequestBody Header<SalesApiRequest> request) {
             return salesService.create(request);
             }
 
     //판매입찰 ID로 해당 입찰내역 업데이트(id는 내부 데이터로 확인)
     @PutMapping("/api/sales_update")
-    public Header<SalesApiResponse> update(@RequestBody Header<SalesApiRequest> request) {
+    public Header<Long> update(@RequestBody Header<SalesApiRequest> request) {
             return salesService.update(request);
             }
 

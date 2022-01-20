@@ -1,5 +1,6 @@
 package com.project.kream.Model.response;
 
+import com.project.kream.Model.Entity.Sales;
 import com.project.kream.Model.enumclass.SalesStatus1;
 import com.project.kream.Model.enumclass.SalesStatus2;
 import com.project.kream.Model.enumclass.SalesStatus3;
@@ -40,4 +41,18 @@ public class SalesApiResponse implements Comparable<PurchaseApiResponse>{
     private ProductApiResponse productApiResponse;
     private DeliveryApiResponse deliveryApiResponse;
 
+
+    public SalesApiResponse(Sales sales) {
+        this.id = sales.getId();
+        this.productId = sales.getProduct().getId();
+        this.customerId = sales.getCustomer().getId();
+        this.price = sales.getPrice();
+        this.period = sales.getPeriod();
+        this.sizeType = sales.getSizeType();
+        this.originFileName = sales.getProduct().getProImgList().get(0).getFilePath();
+        this.status1 = sales.getStatus1();
+        this.status2 = sales.getStatus2();
+        this.status3 = sales.getStatus3();
+        this.regdate = sales.getRegdate();
+    }
 }

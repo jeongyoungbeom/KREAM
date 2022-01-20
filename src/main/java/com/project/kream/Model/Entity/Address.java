@@ -5,6 +5,7 @@ import com.project.kream.Model.enumclass.AddressFlag;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -32,4 +33,19 @@ public class Address extends DateEntity{
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Customer customer;
+
+    public void update(String name, String hp, String zipcode, String detail1, String detail2, AddressFlag flag) {
+        this.name = name;
+        this.hp = hp;
+        this.zipcode = zipcode;
+        this.detail1 = detail1;
+        this.detail2 = detail2;
+        this.flag = flag;
+    }
+
+    // 기본 배송지 수정
+    public void update(Long id, AddressFlag addressFlag){
+        this.id = id;
+        this.flag = addressFlag;
+    }
 }

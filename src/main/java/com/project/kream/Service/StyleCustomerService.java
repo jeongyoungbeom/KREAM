@@ -8,6 +8,7 @@ import com.project.kream.Repository.CustomerRepository;
 import com.project.kream.Repository.StyleCustomerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.Random;
@@ -23,62 +24,32 @@ public class StyleCustomerService extends BaseService<StyleCustomerApiRequest, S
         int rightLimit = 122;
         int targetStringLength = 10;
         Random random = new Random();
-
         String generatedString = random.ints(leftLimit,rightLimit + 1)
                 .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
                 .limit(targetStringLength)
                 .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
                 .toString();
 
-        StyleCustomer styleCustomer = StyleCustomer.builder()
-                .customer(customerRepository.getById(customerId))
-                .profileName(generatedString)
-                .name(name)
-                .build();
-        baseRepository.save(styleCustomer);
+        StyleCustomerApiRequest styleCustomerApiRequest = new StyleCustomerApiRequest();
+        baseRepository.save(styleCustomerApiRequest.toEntity(
+                customerRepository.getById(customerId),
+                generatedString,
+                name
+        ));
     }
 
-    public Header<StyleCustomerApiResponse> update(Header<StyleCustomerApiRequest> request){
+    @Transactional
+    public Header<Long> update(Header<StyleCustomerApiRequest> request){
         StyleCustomerApiRequest styleCustomerApiRequest = request.getData();
-        Optional<StyleCustomer> styleCustomer = baseRepository.findById(styleCustomerApiRequest.getId());
+        StyleCustomer styleCustomer = baseRepository.findById(styleCustomerApiRequest.getId()).orElseThrow(() -> new IllegalArgumentException("데이터가 없습니다."));
+        styleCustomer.update(styleCustomerApiRequest.getProfileName(), styleCustomerApiRequest.getName(), styleCustomerApiRequest.getIntro());
 
-        return styleCustomer.map(newStyleCustomer -> {
-            newStyleCustomer.setProfileName(styleCustomerApiRequest.getProfileName());
-            newStyleCustomer.setName(styleCustomerApiRequest.getName());
-            newStyleCustomer.setIntro(styleCustomerApiRequest.getIntro());
-
-            return newStyleCustomer;
-
-        }).map(newStyleCustomer -> baseRepository.save(newStyleCustomer))
-                .map(newStyleCustomer -> response(newStyleCustomer))
-                .map(Header::OK)
-                .orElseGet(() -> Header.ERROR("데이터가 없습니다"));
+        return Header.OK(styleCustomerApiRequest.getId());
     }
 
     public Header<StyleCustomerApiResponse> detail(Long customerId){
-
         StyleCustomer styleCustomer = styleCustomerRepository.findByCustomerId(customerId);
-        StyleCustomerApiResponse styleCustomerApiResponse = StyleCustomerApiResponse.builder()
-                .id(styleCustomer.getId())
-                .customerId(styleCustomer.getCustomer().getId())
-                .profileName(styleCustomer.getProfileName())
-                .name(styleCustomer.getName())
-                .intro(styleCustomer.getIntro())
-                .build();
-        return Header.OK(styleCustomerApiResponse);
+        return Header.OK(new StyleCustomerApiResponse(styleCustomer));
     }
-    public StyleCustomerApiResponse response(StyleCustomer styleCustomer){
-        String intro = styleCustomer.getIntro();
-        if(intro == null){
-            intro = "정보없음";
-        }
-        StyleCustomerApiResponse styleCustomerApiResponse = StyleCustomerApiResponse.builder()
-                .id(styleCustomer.getId())
-                .customerId(styleCustomer.getCustomer().getId())
-                .profileName(styleCustomer.getProfileName())
-                .name(styleCustomer.getName())
-                .intro(intro)
-                .build();
-        return styleCustomerApiResponse;
-    }
+
 }

@@ -1,5 +1,6 @@
 package com.project.kream.Model.response;
 
+import com.project.kream.Model.Entity.Style;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,4 +25,10 @@ public class StyleApiResponse {
     private List<ProductTagApiResponse> productTagList;
     private List<HashTagApiResponse> hashTagList;
     private List<StyleimgApiResponse> styleimgList;
+
+    public StyleApiResponse(Style style) {
+        this.id = style.getId();
+        this.customerId = style.getCustomer().getId();
+        this.content = style.getContent();
+    }
 }

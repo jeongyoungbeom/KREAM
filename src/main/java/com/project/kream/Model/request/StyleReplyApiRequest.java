@@ -1,5 +1,8 @@
 package com.project.kream.Model.request;
 
+import com.project.kream.Model.Entity.Customer;
+import com.project.kream.Model.Entity.Style;
+import com.project.kream.Model.Entity.StyleReply;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,4 +25,18 @@ public class StyleReplyApiRequest {
     private Long groupNum;
     private Long groupId;
     private LocalDateTime regdate;
+
+    public StyleReply toEntity(Style style, Customer customer,Long parentId, Long depth, Long groupNum,  Long groupId){
+        return StyleReply.builder()
+                .style(style)
+                .customer(customer)
+                .content(content)
+                .hit(0L)
+                .parentId(parentId)
+                .depth(depth)
+                .groupNum(groupNum)
+                .groupId(groupId)
+                .build();
+    }
+
 }

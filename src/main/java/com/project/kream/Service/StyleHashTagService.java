@@ -15,10 +15,10 @@ public class StyleHashTagService extends BaseService<StyleHashTagApiRequest, Sty
     private final HashTagRepository hashTagRepository;
 
     public void create(Long styleId, Long hashTagId){
-        StyleHashTag styleHashTag = StyleHashTag.builder()
-                .style(styleRepository.getById(styleId))
-                .hashTag(hashTagRepository.getById(hashTagId))
+        StyleHashTagApiRequest styleHashTagApiRequest = StyleHashTagApiRequest.builder()
+                .styleId(styleId)
+                .hashTagId(hashTagId)
                 .build();
-        baseRepository.save(styleHashTag);
+        baseRepository.save(styleHashTagApiRequest.toEntity(styleRepository.getById(styleId), hashTagRepository.getById(hashTagId)));
     }
 }

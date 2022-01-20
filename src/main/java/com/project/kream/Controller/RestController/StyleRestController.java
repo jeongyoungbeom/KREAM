@@ -22,7 +22,7 @@ public class StyleRestController extends CrudController<StyleApiRequest, StyleAp
     private final StyleService styleService;
 
     @PostMapping("/api/style_register")
-    public Header<StyleApiResponse> create(@RequestPart(value = "data") StyleApiRequest request, MultipartHttpServletRequest multipart){
+    public Long create(@RequestPart(value = "data") Header<StyleApiRequest> request, MultipartHttpServletRequest multipart){
         return styleService.create(request, multipart);
     }
 
@@ -90,7 +90,7 @@ public class StyleRestController extends CrudController<StyleApiRequest, StyleAp
     }
     ///////////////
     @PutMapping("/api/style_update")
-    public Header<StyleApiResponse> update(@RequestPart(value = "data") StyleApiRequest request) {
+    public Long update(@RequestPart(value = "data") Header<StyleApiRequest> request) {
         return styleService.update(request);
     }
 
@@ -108,7 +108,7 @@ public class StyleRestController extends CrudController<StyleApiRequest, StyleAp
 
     //스타일 삭제
     @DeleteMapping("/api/style_delete/{id}")
-    public Header delete(@PathVariable Long id){
+    public int delete(@PathVariable Long id){
         return styleService.delete(id);
     }
 

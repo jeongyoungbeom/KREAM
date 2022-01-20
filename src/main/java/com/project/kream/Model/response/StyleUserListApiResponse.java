@@ -1,5 +1,6 @@
 package com.project.kream.Model.response;
 
+import com.project.kream.Model.Entity.Style;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,4 +24,18 @@ public class StyleUserListApiResponse {
     private Long styleCnt;
     private boolean hitBoolean;
     private LocalDateTime regdate;
+
+    public StyleUserListApiResponse(Style style, List<StyleProductTagApiResponse> styleProductTagApiResponseList, List<StyleHashTagNameApiResponse> styleHashTagNameApiResponseList, Long replyCnt, Long styleCnt, boolean hitBoolean) {
+        this.styleId = style.getId();
+        this.content = style.getContent();
+        this.styleProductTagApiResponseList = styleProductTagApiResponseList;
+        this.styleHashTagNameApiResponseList = styleHashTagNameApiResponseList;
+        this.styleImg = style.getStyleImgList().get(0).getOrigFileName();
+        this.hit = style.getHit();
+        this.replyCnt = replyCnt;
+        this.styleCnt = styleCnt;
+        this.hitBoolean = hitBoolean;
+        this.regdate = style.getRegdate();
+    }
 }
+

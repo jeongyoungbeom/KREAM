@@ -20,7 +20,7 @@ public class StyleCustomerRestController extends CrudController<StyleCustomerApi
     }
 
     @PutMapping("/api/style_customer_update")
-    public Header<StyleCustomerApiResponse> update(@RequestBody Header<StyleCustomerApiRequest> request){
+    public Header<Long> update(@RequestBody Header<StyleCustomerApiRequest> request){
         return styleCustomerService.update(request);
     }
 }

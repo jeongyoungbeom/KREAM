@@ -26,4 +26,10 @@ public class StyleCustomer {
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Customer customer;
+
+    public void update(String profileName, String name, String intro){
+        this.profileName = profileName;
+        this.name = name;
+        this.intro = intro;
+    }
 }
