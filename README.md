@@ -30,6 +30,8 @@
   - ProSizeService
   - ProductTagService
   - StyleService(수정중)
+- 2022년 01월 21일 수정
+  - 나머지 Service 모두 수정완료
 
 # 프로젝트 상세내용
 ## 구현목표
