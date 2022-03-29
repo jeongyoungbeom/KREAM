@@ -5,15 +5,9 @@ import com.project.kream.Model.Entity.Sales;
 import com.project.kream.Model.enumclass.SalesStatus1;
 import com.project.kream.Model.enumclass.SalesStatus2;
 import com.project.kream.Model.enumclass.SalesStatus3;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Getter
 public class CustomerMypageSalesApiResponse {
     private Long id;
     private String name;

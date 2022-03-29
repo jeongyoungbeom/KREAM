@@ -1,16 +1,10 @@
 package com.project.kream.Model.response;
 
 import com.project.kream.Model.Entity.Withdrawal;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Getter
 public class WithdrawalListApiResponse {
     private Long id;
     private String email;

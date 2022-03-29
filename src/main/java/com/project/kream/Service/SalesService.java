@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class SalesService extends BaseService<SalesApiRequest, SalesApiResponse, Sales> {
+public class SalesService {
     private final SalesRepository salesRepository;
     private final ProductRepository productRepository;
     private final CustomerRepository customerRepository;
@@ -42,7 +42,7 @@ public class SalesService extends BaseService<SalesApiRequest, SalesApiResponse,
                     accountRepository.getById(salesApiRequest.getAccountId())
             ));
         }else{
-            newsellEntity = baseRepository.save(salesApiRequest.toEntity(
+            newsellEntity = salesRepository.save(salesApiRequest.toEntity(
                     productRepository.getById(salesApiRequest.getProductId()),
                     customerRepository.getById(salesApiRequest.getCustomerId()),
                     addressRepository.getById(salesApiRequest.getAddressId()),

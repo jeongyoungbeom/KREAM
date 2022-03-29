@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @Builder
-@AllArgsConstructor
 public class StyleDetailHashTagApiResponse {
     private String tagName;
 

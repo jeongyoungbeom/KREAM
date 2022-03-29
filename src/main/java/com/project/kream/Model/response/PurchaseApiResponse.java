@@ -3,17 +3,11 @@ package com.project.kream.Model.response;
 import com.project.kream.Model.enumclass.PurchaseStatus1;
 import com.project.kream.Model.enumclass.PurchaseStatus2;
 import com.project.kream.Model.enumclass.PurchaseStatus3;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Data
-@NoArgsConstructor
-@Builder
-@AllArgsConstructor
+@Getter
 public class PurchaseApiResponse implements Comparable<PurchaseApiResponse>{
     @Override //객체를 비교하기 위해 오버라이딩 comparable
     public int compareTo(PurchaseApiResponse o) {

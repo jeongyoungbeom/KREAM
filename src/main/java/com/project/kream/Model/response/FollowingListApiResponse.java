@@ -1,15 +1,9 @@
 package com.project.kream.Model.response;
 
 import com.project.kream.Model.Entity.Follow;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
-@NoArgsConstructor
-@Builder
-@AllArgsConstructor
+@Getter
 public class FollowingListApiResponse {
     private Long id;
     private String profileName;

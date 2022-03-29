@@ -14,12 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-@Component
 @Service
 @RequiredArgsConstructor
 public class MailService {
 
-    @Autowired
     private JavaMailSender mailSender;
     private final CustomerRepository customerRepository;
     private static final String FROM_ADDRESS = "kream@kream.com";

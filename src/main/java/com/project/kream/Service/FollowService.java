@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class FollowService extends BaseService<FollowApiRequest, FollowApiResponse, Follow> {
+public class FollowService {
     private final CustomerRepository customerRepository;
     private final FollowRepository followRepository;
 

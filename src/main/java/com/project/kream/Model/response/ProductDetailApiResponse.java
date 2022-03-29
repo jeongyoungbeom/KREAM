@@ -22,7 +22,6 @@ public class ProductDetailApiResponse {
     private List<ProductCollectionApiResponse> productCollectionApiResponseList;
     private List<ProductStyleTagApiResponse> productStyleTagApiResponseList;
     private List<ProductTransactionApiResponse> productTransactionApiResponseList;
-//    private List<ProductRegdateApiResponse> productRegdateApiResponseList;
     private List<ProductImgApiResponse> productImgApiResponseList;
     private List<ProductTopTransactionApiResponse> productTopTransactionApiResponseList;
 

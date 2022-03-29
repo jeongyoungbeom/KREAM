@@ -1,10 +1,6 @@
 package com.project.kream.Service;
 
-import com.project.kream.Model.Entity.Style;
-import com.project.kream.Model.Entity.StyleLike;
-import com.project.kream.Model.Header;
 import com.project.kream.Model.request.StyleLikeApiRequest;
-import com.project.kream.Model.response.StyleLikeApiResponse;
 import com.project.kream.Repository.CustomerRepository;
 import com.project.kream.Repository.StyleLikeRepository;
 import com.project.kream.Repository.StyleRepository;
@@ -13,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class StyleLikeService extends BaseService<StyleLikeApiRequest, StyleLikeApiResponse, StyleLike> {
+public class StyleLikeService {
     private final CustomerRepository customerRepository;
     private final StyleRepository styleRepository;
     private final StyleLikeRepository styleLikeRepository;

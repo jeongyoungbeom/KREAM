@@ -2,16 +2,10 @@ package com.project.kream.Model.response;
 
 import com.project.kream.Model.Entity.Board;
 import com.project.kream.Model.enumclass.BoardCategory;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
+@Getter
 public class BoardFaqApiResponse {
     private Long id;
     private BoardCategory boardCategory;

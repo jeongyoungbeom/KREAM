@@ -1,8 +1,6 @@
 package com.project.kream.Controller.RestController;
 
 
-import com.project.kream.Controller.CrudController;
-import com.project.kream.Model.Entity.Customer;
 import com.project.kream.Model.Header;
 import com.project.kream.Model.enumclass.CustomerType;
 import com.project.kream.Model.request.CustomerApiRequest;
@@ -12,25 +10,28 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpSession;
 import java.util.List;
 
-
+// @Controller + @ResponseBody이며, 메소드의 return(반환값)을 문자열(JSON) 형태로 반환합니다.
 @RestController
+// final 필드에 대해 생성자를 만들어주는 lombok의 annotation.
+// Spring Framework의 DI(의존성주입) 중 Constructor Injection(생성자 주입)을 임의의 코드 없이 자동으로 설정
 @RequiredArgsConstructor
-public class CustomerRestController extends CrudController<CustomerApiRequest, CustomerApiResponse, Customer> {
+public class CustomerRestController {
+    // 의존성 주입
     private final CustomerService customerService;
 
     // 회원등록
     @PostMapping("/api/customer_register")
+    // @RequestBody HTTP요청의 body 내용을 자바 객체로 매핑하는 역할을 합니다.
     public Header<Long> create(@RequestBody Header<CustomerApiRequest> request) {
         return customerService.create(request);
     }
     // 마이페이지
     @GetMapping("/api/customer_detail/{id}")
+    // @PathVariable URL 에서 ({})의 명시된 변수를 받아온다.
     public Header<CustomerApiResponse> read(@PathVariable Long id){
         return customerService.read(id);
     }

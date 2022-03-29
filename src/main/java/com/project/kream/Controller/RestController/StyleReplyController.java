@@ -1,22 +1,15 @@
 package com.project.kream.Controller.RestController;
 
-import com.project.kream.Controller.CrudController;
-import com.project.kream.Model.Entity.StyleReply;
 import com.project.kream.Model.Header;
 import com.project.kream.Model.request.StyleReplyApiRequest;
-import com.project.kream.Model.response.StyleApiResponse;
-import com.project.kream.Model.response.StyleReplyApiResponse;
-import com.project.kream.Model.response.StyleReplyDetailApiResponse;
 import com.project.kream.Model.response.StyleReplyPopApiResponse;
 import com.project.kream.Service.StyleReplyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
-public class StyleReplyController extends CrudController<StyleReplyApiRequest, StyleReplyApiResponse, StyleReply> {
+public class StyleReplyController {
     private final StyleReplyService styleReplyService;
 
     @PostMapping("/api/st_reply_register")

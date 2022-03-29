@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class BoardService extends BaseService<BoardApiRequest, BoardApiResponse, Board> {
+public class BoardService {
     private final BoardRepository boardRepository;
     private final BoardSpecification boardSpecification;
 
@@ -47,7 +47,7 @@ public class BoardService extends BaseService<BoardApiRequest, BoardApiResponse,
     }
 
     public Header<List<BoardApiResponse>> List(Pageable pageable){
-        Page<Board> boardList = baseRepository.findAll(pageable);
+        Page<Board> boardList = boardRepository.findAll(pageable);
         List<BoardApiResponse> boardApiResponseList = boardList.stream()
                 .map(BoardApiResponse::new)
                 .collect(Collectors.toList());

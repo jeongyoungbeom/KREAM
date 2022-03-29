@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class WithdrawalService extends BaseService<WithdrawalApiRequest, WithdrawalApiResponse, Withdrawal> {
+public class WithdrawalService {
     private final WithdrawalRepository withdrawalRepository;
     private final WithdrawalSpecification withdrawalSpecification;
 
@@ -32,7 +32,7 @@ public class WithdrawalService extends BaseService<WithdrawalApiRequest, Withdra
     }
 
     public Header<List<WithdrawalApiResponse>> List(Pageable pageable){
-        Page<Withdrawal> withdrawalList = baseRepository.findAll(pageable);
+        Page<Withdrawal> withdrawalList = withdrawalRepository.findAll(pageable);
         List<WithdrawalApiResponse> withdrawalApiResponses = withdrawalList.stream()
                 .map(WithdrawalApiResponse::new).collect(Collectors.toList());
 

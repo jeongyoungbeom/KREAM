@@ -8,6 +8,7 @@ import com.project.kream.Model.response.CustomerQnaApiResponse;
 import com.project.kream.Repository.CustomerQnaRepository;
 import com.project.kream.Repository.CustomerRepository;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -17,8 +18,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
-public class CustomerQnaService extends BaseService<CustomerQnaApiRequest, CustomerQnaApiResponse, CustomerQna>{
+@RequiredArgsConstructor
+public class CustomerQnaService {
     private final CustomerRepository customerRepository;
     private final CustomerQnaRepository customerQnaRepository;
 
@@ -43,7 +44,7 @@ public class CustomerQnaService extends BaseService<CustomerQnaApiRequest, Custo
 
 
     public Header<List<CustomerQnaApiResponse>> List(Pageable pageable){
-        Page<CustomerQna> customerQnaList = baseRepository.findAll(pageable);
+        Page<CustomerQna> customerQnaList = customerQnaRepository.findAll(pageable);
         List<CustomerQnaApiResponse> customerQnaApiResponseList = customerQnaList.stream()
                 .map(CustomerQnaApiResponse::new)
                 .collect(Collectors.toList());
@@ -58,7 +59,7 @@ public class CustomerQnaService extends BaseService<CustomerQnaApiRequest, Custo
     }
 
     public int delete(Long id){
-        Optional<CustomerQna> optionalQnA = baseRepository.findById(id);
+        Optional<CustomerQna> optionalQnA = customerQnaRepository.findById(id);
         if(optionalQnA.isPresent()){
             customerQnaRepository.delete(optionalQnA.get());
             return 1;

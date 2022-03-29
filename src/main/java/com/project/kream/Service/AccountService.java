@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @Transactional
 @Service
 @RequiredArgsConstructor
-public class AccountService extends BaseService<AccountApiRequest, AccountApiResponse, Account> {
+public class AccountService {
     private final AccountRepository accountRepository;
     private final CustomerRepository customerRepository;
 

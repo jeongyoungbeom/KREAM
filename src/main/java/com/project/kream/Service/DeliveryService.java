@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class DeliveryService extends BaseService<DeliveryApiRequest, DeliveryApiResponse, Delivery> {
+public class DeliveryService {
     private final DeliveryRepository deliveryRepository;
     private final PurchaseRepository purchaseRepository;
 
@@ -64,7 +64,7 @@ public class DeliveryService extends BaseService<DeliveryApiRequest, DeliveryApi
     }
 
     public Header<DeliveryPurchaseApiResponse> deliveryInfo(Long id){
-        Delivery delivery = baseRepository.getById(id);
+        Delivery delivery = deliveryRepository.getById(id);
         return Header.OK(new DeliveryPurchaseApiResponse(new DeliveryApiResponse(delivery), new DeliveryProductApiResponse(delivery.getPurchase().getProduct()),
                 new AddressApiResponse(delivery.getPurchase().getAddress()), delivery.getPurchase().getCustomer(), delivery.getPurchase()));
     }

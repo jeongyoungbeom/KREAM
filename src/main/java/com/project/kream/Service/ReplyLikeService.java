@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class ReplyLikeService extends BaseService<ReplyLikeApiRequest, ReplyLikeApiResponse, ReplyLike> {
+public class ReplyLikeService {
     private final CustomerRepository customerRepository;
     private final StyleReplyRepository styleReplyRepository;
     private final ReplyLikeRepository replyLikeRepository;
@@ -19,7 +19,7 @@ public class ReplyLikeService extends BaseService<ReplyLikeApiRequest, ReplyLike
     public Long like(Long customerId, Long replyId){
         if(!liked(customerId, replyId)){
             ReplyLikeApiRequest replyLikeApiRequest = new ReplyLikeApiRequest();
-            baseRepository.save(replyLikeApiRequest.toEntity(customerRepository.getById(customerId), styleReplyRepository.getById(replyId)));
+            replyLikeRepository.save(replyLikeApiRequest.toEntity(customerRepository.getById(customerId), styleReplyRepository.getById(replyId)));
             styleReplyRepository.updateStyleIdPlus(replyId);
         }else{
             replyLikeRepository.deleteByCustomerIdAndStyleReplyId(customerId, replyId);

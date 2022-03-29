@@ -5,17 +5,11 @@ import com.project.kream.Model.Entity.Product;
 import com.project.kream.Model.Entity.Purchase;
 import com.project.kream.Model.enumclass.PurchaseStatus2;
 import com.project.kream.Model.enumclass.PurchaseStatus3;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Data
-@NoArgsConstructor
-@Builder
-@AllArgsConstructor
+@Getter
 public class PurchaseListApiResponse {
     private Long productId;
     private Long purchaseId;

@@ -3,7 +3,6 @@ package com.project.kream.Service;
 import com.project.kream.Model.Entity.Transaction;
 import com.project.kream.Model.Header;
 import com.project.kream.Model.request.TransactionApiRequest;
-import com.project.kream.Model.response.TransactionApiResponse;
 import com.project.kream.Model.response.TransactionListApiResponse;
 import com.project.kream.Repository.ProductRepository;
 import com.project.kream.Repository.TransactionRepository;
@@ -15,7 +14,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class TransactionService extends BaseService<TransactionApiRequest, TransactionApiResponse, Transaction> {
+public class TransactionService {
     private final ProductRepository productRepository;
     private final TransactionRepository transactionRepository;
 

@@ -1,7 +1,5 @@
 package com.project.kream.Controller.RestController;
 
-import com.project.kream.Controller.CrudController;
-import com.project.kream.Model.Entity.Address;
 import com.project.kream.Model.Header;
 import com.project.kream.Model.request.AddressApiRequest;
 import com.project.kream.Model.response.AddressApiResponse;
@@ -13,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class AddressRestController extends CrudController<AddressApiRequest, AddressApiResponse, Address> {
+public class AddressRestController {
     private final AddressService addressService;
 
     // 주소 등록

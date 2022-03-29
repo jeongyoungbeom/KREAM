@@ -9,13 +9,11 @@ import com.project.kream.Repository.StyleCustomerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
-public class StyleCustomerService extends BaseService<StyleCustomerApiRequest, StyleCustomerApiResponse, StyleCustomer> {
+public class StyleCustomerService {
     private final CustomerRepository customerRepository;
     private final StyleCustomerRepository styleCustomerRepository;
 
@@ -31,7 +29,7 @@ public class StyleCustomerService extends BaseService<StyleCustomerApiRequest, S
                 .toString();
 
         StyleCustomerApiRequest styleCustomerApiRequest = new StyleCustomerApiRequest();
-        baseRepository.save(styleCustomerApiRequest.toEntity(
+        styleCustomerRepository.save(styleCustomerApiRequest.toEntity(
                 customerRepository.getById(customerId),
                 generatedString,
                 name
@@ -41,7 +39,7 @@ public class StyleCustomerService extends BaseService<StyleCustomerApiRequest, S
     @Transactional
     public Header<Long> update(Header<StyleCustomerApiRequest> request){
         StyleCustomerApiRequest styleCustomerApiRequest = request.getData();
-        StyleCustomer styleCustomer = baseRepository.findById(styleCustomerApiRequest.getId()).orElseThrow(() -> new IllegalArgumentException("데이터가 없습니다."));
+        StyleCustomer styleCustomer = styleCustomerRepository.findById(styleCustomerApiRequest.getId()).orElseThrow(() -> new IllegalArgumentException("데이터가 없습니다."));
         styleCustomer.update(styleCustomerApiRequest.getProfileName(), styleCustomerApiRequest.getName(), styleCustomerApiRequest.getIntro());
 
         return Header.OK(styleCustomerApiRequest.getId());

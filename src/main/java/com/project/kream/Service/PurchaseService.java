@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class PurchaseService extends BaseService<PurchaseApiRequest, PurchaseApiResponse, Purchase> {
+public class PurchaseService {
     private final PurchaseRepository purchaseRepository;
     private final ProductRepository productRepository;
     private final CustomerRepository customerRepository;

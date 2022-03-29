@@ -1,8 +1,6 @@
 package com.project.kream.Controller.RestController;
 
 
-import com.project.kream.Controller.CrudController;
-import com.project.kream.Model.Entity.Sales;
 import com.project.kream.Model.Header;
 import com.project.kream.Model.request.SalesApiRequest;
 import com.project.kream.Model.response.SalesAdminApiResponse;
@@ -20,7 +18,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class SalesRestController extends CrudController<SalesApiRequest, SalesApiResponse, Sales> {
+public class SalesRestController {
     private final SalesService salesService;
 
     //판매 입찰 등록

@@ -1,7 +1,5 @@
 package com.project.kream.Controller.RestController;
 
-import com.project.kream.Controller.CrudController;
-import com.project.kream.Model.Entity.ProductQna;
 import com.project.kream.Model.Header;
 import com.project.kream.Model.request.ProductQnaApiRequest;
 import com.project.kream.Model.response.ProductQnaApiResponse;
@@ -16,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class ProductQnaRestController extends CrudController<ProductQnaApiRequest, ProductQnaApiResponse, ProductQna> {
+public class ProductQnaRestController {
     private final ProductQnaService productQnaService;
 
     @PostMapping("/api/product_Qna_register")

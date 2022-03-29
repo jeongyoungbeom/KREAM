@@ -3,17 +3,11 @@ package com.project.kream.Model.response;
 import com.project.kream.Model.Entity.ProductQna;
 import com.project.kream.Model.enumclass.ProductQnaType;
 import com.project.kream.Model.enumclass.QnaStauts;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
+@Getter
 public class ProductQnaApiResponse {
     private Long id;
     private QnaStauts status;

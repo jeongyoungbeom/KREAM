@@ -8,6 +8,7 @@ import com.project.kream.Model.response.ProductQnaApiResponse;
 import com.project.kream.Repository.CustomerRepository;
 import com.project.kream.Repository.ProductQnaRepository;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,21 +19,21 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
-public class ProductQnaService extends BaseService<ProductQnaApiRequest, ProductQnaApiResponse, ProductQna>{
+@RequiredArgsConstructor
+public class ProductQnaService {
     private final CustomerRepository customerRepository;
     private final ProductQnaRepository productQnaRepository;
 
     public Header<Long> create(Header<ProductQnaApiRequest> request) {
         ProductQnaApiRequest productQnaApiRequest = request.getData();
-        ProductQna newqna = baseRepository.save(productQnaApiRequest.toEntity(customerRepository.getById(productQnaApiRequest.getCustomerId())));
+        ProductQna newqna = productQnaRepository.save(productQnaApiRequest.toEntity(customerRepository.getById(productQnaApiRequest.getCustomerId())));
         return Header.OK(newqna.getId());
     }
 
     @Transactional
     public Long update(Header<ProductQnaApiRequest> request) {
         ProductQnaApiRequest productQnaApiRequest = request.getData();
-        ProductQna productQna = baseRepository.findById(productQnaApiRequest.getId()).orElseThrow(() -> new IllegalArgumentException("데이터가 없습니다."));
+        ProductQna productQna = productQnaRepository.findById(productQnaApiRequest.getId()).orElseThrow(() -> new IllegalArgumentException("데이터가 없습니다."));
         productQna.update(productQnaApiRequest.getStatus(), productQnaApiRequest.getType(), productQnaApiRequest.getTitle(), productQnaApiRequest.getContent(), productQnaApiRequest.getAnswer(), productQnaApiRequest.getAcomment());
         return productQnaApiRequest.getId();
     }
@@ -44,7 +45,7 @@ public class ProductQnaService extends BaseService<ProductQnaApiRequest, Product
 
 
     public Header<List<ProductQnaApiResponse>> List(Pageable pageable){
-        Page<ProductQna> productQnaList = baseRepository.findAll(pageable);
+        Page<ProductQna> productQnaList = productQnaRepository.findAll(pageable);
         List<ProductQnaApiResponse> productQnaApiResponseList = productQnaList.stream()
                 .map(ProductQnaApiResponse::new)
                 .collect(Collectors.toList());
@@ -59,9 +60,9 @@ public class ProductQnaService extends BaseService<ProductQnaApiRequest, Product
     }
 
     public int delete(Long id){
-        Optional<ProductQna> optionalProductQna = baseRepository.findById(id);
+        Optional<ProductQna> optionalProductQna = productQnaRepository.findById(id);
         return optionalProductQna.map(qna ->{
-            baseRepository.delete(qna);
+            productQnaRepository.delete(qna);
             return 1;
         }).orElseThrow(() -> new IllegalArgumentException("데이터가 없습니다."));
     }

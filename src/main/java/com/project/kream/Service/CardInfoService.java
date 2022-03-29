@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class CardInfoService extends BaseService<CardInfoApiRequest, CardInfoApiResponse, CardInfo>{
+public class CardInfoService {
     private final CustomerRepository customerRepository;
     private final CardInfoRepository cardInfoRepository;
 
@@ -35,7 +35,7 @@ public class CardInfoService extends BaseService<CardInfoApiRequest, CardInfoApi
     }
 
     public int delete(Long id){
-        Optional<CardInfo> optionalCardInfo = baseRepository.findById(id);
+        Optional<CardInfo> optionalCardInfo = cardInfoRepository.findById(id);
         if(optionalCardInfo.isPresent()){
             cardInfoRepository.delete(optionalCardInfo.get());
             return 1;

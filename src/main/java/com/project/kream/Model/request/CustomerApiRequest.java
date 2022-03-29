@@ -6,7 +6,6 @@ import com.project.kream.Model.enumclass.CustomerRole;
 import com.project.kream.Model.enumclass.CustomerType;
 import lombok.*;
 
-
 @Getter
 public class CustomerApiRequest {
     private Long id;

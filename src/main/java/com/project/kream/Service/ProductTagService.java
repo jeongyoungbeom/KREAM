@@ -16,14 +16,14 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class ProductTagService extends BaseService<ProductTagApiRequest, ProductTagApiResponse, ProductTag>{
+public class ProductTagService {
     private final ProductRepository productRepository;
     private final ProductTagRepository productTagRepository;
     private final StyleRepository styleRepository;
 
     public Header<Long> create(Long productId, Long styleId) {
         ProductTagApiRequest productTagApiRequest = new ProductTagApiRequest();
-        ProductTag newtagdata = baseRepository.save(productTagApiRequest.toEntity(styleRepository.getById(styleId), productRepository.getById(productId)));
+        ProductTag newtagdata = productTagRepository.save(productTagApiRequest.toEntity(styleRepository.getById(styleId), productRepository.getById(productId)));
         return Header.OK(newtagdata.getId());
     }
 
@@ -32,7 +32,7 @@ public class ProductTagService extends BaseService<ProductTagApiRequest, Product
     }
 
         public Header<List<ProductTagApiResponse>> list(){
-            List<ProductTag> productTagList = baseRepository.findAll();
+            List<ProductTag> productTagList = productTagRepository.findAll();
             List<ProductTagApiResponse> productTagApiResponseList = productTagList.stream()
                     .map(ProductTagApiResponse::new)
                     .collect(Collectors.toList());

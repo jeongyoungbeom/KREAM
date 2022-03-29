@@ -1,7 +1,5 @@
 package com.project.kream.Controller.RestController;
 
-import com.project.kream.Controller.CrudController;
-import com.project.kream.Model.Entity.CardInfo;
 import com.project.kream.Model.Header;
 import com.project.kream.Model.request.CardInfoApiRequest;
 import com.project.kream.Model.response.CardInfoApiResponse;
@@ -13,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class CardInfoRestController extends CrudController<CardInfoApiRequest, CardInfoApiResponse, CardInfo> {
+public class CardInfoRestController {
     private final CardInfoService cardInfoService;
 
     // 카드 등록

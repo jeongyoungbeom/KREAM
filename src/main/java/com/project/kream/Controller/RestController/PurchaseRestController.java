@@ -1,7 +1,5 @@
 package com.project.kream.Controller.RestController;
 
-import com.project.kream.Controller.CrudController;
-import com.project.kream.Model.Entity.Purchase;
 import com.project.kream.Model.Header;
 import com.project.kream.Model.request.PurchaseApiRequest;
 import com.project.kream.Model.response.*;
@@ -16,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class PurchaseRestController extends CrudController<PurchaseApiRequest, PurchaseApiResponse, Purchase> {
+public class PurchaseRestController {
     private final PurchaseService purchaseService;
 
     //구매입찰 등록

@@ -1,18 +1,12 @@
 package com.project.kream.Model.response;
 
 import com.project.kream.Model.Entity.Style;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Data
-@NoArgsConstructor
-@Builder
-@AllArgsConstructor
+@Getter
 public class StyleDetailListApiResponse {
     private Long styleId;
     private Long customerId;

@@ -1,9 +1,6 @@
 package com.project.kream.Controller.RestController;
 
-import com.project.kream.Controller.CrudController;
-import com.project.kream.Model.Entity.ProductTag;
 import com.project.kream.Model.Header;
-import com.project.kream.Model.request.ProductTagApiRequest;
 import com.project.kream.Model.response.ProductTagApiResponse;
 import com.project.kream.Service.ProductTagService;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +10,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class ProductTagRestController extends CrudController<ProductTagApiRequest, ProductTagApiResponse, ProductTag> {
+public class ProductTagRestController {
     private final ProductTagService productTagService;
 
     // 전체 게시글의 상품 태그 리스트

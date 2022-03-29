@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class AddressService extends BaseService<AddressApiRequest, AddressApiResponse, Address>{
+public class AddressService {
     private final CustomerRepository customerRepository;
     private final AddressRepository addressRepository;
 
@@ -58,27 +58,11 @@ public class AddressService extends BaseService<AddressApiRequest, AddressApiRes
     }
 
     public int delete(Long id) {
-        Optional<Address> optionalAddress = baseRepository.findById(id);
+        Optional<Address> optionalAddress = addressRepository.findById(id);
         if(optionalAddress.isPresent()){
             addressRepository.delete(optionalAddress.get());
             return 1;
         }
         return 0;
-    }
-
-
-    public AddressApiResponse response(Address address){
-        AddressApiResponse addressApiResponse = AddressApiResponse.builder()
-                .id(address.getId())
-                .name(address.getName())
-                .hp(address.getHp())
-                .zipcode(address.getZipcode())
-                .detail1(address.getDetail1())
-                .detail2(address.getDetail2())
-                .flag(address.getFlag())
-                .customerId(address.getCustomer().getId())
-                .regdate(address.getRegdate())
-                .build();
-        return addressApiResponse;
     }
 }

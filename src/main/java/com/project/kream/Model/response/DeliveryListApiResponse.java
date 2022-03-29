@@ -2,17 +2,11 @@ package com.project.kream.Model.response;
 
 import com.project.kream.Model.Entity.Delivery;
 import com.project.kream.Model.enumclass.DeliveryStatus;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Data
-@NoArgsConstructor
-@Builder
-@AllArgsConstructor
+@Getter
 public class DeliveryListApiResponse {
     private Long deliveryId;
     private Long purchaseId;

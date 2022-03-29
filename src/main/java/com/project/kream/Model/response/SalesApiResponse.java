@@ -4,17 +4,11 @@ import com.project.kream.Model.Entity.Sales;
 import com.project.kream.Model.enumclass.SalesStatus1;
 import com.project.kream.Model.enumclass.SalesStatus2;
 import com.project.kream.Model.enumclass.SalesStatus3;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Data
-@NoArgsConstructor
-@Builder
-@AllArgsConstructor
+@Getter
 public class SalesApiResponse implements Comparable<PurchaseApiResponse>{
 
     @Override

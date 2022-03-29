@@ -1,7 +1,5 @@
 package com.project.kream.Controller.RestController;
 
-import com.project.kream.Controller.CrudController;
-import com.project.kream.Model.Entity.Product;
 import com.project.kream.Model.Header;
 import com.project.kream.Model.request.ProductApiRequest;
 import com.project.kream.Model.response.*;
@@ -18,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class ProductRestController extends CrudController<ProductApiRequest, ProductApiResponse, Product> {
+public class ProductRestController {
     private final ProductService productService;
 
     //상품 등록

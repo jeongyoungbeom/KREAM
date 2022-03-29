@@ -8,13 +8,14 @@ import com.project.kream.Repository.CartRepository;
 import com.project.kream.Repository.CustomerRepository;
 import com.project.kream.Repository.ProductRepository;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
-@AllArgsConstructor
-public class CartService extends BaseService<CartApiRequest, CartApiResponse, Cart>{
+@RequiredArgsConstructor
+public class CartService {
     private final ProductRepository productRepository;
     private final CustomerRepository customerRepository;
     private final CartRepository cartRepository;
@@ -26,7 +27,7 @@ public class CartService extends BaseService<CartApiRequest, CartApiResponse, Ca
     }
 
     public int delete(Long id){
-        Optional<Cart> cartOptional = baseRepository.findById(id);
+        Optional<Cart> cartOptional = cartRepository.findById(id);
         if(cartOptional.isPresent()){
             cartRepository.delete(cartOptional.get());
             return 1;

@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class ProductService extends BaseService<ProductApiRequest, ProductApiResponse, Product> {
+public class ProductService {
     private final ProductRepository productRepository;
     private final ProductTagRepository productTagRepository;
     private final AddressRepository addressRepository;
@@ -46,7 +46,7 @@ public class ProductService extends BaseService<ProductApiRequest, ProductApiRes
 
 
     public Header<Long> create(ProductApiRequest request, MultipartHttpServletRequest mutilRequest) {
-        Product newproEntity = baseRepository.save(request.toEntity());
+        Product newproEntity = productRepository.save(request.toEntity());
 
         List<MultipartFile> fileList = mutilRequest.getFiles("files");
         String path = "C:\\Users\\jybeo\\Desktop\\final\\src\\main\\resources\\static\\lib\\product\\";
@@ -110,7 +110,7 @@ public class ProductService extends BaseService<ProductApiRequest, ProductApiRes
 
     // 관리자
     public Header<List<ProductAdminListApiResponse>> adminList(Pageable pageable){
-        Page<Product> productList = baseRepository.findAll(pageable);
+        Page<Product> productList = productRepository.findAll(pageable);
         List<ProductAdminListApiResponse> productAdminListApiResponses = productList.stream()
                 .map(ProductAdminListApiResponse::new).collect(Collectors.toList());
 
@@ -126,7 +126,7 @@ public class ProductService extends BaseService<ProductApiRequest, ProductApiRes
 
     // 관리자 상세
     public Header<ProductAdminDetailApiResponse> adminDetail(Long id){
-        Product product = baseRepository.getById(id);
+        Product product = productRepository.getById(id);
         List<ProImg> proImgList = product.getProImgList();
         List<ProimgPathApiResponse> proimgPathApiResponseList = proImgList.stream()
                 .map(ProimgPathApiResponse::new).collect(Collectors.toList());
@@ -144,7 +144,7 @@ public class ProductService extends BaseService<ProductApiRequest, ProductApiRes
     }
 
     public Header<ProductUserListCartApiResponse> userListCart(Long ProductId, Long CustomerId){
-        Product product = baseRepository.getById(ProductId);
+        Product product = productRepository.getById(ProductId);
         List<ProSize> prosizeList = product.getProSizeList();
         List<ProductSizeApiResponse> productSizeApiResponseList = prosizeList.stream()
                 .map(proSize -> new ProductSizeApiResponse(proSize.getSizeType(), cartRepository.countByProductIdAndSizeTypeAndCustomerId(ProductId, proSize.getSizeType(), CustomerId))).collect(Collectors.toList());
@@ -152,7 +152,7 @@ public class ProductService extends BaseService<ProductApiRequest, ProductApiRes
     }
 
     public Header<ProductDetailApiResponse> userDetail(Long id){
-        Product product = baseRepository.getById(id);
+        Product product = productRepository.getById(id);
         List<ProductSizeApiResponse> productSizeApiResponseList = product.getProSizeList().stream()
                 .map(prosize -> new ProductSizeApiResponse(prosize.getSizeType(), salesRepository.findBySizeTypeAndProductId(prosize.getSizeType(), id))).collect(Collectors.toList());
         List<ProductImgApiResponse> productImgApiResponseList = product.getProImgList().stream()
@@ -198,31 +198,31 @@ public class ProductService extends BaseService<ProductApiRequest, ProductApiRes
     }
 
     public Header<ProductBuyCheckApiResponse> buyCheck(Long id, String size){
-        Product product = baseRepository.getById(id);
+        Product product = productRepository.getById(id);
         List<ProductBuySizeApiResponse> productBuySizeApiResponseList = product.getProSizeList().stream()
                 .map(prosize -> new ProductBuySizeApiResponse(prosize.getSizeType(), salesRepository.findBySizeTypeAndProductId(prosize.getSizeType(), id))).collect(Collectors.toList());
         return Header.OK(new ProductBuyCheckApiResponse(product, size, productBuySizeApiResponseList));
     }
 
     public Header<ProductSellCheckApiResponse> sellCheck(Long id, String size){
-        Product product = baseRepository.getById(id);
+        Product product = productRepository.getById(id);
         List<ProductSellSizeApiResponse> productSellSizeApiResponseList = product.getProSizeList().stream()
                 .map(prosize -> new ProductSellSizeApiResponse(prosize.getSizeType(), purchaseRepository.findBySizeTypeAndProductId(prosize.getSizeType(), id))).collect(Collectors.toList());
         return Header.OK(new ProductSellCheckApiResponse(product, size, productSellSizeApiResponseList));
     }
 
     public Header<ProductBuyInfoApiResponse> buyInfo(Long id, String size){
-        Product product = baseRepository.getById(id);
+        Product product = productRepository.getById(id);
         return Header.OK(new ProductBuyInfoApiResponse(product, size, salesRepository.findBySizeTypeAndProductId(size, id), purchaseRepository.findBySizeTypeAndProductId(size, id), salesRepository.findByProductIdAndSizeType(id, size)));
     }
 
     public Header<ProductSellInfoApiResponse> sellInfo(Long id, String size){
-        Product product = baseRepository.getById(id);
+        Product product = productRepository.getById(id);
         return Header.OK(new ProductSellInfoApiResponse(product, size, salesRepository.findBySizeTypeAndProductId(size, id), purchaseRepository.findBySizeTypeAndProductId(size, id), purchaseRepository.findByProductIdAndSizeType(id, size)));
     }
 
     public Header<ProductBuyFinalApiResponse> buyFinal(Long productId, Long customerId, String size, Long price, Long date){
-        Product product = baseRepository.getById(productId);
+        Product product = productRepository.getById(productId);
 
         List<Address> addressList = addressRepository.findAllByCustomerId(customerId);
         List<ProductAddressApiResponse> productAddressApiResponseList = addressList.stream()
@@ -236,7 +236,7 @@ public class ProductService extends BaseService<ProductApiRequest, ProductApiRes
     }
 
     public Header<ProductSellFinalResponse> sellFinal(Long productId, Long customerId, String size, Long price){
-        Product product = baseRepository.getById(productId);
+        Product product = productRepository.getById(productId);
         Optional<Account> account = accountRepository.findByCustomerId(customerId);
         Account newAccount = account.orElseGet(Account::new);
 
@@ -268,7 +268,7 @@ public class ProductService extends BaseService<ProductApiRequest, ProductApiRes
     public Header delete(Long id){
         Optional<Product> productEntity = productRepository.findById(id);
         return productEntity.map(pro ->{
-            baseRepository.delete(pro);
+            productRepository.delete(pro);
             return Header.OK();
         }).orElseGet(() ->Header.ERROR("데이터없음"));
     }

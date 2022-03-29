@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @AllArgsConstructor
+// Controller임을 나타내고, bean으로 등록되며 해당 클래스가 Controller로 사용됨을 Spring FrameWork에 알립니다.
 @Controller
 public class BaseController {
 

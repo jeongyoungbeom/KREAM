@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class StyleimgService extends BaseService<StyleimgApiRequest, StyleimgApiResponse, StyleImg> {
+public class StyleimgService {
     private final StyleRepository styleRepository;
     private final StyleimgRepository styleimgRepository;
 
@@ -33,7 +33,7 @@ public class StyleimgService extends BaseService<StyleimgApiRequest, StyleimgApi
 
 
     public Header<List<StyleimgApiResponse>> list(){
-        List<StyleImg> styleImgs = baseRepository.findAll();
+        List<StyleImg> styleImgs = styleimgRepository.findAll();
         List<StyleimgApiResponse> styleimgApiResponseList = styleImgs.stream()
                 .map(StyleimgApiResponse::new)
                 .collect(Collectors.toList());

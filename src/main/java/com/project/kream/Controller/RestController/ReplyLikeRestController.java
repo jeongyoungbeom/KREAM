@@ -1,10 +1,5 @@
 package com.project.kream.Controller.RestController;
 
-import com.project.kream.Controller.CrudController;
-import com.project.kream.Model.Entity.ReplyLike;
-import com.project.kream.Model.request.ReplyLikeApiRequest;
-import com.project.kream.Model.response.ReplyLikeApiResponse;
-import com.project.kream.Repository.ReplyLikeRepository;
 import com.project.kream.Service.ReplyLikeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-public class ReplyLikeRestController extends CrudController<ReplyLikeApiRequest, ReplyLikeApiResponse, ReplyLike> {
+public class ReplyLikeRestController {
     private final ReplyLikeService replyLikeService;
 
     @GetMapping("/api/replyLike_like/{customerId}/{replyId}")

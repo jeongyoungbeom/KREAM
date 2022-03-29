@@ -1,8 +1,5 @@
 package com.project.kream.Controller.RestController;
 
-
-import com.project.kream.Controller.CrudController;
-import com.project.kream.Model.Entity.ProSize;
 import com.project.kream.Model.Header;
 import com.project.kream.Model.request.ProsizeApiRequest;
 import com.project.kream.Model.response.ProsizeApiResponse;
@@ -14,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class ProsizeRestController extends CrudController<ProsizeApiRequest, ProsizeApiResponse, ProSize> {
+public class ProsizeRestController {
     private final ProsizeService prosizeService;
 
     @PostMapping("/api/prosize_register") //제품 사이즈 등록

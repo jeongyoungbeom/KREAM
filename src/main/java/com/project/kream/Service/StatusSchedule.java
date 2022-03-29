@@ -8,13 +8,13 @@ import com.project.kream.Repository.PurchaseRepository;
 import com.project.kream.Repository.SalesRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-@Component
+@Service
 @RequiredArgsConstructor
 public class StatusSchedule {
     private final PurchaseRepository purchaseRepository;

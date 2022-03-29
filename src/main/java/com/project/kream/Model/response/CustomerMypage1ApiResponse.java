@@ -2,17 +2,11 @@ package com.project.kream.Model.response;
 
 import com.project.kream.Model.Entity.Customer;
 import com.project.kream.Model.enumclass.CustomerRank;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Getter
 public class CustomerMypage1ApiResponse {
     private String userid;
     private String email;

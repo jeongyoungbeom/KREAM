@@ -1,17 +1,13 @@
 package com.project.kream.Controller.RestController;
 
-import com.project.kream.Controller.CrudController;
-import com.project.kream.Model.Entity.Withdrawal;
 import com.project.kream.Model.Header;
 import com.project.kream.Model.request.WithdrawalApiRequest;
 import com.project.kream.Model.response.WithdrawalApiResponse;
-import com.project.kream.Model.response.WithdrawalListApiResponse;
 import com.project.kream.Service.WithdrawalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class WithdrawalRestController extends CrudController<WithdrawalApiRequest, WithdrawalApiResponse, Withdrawal> {
+public class WithdrawalRestController {
     private final WithdrawalService withdrawalService;
 
     //관리자 리스트

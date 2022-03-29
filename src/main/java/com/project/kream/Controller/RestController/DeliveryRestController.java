@@ -1,10 +1,7 @@
 package com.project.kream.Controller.RestController;
 
-import com.project.kream.Controller.CrudController;
-import com.project.kream.Model.Entity.Delivery;
 import com.project.kream.Model.Header;
 import com.project.kream.Model.request.DeliveryApiRequest;
-import com.project.kream.Model.response.DeliveryApiResponse;
 import com.project.kream.Model.response.DeliveryListApiResponse;
 import com.project.kream.Model.response.DeliveryPurchaseApiResponse;
 import com.project.kream.Service.DeliveryService;
@@ -18,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class DeliveryRestController extends CrudController<DeliveryApiRequest, DeliveryApiResponse, Delivery> {
+public class DeliveryRestController {
     private final DeliveryService deliveryService;
 
     // 배송정보 등록

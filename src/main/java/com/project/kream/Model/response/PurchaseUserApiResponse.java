@@ -4,18 +4,12 @@ import com.project.kream.Model.Entity.Purchase;
 import com.project.kream.Model.Entity.Sales;
 import com.project.kream.Model.enumclass.PurchaseStatus1;
 import com.project.kream.Model.enumclass.PurchaseStatus2;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Getter
 public class PurchaseUserApiResponse {
     private Long orderNumber;
     private Long period;

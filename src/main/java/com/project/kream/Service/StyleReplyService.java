@@ -1,13 +1,10 @@
 package com.project.kream.Service;
 
-import com.project.kream.Model.Entity.Customer;
 import com.project.kream.Model.Entity.Style;
-import com.project.kream.Model.Entity.StyleCustomer;
 import com.project.kream.Model.Entity.StyleReply;
 import com.project.kream.Model.Header;
 import com.project.kream.Model.request.StyleReplyApiRequest;
 import com.project.kream.Model.response.StyleHashTagNameApiResponse;
-import com.project.kream.Model.response.StyleReplyApiResponse;
 import com.project.kream.Model.response.StyleReplyDetailApiResponse;
 import com.project.kream.Model.response.StyleReplyPopApiResponse;
 import com.project.kream.Repository.CustomerRepository;
@@ -18,12 +15,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class StyleReplyService extends BaseService<StyleReplyApiRequest, StyleReplyApiResponse, StyleReply> {
+public class StyleReplyService {
     private final StyleReplyRepository styleReplyRepository;
     private final StyleRepository styleRepository;
     private final CustomerRepository customerRepository;
@@ -36,7 +32,7 @@ public class StyleReplyService extends BaseService<StyleReplyApiRequest, StyleRe
         StyleReply styleReply;
 
         if(Reply != null){
-            StyleReply newReply = baseRepository.getById(Reply);
+            StyleReply newReply = styleReplyRepository.getById(Reply);
             Long groupNumMin = styleReplyRepository.groupNumMin(newReply.getGroupId(), newReply.getGroupNum(), newReply.getDepth());
             if(groupNumMin == 0){
                 Long groupNumMax = styleReplyRepository.groupNumMax(newReply.getGroupId());
@@ -55,7 +51,6 @@ public class StyleReplyService extends BaseService<StyleReplyApiRequest, StyleRe
             styleReply = styleReplyRepository.save(styleReplyApiRequest.toEntity(styleRepository.getById(styleReplyApiRequest.getStyleId())
                     ,customerRepository.getById(styleReplyApiRequest.getCustomerId()),styleReplyRepository.getnextval(),0L, 0L, styleReplyRepository.getnextval()));
         }
-//        StyleReply newstyleReply = baseRepository.save(styleReply);
         return styleReply.getId();
     }
 

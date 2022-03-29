@@ -17,14 +17,14 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class ProsizeService extends BaseService<ProsizeApiRequest, ProsizeApiResponse, ProSize> {
+public class ProsizeService {
     private final ProSizeRepository prosizeRepository;
     private final ProductRepository productRepository;
 
 
     public Header<Long> create(Header<ProsizeApiRequest> request) {
         ProsizeApiRequest prosizeApiRequest = request.getData();
-        ProSize newprosize = baseRepository.save(prosizeApiRequest.toEntity(productRepository.getById(prosizeApiRequest.getProductId())));
+        ProSize newprosize = prosizeRepository.save(prosizeApiRequest.toEntity(productRepository.getById(prosizeApiRequest.getProductId())));
         return Header.OK(newprosize.getId());
     }
 
@@ -40,13 +40,13 @@ public class ProsizeService extends BaseService<ProsizeApiRequest, ProsizeApiRes
     public Header delete(Long id){
         Optional<ProSize> prosize = prosizeRepository.findById(id);
         return prosize.map(pro -> {
-            baseRepository.delete(pro);
+            prosizeRepository.delete(pro);
             return Header.OK();
         }).orElseGet(() -> Header.ERROR("데이터없음"));
     }
 
     public Header<List<ProsizeApiResponse>> list(){
-        List<ProSize> styleEntities = baseRepository.findAll();
+        List<ProSize> styleEntities = prosizeRepository.findAll();
         List<ProsizeApiResponse> styleApiResponseList = styleEntities.stream()
                 .map(ProsizeApiResponse::new)
                 .collect(Collectors.toList());

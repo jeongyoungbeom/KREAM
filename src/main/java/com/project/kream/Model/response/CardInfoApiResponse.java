@@ -3,15 +3,9 @@ package com.project.kream.Model.response;
 import com.project.kream.Model.Entity.CardInfo;
 import com.project.kream.Model.Entity.Customer;
 import com.project.kream.Model.enumclass.CardFlag;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
+@Getter
 public class CardInfoApiResponse {
     private Long id;
     private CardFlag cardFlag;

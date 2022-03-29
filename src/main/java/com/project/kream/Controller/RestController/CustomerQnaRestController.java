@@ -1,7 +1,5 @@
 package com.project.kream.Controller.RestController;
 
-import com.project.kream.Controller.CrudController;
-import com.project.kream.Model.Entity.CustomerQna;
 import com.project.kream.Model.Header;
 import com.project.kream.Model.request.CustomerQnaApiRequest;
 import com.project.kream.Model.response.CustomerQnaApiResponse;
@@ -16,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class CustomerQnaRestController extends CrudController<CustomerQnaApiRequest, CustomerQnaApiResponse, CustomerQna> {
+public class CustomerQnaRestController {
     private final CustomerQnaService customerQnaService;
 
     // 1:1 문의 등록

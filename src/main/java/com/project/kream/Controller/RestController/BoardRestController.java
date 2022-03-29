@@ -1,7 +1,5 @@
 package com.project.kream.Controller.RestController;
 
-import com.project.kream.Controller.CrudController;
-import com.project.kream.Model.Entity.Board;
 import com.project.kream.Model.Header;
 import com.project.kream.Model.enumclass.BoardCategory;
 import com.project.kream.Model.request.BoardApiRequest;
@@ -19,7 +17,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class BoardRestController extends CrudController<BoardApiRequest, BoardApiResponse, Board> {
+public class BoardRestController {
     private final BoardService boardService;
 
     // 글 등록

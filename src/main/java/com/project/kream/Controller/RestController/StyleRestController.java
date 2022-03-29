@@ -1,8 +1,6 @@
 package com.project.kream.Controller.RestController;
 
 
-import com.project.kream.Controller.CrudController;
-import com.project.kream.Model.Entity.Style;
 import com.project.kream.Model.Header;
 import com.project.kream.Model.request.StyleApiRequest;
 import com.project.kream.Model.response.*;
@@ -18,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class StyleRestController extends CrudController<StyleApiRequest, StyleApiResponse, Style> {
+public class StyleRestController {
     private final StyleService styleService;
 
     @PostMapping("/api/style_register")
